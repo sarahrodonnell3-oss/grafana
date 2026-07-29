@@ -2,11 +2,11 @@ import { render, screen, waitFor } from '@testing-library/react';
 import selectEvent from 'react-select-event';
 
 import { LiveChannelScope, type StandardEditorContext, type StandardEditorsRegistryItem } from '@grafana/data';
-import { getManagedChannelInfo } from 'app/features/live/info';
 import {
   discoveryResources,
   getAPIGroupDiscoveryList,
 } from 'app/features/apiserver/discovery';
+import { getManagedChannelInfo } from 'app/features/live/info';
 
 import { LiveChannelEditor } from './LiveChannelEditor';
 import { type LivePanelOptions } from './types';
