@@ -37,6 +37,19 @@ describe('LabsPage', () => {
     expect(screen.getByText('1 enabled')).toBeInTheDocument();
   });
 
+  it('shows safe runtime feature flags even when they are disabled or absent from boot config', () => {
+    config.featureToggles = {
+      dashboardScene: true,
+    };
+
+    render(<LabsPage />);
+
+    expect(screen.queryByText('dashboardScene')).not.toBeInTheDocument();
+    expect(screen.getByText('queryServiceFromUI')).toBeInTheDocument();
+    expect(screen.getByText('0 enabled')).toBeInTheDocument();
+    expect(screen.getByText('1 visible')).toBeInTheDocument();
+  });
+
   it('loads and persists feature flag overrides to localStorage', async () => {
     config.featureToggles = {
       queryServiceFromUI: true,
@@ -54,6 +67,22 @@ describe('LabsPage', () => {
 
     expect(isEnabled()).toBe(true);
     expect(window.localStorage.getItem('grafana.featureToggles')).toContain('queryServiceFromUI=true');
+  });
+
+  it('preserves unrelated localStorage feature toggle overrides when toggling', async () => {
+    config.featureToggles = {
+      queryServiceFromUI: false,
+    };
+    window.localStorage.setItem('grafana.featureToggles', 'dashboardScene=true,queryServiceFromUI=false');
+
+    const { user } = render(<LabsPage />);
+    const toggle = screen.getByTestId('labs-feature-toggle-queryServiceFromUI');
+
+    await user.click(toggle);
+
+    const storedValue = window.localStorage.getItem('grafana.featureToggles') ?? '';
+    expect(storedValue).toContain('queryServiceFromUI=true');
+    expect(storedValue).toContain('dashboardScene=true');
   });
 
   it('ignores unknown feature flags from localStorage overrides', () => {

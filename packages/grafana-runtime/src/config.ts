@@ -322,6 +322,10 @@ export function isSafeRuntimeFeatureFlag(featureName: string): boolean {
   return safeRuntimeFeatureFlags.has(featureName);
 }
 
+export function getSafeRuntimeFeatureFlags(): string[] {
+  return Array.from(safeRuntimeFeatureFlags);
+}
+
 function overrideFeatureTogglesFromUrl(config: GrafanaBootConfig) {
   if (window.location.href.indexOf('__feature') === -1) {
     return;

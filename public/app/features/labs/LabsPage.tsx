@@ -3,7 +3,7 @@ import { FormEvent, useMemo, useState } from 'react';
 
 import { GrafanaTheme2, store } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { config, isSafeRuntimeFeatureFlag } from '@grafana/runtime';
+import { config, getSafeRuntimeFeatureFlags, isSafeRuntimeFeatureFlag } from '@grafana/runtime';
 import { Alert, Badge, Button, Input, Stack, Switch, Text, useStyles2 } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 
@@ -40,12 +40,13 @@ function serializeFeatureToggleOverrides(overrides: FeatureToggleMap): string {
 }
 
 function buildInitialFeatureToggleState(): FeatureToggleMap {
+  // Boot config only includes enabled flags (GetEnabled), so seed from the safe
+  // allowlist so default-off flags remain discoverable and toggleable in Labs.
   const runtimeFeatureToggles: FeatureToggleMap = {};
-
-  for (const [featureName, featureValue] of Object.entries(config.featureToggles)) {
-    if (typeof featureValue === 'boolean' && isSafeRuntimeFeatureFlag(featureName)) {
-      runtimeFeatureToggles[featureName] = featureValue;
-    }
+  for (const featureName of getSafeRuntimeFeatureFlags()) {
+    runtimeFeatureToggles[featureName] = Boolean(
+      config.featureToggles[featureName as keyof typeof config.featureToggles]
+    );
   }
 
   const runtimeFeatureToggleNames = new Set(Object.keys(runtimeFeatureToggles));
@@ -55,10 +56,6 @@ function buildInitialFeatureToggleState(): FeatureToggleMap {
   );
 
   return { ...runtimeFeatureToggles, ...filteredOverrides };
-}
-
-function isRuntimeFeatureToggleName(featureName: string): featureName is keyof typeof config.featureToggles {
-  return featureName in config.featureToggles;
 }
 
 export default function LabsPage() {
@@ -88,13 +85,9 @@ export default function LabsPage() {
     setFeatureToggles((previousFeatureToggles) => ({ ...previousFeatureToggles, [featureName]: enabled }));
     const localStorageFeatureToggles = parseFeatureToggleOverrides(store.get(FEATURE_TOGGLE_STORAGE_KEY));
     localStorageFeatureToggles[featureName] = enabled;
-    const safeLocalStorageFeatureToggles = Object.fromEntries(
-      Object.entries(localStorageFeatureToggles).filter(([name]) => isSafeRuntimeFeatureFlag(name))
-    );
-    store.set(FEATURE_TOGGLE_STORAGE_KEY, serializeFeatureToggleOverrides(safeLocalStorageFeatureToggles));
-    if (isRuntimeFeatureToggleName(featureName)) {
-      config.featureToggles[featureName] = enabled;
-    }
+    // Preserve non-safe overrides already stored under grafana.featureToggles.
+    store.set(FEATURE_TOGGLE_STORAGE_KEY, serializeFeatureToggleOverrides(localStorageFeatureToggles));
+    config.featureToggles[featureName as keyof typeof config.featureToggles] = enabled;
   };
 
   return (
