@@ -7,9 +7,9 @@
 # Frontend build manifest (generated / local; see .gitignore)
 manifest.json
 .yarn
-build
+/build
 compiled
-data
+/data
 dist
 pkg
 public/lib/monaco
