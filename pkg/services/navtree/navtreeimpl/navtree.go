@@ -162,6 +162,10 @@ func (s *ServiceImpl) GetNavTree(c *contextmodel.ReqContext, prefs *pref.Prefere
 
 	treeRoot.AddSection(s.buildDataConnectionsNavLink(c))
 
+	if labsNode := s.buildLabsNavLink(c); labsNode != nil {
+		treeRoot.AddSection(labsNode)
+	}
+
 	orgAdminNode, err := s.getAdminNode(c)
 
 	if orgAdminNode != nil && len(orgAdminNode.Children) > 0 {
@@ -563,6 +567,27 @@ func (s *ServiceImpl) buildAlertNavLinks(c *contextmodel.ReqContext) *navtree.Na
 	}
 
 	return nil
+}
+
+// buildLabsNavLink adds the experimental "Labs" section where admins can flip
+// feature toggles at runtime. It is gated behind the feature management read
+// permission, which is granted to admins by the fixed:featuremgmt:reader role.
+func (s *ServiceImpl) buildLabsNavLink(c *contextmodel.ReqContext) *navtree.NavLink {
+	hasAccess := ac.HasAccess(s.accessControl, c)
+
+	if !hasAccess(ac.EvalPermission(ac.ActionFeatureManagementRead)) {
+		return nil
+	}
+
+	return &navtree.NavLink{
+		Text:       "Labs",
+		SubTitle:   "Experiment with feature toggles",
+		Id:         navtree.NavIDLabs,
+		Icon:       "flask",
+		Url:        s.cfg.AppSubURL + "/labs",
+		SortWeight: navtree.WeightLabs,
+		IsNew:      true,
+	}
 }
 
 func (s *ServiceImpl) buildDataConnectionsNavLink(c *contextmodel.ReqContext) *navtree.NavLink {

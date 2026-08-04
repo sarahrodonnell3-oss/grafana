@@ -218,6 +218,8 @@ func (hs *HTTPServer) registerRoutes() {
 	r.Get("/explore", authorize(ac.EvalPermission(ac.ActionDatasourcesExplore)), hs.Index)
 	r.Get("/drilldown", authorize(ac.EvalPermission(ac.ActionDatasourcesExplore)), hs.Index)
 
+	r.Get("/labs", authorize(ac.EvalPermission(ac.ActionFeatureManagementRead)), hs.Index)
+
 	r.Get("/playlists/", reqSignedIn, hs.Index)
 	r.Get("/playlists/*", reqSignedIn, hs.Index)
 	r.Get("/alerting/", reqSignedIn, hs.Index)
@@ -569,6 +571,12 @@ func (hs *HTTPServer) registerRoutes() {
 		adminRoute.Post("/provisioning/plugins/reload", authorize(ac.EvalPermission(ActionProvisioningReload, ScopeProvisionersPlugins)), routing.Wrap(hs.AdminProvisioningReloadPlugins))
 		adminRoute.Post("/provisioning/datasources/reload", authorize(ac.EvalPermission(ActionProvisioningReload, ScopeProvisionersDatasources)), routing.Wrap(hs.AdminProvisioningReloadDatasources))
 		adminRoute.Post("/provisioning/alerting/reload", authorize(ac.EvalPermission(ActionProvisioningReload, ScopeProvisionersAlertRules)), routing.Wrap(hs.AdminProvisioningReloadAlerting))
+	}, reqSignedIn)
+
+	// Labs: runtime feature toggle management
+	r.Group("/api/labs", func(labsRoute routing.RouteRegister) {
+		labsRoute.Get("/features", authorize(ac.EvalPermission(ac.ActionFeatureManagementRead)), routing.Wrap(hs.GetLabsFeatures))
+		labsRoute.Patch("/features", authorize(ac.EvalPermission(ac.ActionFeatureManagementWrite)), routing.Wrap(hs.UpdateLabsFeatures))
 	}, reqSignedIn)
 
 	// Administering users
