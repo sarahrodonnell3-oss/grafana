@@ -199,6 +199,8 @@ export function getNavTitle(navId: string | undefined) {
       return t('nav.connect-data.title', 'Connect data');
     case 'standalone-plugin-page-/connections/private-data-source-connections':
       return t('nav.private-data-source-connections.title', 'Private data source connect');
+    case 'labs':
+      return t('nav.labs.title', 'Labs');
     case 'plugin-page-grafana-detect-app':
       return t('nav.detect.title', 'Detect');
     case 'plugin-page-grafana-quaderno-app':
@@ -298,6 +300,8 @@ export function getNavSubTitle(navId: string | undefined) {
         'nav.admin.subtitle',
         'Manage server-wide settings and access to resources such as organizations, users, and licenses'
       );
+    case 'labs':
+      return t('nav.labs.subtitle', 'Explore and manage the feature toggles of this Grafana instance');
     case 'cfg/general':
       return t('nav.config-general.subtitle', 'Manage default preferences and settings across Grafana');
     case 'cfg/plugins':

@@ -11087,6 +11087,35 @@
     }
   },
   "label-dropdown-info": "Can't find your label? Enter it manually",
+  "labs": {
+    "column-description": "Description",
+    "column-name": "Feature toggle",
+    "column-source": "Set by",
+    "column-stage": "Stage",
+    "column-state": "State",
+    "empty-state": "No feature toggles found",
+    "enabled-count": "{{enabled}} of {{total}} enabled",
+    "filter-all": "All",
+    "filter-disabled": "Disabled",
+    "filter-enabled": "Enabled",
+    "intro-description": "These are all the feature toggles registered in this Grafana instance. Changes are saved and applied straight away, but toggles that change how Grafana starts up, and toggles used by the user interface, only take full effect after a reload or a restart.",
+    "intro-title": "Feature toggles",
+    "load-error": "Failed to load the feature toggles of this instance",
+    "load-error-description": "Reload the page to try again. Feature toggles can also be set in the [feature_toggles] section of the Grafana configuration file.",
+    "loading": "Loading feature toggles...",
+    "read-only": "You need the feature toggle write permission to change these values.",
+    "requires-restart-tooltip": "Changing this toggle requires a Grafana restart",
+    "restart-required-description": "A feature toggle that is read while Grafana starts up has changed. Restart Grafana to fully apply it.",
+    "restart-required-title": "Restart required",
+    "search-placeholder": "Search feature toggles",
+    "source-config": "Configuration file",
+    "source-default": "Default",
+    "source-labs": "Labs",
+    "toggle-aria-label": "Toggle {{name}}",
+    "toggle-disabled": "{{name}} disabled",
+    "toggle-enabled": "{{name}} enabled",
+    "toggle-error": "Failed to update {{name}}"
+  },
   "layers": {
     "layer-drag-drop-list": {
       "draggable-aria-label": "Drag and drop to reorder",
@@ -12210,6 +12239,10 @@
     },
     "kubernetes": {
       "title": "Kubernetes"
+    },
+    "labs": {
+      "subtitle": "Explore and manage the feature toggles of this Grafana instance",
+      "title": "Labs"
     },
     "library-panels": {
       "subtitle": "Reusable panels that can be added to multiple dashboards",
