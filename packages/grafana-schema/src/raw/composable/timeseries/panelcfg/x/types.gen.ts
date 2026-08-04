@@ -24,10 +24,28 @@ export const defaultTimeSeriesLegendOptions: Partial<TimeSeriesLegendOptions> = 
   facetedFilterPinned: false,
 };
 
+export enum OverlayType {
+  LinearRegression = 'linearRegression',
+  MovingAverage = 'movingAverage',
+}
+
+export interface TimeSeriesOverlayOptions {
+  enabled?: boolean;
+  type?: (OverlayType | 'movingAverage');
+  windowSize?: number;
+}
+
+export const defaultTimeSeriesOverlayOptions: Partial<TimeSeriesOverlayOptions> = {
+  enabled: false,
+  type: 'movingAverage',
+  windowSize: 10,
+};
+
 export interface Options extends common.OptionsWithTimezones, common.OptionsWithAnnotations {
   disableKeyboardEvents?: boolean;
   legend: TimeSeriesLegendOptions;
   orientation?: common.VizOrientation;
+  overlay?: TimeSeriesOverlayOptions;
   timeCompare?: common.TimeCompareOptions;
   tooltip: common.VizTooltipOptions;
 }
