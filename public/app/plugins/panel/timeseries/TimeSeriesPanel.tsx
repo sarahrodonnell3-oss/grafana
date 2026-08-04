@@ -30,7 +30,7 @@ import { ExemplarsPlugin, getVisibleLabels } from './plugins/ExemplarsPlugin';
 import { OutsideRangePlugin } from './plugins/OutsideRangePlugin';
 import { getXAnnotationFrames } from './plugins/utils';
 import { getPrepareTimeseriesSuggestion } from './suggestions';
-import { getTimezones, prepareGraphableFields } from './utils';
+import { applyOverlays, getTimezones, prepareGraphableFields } from './utils';
 
 interface TimeSeriesPanelProps extends PanelProps<Options> {}
 
@@ -66,6 +66,10 @@ export const TimeSeriesPanel = ({
   const { frames, compareDiffMs } = useMemo(() => {
     let frames = prepareGraphableFields(data.series, config.theme2, timeRange);
     if (frames != null) {
+      // Inject overlay series before compareDiffMs is built so the per-series diff array below stays
+      // index-aligned with the augmented field list (overlays inherit their frame's diff).
+      frames = applyOverlays(frames, options.overlay, config.theme2);
+
       let compareDiffMs: number[] = [0];
       // Held separately from `frames` below: TS won't retain the null-check narrowing of `frames`
       // inside the .map callback once `frames` itself gets reassigned in this scope.
@@ -97,7 +101,7 @@ export const TimeSeriesPanel = ({
     }
 
     return { frames };
-  }, [data.series, timeRange]);
+  }, [data.series, timeRange, options.overlay]);
 
   const timezones = useMemo(() => getTimezones(options.timezone, timeZone), [options.timezone, timeZone]);
   const suggestions = useMemo(() => {

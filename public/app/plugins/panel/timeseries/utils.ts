@@ -1,9 +1,13 @@
+import { SimpleLinearRegression } from 'ml-regression-simple-linear';
+
 import {
   type DataFrame,
   type Field,
+  FieldColorModeId,
   FieldType,
   formatLabels,
   getDisplayProcessor,
+  getFieldDisplayName,
   type GrafanaTheme2,
   isBooleanUnit,
   type TimeRange,
@@ -12,8 +16,10 @@ import {
   nullToValue,
 } from '@grafana/data';
 import { convertFieldType } from '@grafana/data/internal';
-import { type GraphFieldConfig, LineInterpolation } from '@grafana/schema';
+import { GraphDrawStyle, type GraphFieldConfig, GraphGradientMode, LineInterpolation } from '@grafana/schema';
 import { buildScaleKey } from '@grafana/ui/internal';
+
+import { OverlayType, type TimeSeriesOverlayOptions } from './panelcfg.gen';
 
 type ScaleKey = string;
 
@@ -350,4 +356,155 @@ export function getTimezones(timezones: string[] | undefined, defaultTimezone: s
     return [defaultTimezone];
   }
   return timezones.map((v) => (v?.length ? v : defaultTimezone));
+}
+
+// A moving-average window narrower than this is meaningless (it would just echo the source series).
+export const MIN_OVERLAY_WINDOW_SIZE = 2;
+
+// The overlay is drawn as a contrasting secondary line so it reads clearly over the classic-palette
+// source series. Green is picked to stand out against the blue that starts the classic palette.
+const OVERLAY_COLOR = 'green';
+
+/**
+ * Trailing simple moving average over the last `window` positions (by index, so nulls inside the
+ * window are skipped rather than treated as zero). Mirrors the trailing-mean logic used by the
+ * "Add field from calculation" transformer, but yields null when the window holds no finite values
+ * so the overlay line has a gap instead of a misleading flat zero.
+ */
+function trailingMovingAverage(values: unknown[], window: number): Array<number | null> {
+  const win = Math.max(MIN_OVERLAY_WINDOW_SIZE, Math.floor(window));
+  const out: Array<number | null> = [];
+  let sum = 0;
+  let count = 0;
+
+  for (let i = 0; i < values.length; i++) {
+    const current = values[i];
+    if (typeof current === 'number' && Number.isFinite(current)) {
+      sum += current;
+      count++;
+    }
+
+    if (i > win - 1) {
+      const leaving = values[i - win];
+      if (typeof leaving === 'number' && Number.isFinite(leaving)) {
+        sum -= leaving;
+        count--;
+      }
+    }
+
+    out.push(count === 0 ? null : sum / count);
+  }
+
+  return out;
+}
+
+/**
+ * Simple OLS linear regression predicted at each X. X is shifted by its first finite value before
+ * fitting so large time epochs don't blow up floating-point precision (the fit is shift-invariant).
+ */
+function linearRegressionLine(xValues: unknown[], yValues: unknown[]): Array<number | null> {
+  const xs: number[] = [];
+  const ys: number[] = [];
+
+  for (let i = 0; i < yValues.length; i++) {
+    const x = xValues[i];
+    const y = yValues[i];
+    if (typeof x === 'number' && Number.isFinite(x) && typeof y === 'number' && Number.isFinite(y)) {
+      xs.push(x);
+      ys.push(y);
+    }
+  }
+
+  if (xs.length < 2) {
+    return yValues.map(() => null);
+  }
+
+  const shift = xs[0];
+  const regression = new SimpleLinearRegression(
+    xs.map((x) => x - shift),
+    ys
+  );
+
+  return xValues.map((x) => (typeof x === 'number' && Number.isFinite(x) ? regression.predict(x - shift) : null));
+}
+
+/**
+ * Appends a derived overlay line (trailing moving average or OLS trendline) for every numeric value
+ * field, aligned to the frame's existing X field. Runs after prepareGraphableFields so the synthetic
+ * fields are already graphable; source fields are left untouched. No-op unless overlay.enabled.
+ */
+export function applyOverlays(
+  frames: DataFrame[],
+  overlay: TimeSeriesOverlayOptions | undefined,
+  theme: GrafanaTheme2
+): DataFrame[] {
+  if (overlay?.enabled !== true) {
+    return frames;
+  }
+
+  const type = overlay.type ?? OverlayType.MovingAverage;
+  const windowSize = Math.max(MIN_OVERLAY_WINDOW_SIZE, Math.floor(overlay.windowSize ?? 10));
+
+  return frames.map((frame, frameIndex) => {
+    const xField = frame.fields.find((f) => f.type === FieldType.time) ?? frame.fields[0];
+    if (!xField) {
+      return frame;
+    }
+
+    const overlayFields: Field[] = [];
+
+    frame.fields.forEach((field) => {
+      if (field === xField || field.type !== FieldType.number) {
+        return;
+      }
+
+      const sourceName = getFieldDisplayName(field, frame, frames);
+      let values: Array<number | null>;
+      let displayName: string;
+
+      if (type === OverlayType.LinearRegression) {
+        values = linearRegressionLine(xField.values, field.values);
+        displayName = `${sourceName} (trend)`;
+      } else {
+        values = trailingMovingAverage(field.values, windowSize);
+        displayName = `${sourceName} (MA ${windowSize})`;
+      }
+
+      const custom: GraphFieldConfig = {
+        ...field.config.custom,
+        drawStyle: GraphDrawStyle.Line,
+        lineWidth: 2,
+        lineStyle: { fill: 'dash', dash: [10, 10] },
+        fillOpacity: 0,
+        gradientMode: GraphGradientMode.None,
+      };
+
+      const overlayField: Field = {
+        ...field,
+        name: displayName,
+        labels: undefined,
+        values,
+        config: {
+          ...field.config,
+          displayName,
+          color: { mode: FieldColorModeId.Fixed, fixedColor: OVERLAY_COLOR },
+          custom,
+        },
+        // Point back at the source frame; drop the cached displayName so it recomputes from config.
+        state: { origin: { frameIndex, fieldIndex: frame.fields.length + overlayFields.length } },
+      };
+
+      overlayField.display = getDisplayProcessor({ field: overlayField, theme });
+      overlayFields.push(overlayField);
+    });
+
+    if (overlayFields.length === 0) {
+      return frame;
+    }
+
+    return {
+      ...frame,
+      fields: [...frame.fields, ...overlayFields],
+    };
+  });
 }
