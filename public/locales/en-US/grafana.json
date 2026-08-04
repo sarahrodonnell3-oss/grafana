@@ -11087,6 +11087,32 @@
     }
   },
   "label-dropdown-info": "Can't find your label? Enter it manually",
+  "labs": {
+    "feature-toggles": {
+      "badge-modified": "Modified",
+      "badge-read-only": "Read only",
+      "badge-unsaved": "Unsaved",
+      "column-name": "Name",
+      "column-stage": "Stage",
+      "column-state": "State",
+      "description": "Feature toggles control which features this Grafana instance runs. Changes are applied to the whole instance and are kept when Grafana restarts. Reload the page after saving to pick up changes to the user interface.",
+      "discard": "Discard",
+      "empty-message": "No feature toggles found",
+      "filter-all": "All",
+      "filter-disabled": "Disabled",
+      "filter-enabled": "Enabled",
+      "filter-modified": "Modified",
+      "load-error": "Failed to load feature toggles",
+      "read-only-description": "Ask an administrator for the feature toggle write permission to turn features on and off.",
+      "read-only-title": "You can not change feature toggles",
+      "save": "Save changes",
+      "save-error": "Failed to update feature toggles",
+      "save-success": "Feature toggles updated",
+      "search-placeholder": "Search feature toggles",
+      "summary": "{{enabledCount}} of {{totalCount}} toggles enabled, {{shownCount}} shown",
+      "unsaved-changes": "Unsaved changes: {{changeCount}}"
+    }
+  },
   "layers": {
     "layer-drag-drop-list": {
       "draggable-aria-label": "Drag and drop to reorder",
@@ -12210,6 +12236,10 @@
     },
     "kubernetes": {
       "title": "Kubernetes"
+    },
+    "labs": {
+      "subtitle": "Try out the features this Grafana instance can run",
+      "title": "Labs"
     },
     "library-panels": {
       "subtitle": "Reusable panels that can be added to multiple dashboards",

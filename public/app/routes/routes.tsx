@@ -598,6 +598,11 @@ export function getAppRoutes(): RouteDescriptor[] {
       ),
     },
     {
+      path: '/labs',
+      roles: () => contextSrv.evaluatePermission([AccessControlAction.FeatureManagementRead]),
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "LabsPage"*/ 'app/features/labs/LabsPage')),
+    },
+    {
       path: '/theme-playground',
       component: SafeDynamicImport(
         () => import(/* webpackChunkName: "ThemePlayground"*/ 'app/features/theme-playground/ThemePlayground')
