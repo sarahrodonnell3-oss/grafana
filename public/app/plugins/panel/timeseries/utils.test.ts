@@ -1,7 +1,14 @@
 import { createTheme, FieldType, createDataFrame, toDataFrame } from '@grafana/data';
 import { LineInterpolation } from '@grafana/ui';
 
-import { getCompareSeriesIdentityKey, getTimezones, prepareGraphableFields, setClassicPaletteIdxs } from './utils';
+import { OverlayType } from './panelcfg.gen';
+import {
+  applyOverlays,
+  getCompareSeriesIdentityKey,
+  getTimezones,
+  prepareGraphableFields,
+  setClassicPaletteIdxs,
+} from './utils';
 
 describe('prepare timeseries graph', () => {
   it('errors with no time fields', () => {
@@ -285,6 +292,83 @@ describe('prepare timeseries graph', () => {
       // Second enum field values should be offset by the length of the first enum's text
       expect(frames![1].fields[1].values).toEqual([2, 3]);
     });
+  });
+});
+
+describe('applyOverlays', () => {
+  const makeFrame = (fields: Array<{ name: string; type: FieldType; values: unknown[] }>) =>
+    toDataFrame({ fields });
+
+  const timeField = { name: 'time', type: FieldType.time, values: [1, 2, 3, 4, 5] };
+
+  it('returns frames unchanged when the overlay is disabled', () => {
+    const frames = [makeFrame([timeField, { name: 'a', type: FieldType.number, values: [2, 4, 6, 8, 10] }])];
+
+    expect(applyOverlays(frames, undefined, createTheme())).toBe(frames);
+    expect(applyOverlays(frames, { enabled: false }, createTheme())).toBe(frames);
+
+    const out = applyOverlays(frames, { enabled: false, type: OverlayType.MovingAverage }, createTheme());
+    expect(out[0].fields).toHaveLength(2);
+  });
+
+  it('appends a trailing moving average field with the expected values and label', () => {
+    const frames = [makeFrame([timeField, { name: 'a', type: FieldType.number, values: [2, 4, 6, 8, 10] }])];
+
+    const out = applyOverlays(frames, { enabled: true, type: OverlayType.MovingAverage, windowSize: 2 }, createTheme());
+
+    expect(out[0].fields).toHaveLength(3);
+    const overlay = out[0].fields[2];
+    expect(overlay.config.displayName).toBe('a (MA 2)');
+    expect(overlay.type).toBe(FieldType.number);
+    expect(overlay.values).toEqual([2, 3, 5, 7, 9]);
+    expect(overlay.config.custom?.lineStyle).toEqual({ fill: 'dash', dash: [10, 10] });
+    expect(overlay.config.custom?.fillOpacity).toBe(0);
+    expect(overlay.config.color).toEqual({ mode: 'fixed', fixedColor: 'green' });
+    // Source field is untouched.
+    expect(out[0].fields[1].values).toEqual([2, 4, 6, 8, 10]);
+  });
+
+  it('clamps the moving-average window to a minimum of 2', () => {
+    const frames = [makeFrame([timeField, { name: 'a', type: FieldType.number, values: [2, 4, 6, 8, 10] }])];
+
+    const out = applyOverlays(frames, { enabled: true, type: OverlayType.MovingAverage, windowSize: 1 }, createTheme());
+
+    const overlay = out[0].fields[2];
+    expect(overlay.config.displayName).toBe('a (MA 2)');
+    expect(overlay.values).toEqual([2, 3, 5, 7, 9]);
+  });
+
+  it('appends an OLS trendline that matches the fit on a linear series', () => {
+    const frames = [makeFrame([timeField, { name: 'a', type: FieldType.number, values: [10, 20, 30, 40, 50] }])];
+
+    const out = applyOverlays(frames, { enabled: true, type: OverlayType.LinearRegression }, createTheme());
+
+    const overlay = out[0].fields[2];
+    expect(overlay.config.displayName).toBe('a (trend)');
+    const values = overlay.values as number[];
+    // Perfectly linear input -> trendline reproduces it (and is monotonically increasing).
+    values.forEach((v, i) => expect(v).toBeCloseTo(10 * (i + 1)));
+    for (let i = 1; i < values.length; i++) {
+      expect(values[i]).toBeGreaterThan(values[i - 1]);
+    }
+  });
+
+  it('adds an overlay for every numeric series in a frame', () => {
+    const frames = [
+      makeFrame([
+        timeField,
+        { name: 'a', type: FieldType.number, values: [1, 2, 3, 4, 5] },
+        { name: 'label', type: FieldType.string, values: ['a', 'b', 'c', 'd', 'e'] },
+        { name: 'b', type: FieldType.number, values: [5, 4, 3, 2, 1] },
+      ]),
+    ];
+
+    const out = applyOverlays(frames, { enabled: true, type: OverlayType.LinearRegression }, createTheme());
+
+    const overlayNames = out[0].fields.map((f) => f.config.displayName).filter(Boolean);
+    expect(overlayNames).toEqual(['a (trend)', 'b (trend)']);
+    // Original 4 fields + 2 overlays; string field is skipped.
+    expect(out[0].fields).toHaveLength(6);
   });
 });
 
