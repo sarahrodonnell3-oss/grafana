@@ -38,6 +38,10 @@ const (
 	WeightHelp
 )
 
+// WeightLabs places Labs between Connections and Administration. It is kept out of
+// the block above so that adding it does not shift the weights extensions rely on.
+const WeightLabs = WeightDataConnections + 50
+
 const (
 	NavIDRoot                 = "root"
 	NavIDDashboards           = "dashboards/browse"
@@ -56,6 +60,7 @@ const (
 	NavIDCfgPlugins           = "cfg/plugins"
 	NavIDCfgAccess            = "cfg/access"
 	NavIDBookmarks            = "bookmarks"
+	NavIDLabs                 = "labs"
 )
 
 type NavLink struct {

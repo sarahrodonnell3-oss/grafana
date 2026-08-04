@@ -71,6 +71,7 @@ import (
 	"github.com/grafana/grafana/pkg/services/featuremgmt"
 	"github.com/grafana/grafana/pkg/services/folder"
 	"github.com/grafana/grafana/pkg/services/hooks"
+	"github.com/grafana/grafana/pkg/services/labs"
 	"github.com/grafana/grafana/pkg/services/libraryelements"
 	"github.com/grafana/grafana/pkg/services/librarypanels"
 	"github.com/grafana/grafana/pkg/services/licensing"
@@ -229,6 +230,7 @@ type HTTPServer struct {
 	dsEndpointRedirects             *prometheus.CounterVec
 	dsConnectionClient              datasource.ConnectionClient
 	publicDashboardsService         publicdashboards.Service
+	labsService                     *labs.Service
 }
 
 type TLSCerts struct {
@@ -283,6 +285,7 @@ func ProvideHTTPServer(opts ServerOptions, cfg *setting.Cfg, routeRegister routi
 	starApi *starApi.API, promRegister prometheus.Registerer, anonService anonymous.Service,
 	clientConfigProvider grafanaapiserver.DirectRestConfigProvider, clientGenerator resource.ClientGenerator,
 	userVerifier user.Verifier, pluginPreinstall pluginchecker.Preinstall, publicDashboardsService publicdashboards.Service,
+	labsService *labs.Service,
 ) (*HTTPServer, error) {
 	web.Env = cfg.Env
 	m := web.New()
@@ -369,6 +372,7 @@ func ProvideHTTPServer(opts ServerOptions, cfg *setting.Cfg, routeRegister routi
 		orgDeletionService:           orgDeletionService,
 		TeamService:                  teamService,
 		navTreeService:               navTreeService,
+		labsService:                  labsService,
 		accesscontrolService:         accesscontrolService,
 		annotationsRepo:              annotationsapi.NewMigrationRepository(annotationRepo, annotationMigrationProxy, cfg, userService),
 		tagService:                   tagService,

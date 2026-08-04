@@ -22,12 +22,12 @@ var (
 
 func ProvideManagerService(cfg *setting.Cfg) (*FeatureManager, error) {
 	mgmt := &FeatureManager{
-		isDevMod: cfg.Env != setting.Prod,
-		flags:    make(map[string]*FeatureFlag, 30),
-		enabled:  make(map[string]bool),
-		startup:  make(map[string]bool),
-		warnings: make(map[string]string),
-		log:      log.New("featuremgmt"),
+		isDevMod:  cfg.Env != setting.Prod,
+		flags:     make(map[string]*FeatureFlag, 30),
+		startup:   make(map[string]bool),
+		overrides: make(map[string]bool),
+		warnings:  make(map[string]string),
+		log:       log.New("featuremgmt"),
 	}
 
 	// Register the standard flags
@@ -38,6 +38,7 @@ func ProvideManagerService(cfg *setting.Cfg) (*FeatureManager, error) {
 	if err != nil {
 		return mgmt, err
 	}
+	mgmt.mu.Lock()
 	for key, val := range flags {
 		_, ok := mgmt.flags[key]
 		if !ok {
@@ -53,9 +54,10 @@ func ProvideManagerService(cfg *setting.Cfg) (*FeatureManager, error) {
 
 	// update the values
 	mgmt.update()
+	mgmt.mu.Unlock()
 
 	// Log the enabled feature toggles at startup
-	enabled := slices.Sorted(maps.Keys(mgmt.enabled))
+	enabled := slices.Sorted(maps.Keys(mgmt.enabledFlags()))
 	logctx := make([]any, len(enabled)*2)
 	for i, k := range enabled {
 		logctx[(i * 2)] = k
