@@ -201,7 +201,7 @@ export default function LabsPage() {
                 onChange={setQuery}
                 escapeRegex={false}
               />
-              <InteractiveTable columns={columns} data={filtered} getRowId={(feature) => feature.name} />
+              <InteractiveTable columns={columns} data={filtered} getRowId={(feature) => feature.name} pageSize={25} />
             </>
           )}
         </Stack>
