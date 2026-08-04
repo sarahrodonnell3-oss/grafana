@@ -28,6 +28,9 @@ import { type FeatureToggle, type FeatureToggleState, getFeatureToggles, updateF
 
 type StateFilter = 'all' | 'enabled' | 'disabled';
 
+// Grafana registers hundreds of toggles, so the table is paged to keep typing in the filter snappy
+const PAGE_SIZE = 25;
+
 type ToggleCell<T extends keyof FeatureToggle = keyof FeatureToggle> = CellProps<FeatureToggle, FeatureToggle[T]>;
 
 export function LabsPage() {
@@ -49,6 +52,7 @@ export function LabsPage() {
   const onToggle = useCallback(
     async (toggle: FeatureToggle, enabled: boolean) => {
       setUpdating((current) => [...current, toggle.name]);
+      setState((current) => current && { ...current, toggles: withToggleValue(current.toggles, toggle.name, enabled) });
 
       try {
         setState(await updateFeatureToggles([{ name: toggle.name, enabled }]));
@@ -59,6 +63,9 @@ export function LabsPage() {
         );
       } catch (err) {
         notifyApp.error(t('labs.toggle-error', 'Failed to update {{name}}', { name: toggle.name }));
+        setState(
+          (current) => current && { ...current, toggles: withToggleValue(current.toggles, toggle.name, !enabled) }
+        );
       } finally {
         setUpdating((current) => current.filter((name) => name !== toggle.name));
       }
@@ -191,7 +198,12 @@ export function LabsPage() {
               )}
 
               {toggles.length > 0 ? (
-                <InteractiveTable columns={columns} data={toggles} getRowId={(toggle) => toggle.name} />
+                <InteractiveTable
+                  columns={columns}
+                  data={toggles}
+                  getRowId={(toggle) => toggle.name}
+                  pageSize={PAGE_SIZE}
+                />
               ) : (
                 <EmptyState variant="not-found" message={t('labs.empty-state', 'No feature toggles found')} />
               )}
@@ -201,6 +213,10 @@ export function LabsPage() {
       </Page.Contents>
     </Page>
   );
+}
+
+function withToggleValue(toggles: FeatureToggle[], name: string, enabled: boolean): FeatureToggle[] {
+  return toggles.map((toggle) => (toggle.name === name ? { ...toggle, enabled } : toggle));
 }
 
 function filterToggles(toggles: FeatureToggle[], query: string, stateFilter: StateFilter): FeatureToggle[] {

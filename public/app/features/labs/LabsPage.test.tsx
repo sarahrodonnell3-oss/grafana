@@ -92,6 +92,18 @@ describe('LabsPage', () => {
     expect(screen.getByLabelText('Toggle alphaFeature')).toBeChecked();
   });
 
+  it('puts the switch back when the update fails', async () => {
+    updateFeatureToggles.mockRejectedValue(new Error('nope'));
+
+    renderPage();
+
+    await userEvent.click(await screen.findByLabelText('Toggle alphaFeature'));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Toggle alphaFeature')).not.toBeChecked();
+    });
+  });
+
   it('does not allow editing without the write permission', async () => {
     getFeatureToggles.mockResolvedValue({ ...state, allowEditing: false });
 
