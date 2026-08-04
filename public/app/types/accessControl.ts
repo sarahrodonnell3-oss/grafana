@@ -57,6 +57,9 @@ export enum AccessControlAction {
 
   ActionServerStatsRead = 'server.stats:read',
 
+  FeatureManagementRead = 'featuremgmt.read',
+  FeatureManagementWrite = 'featuremgmt.write',
+
   ActionTeamsCreate = 'teams:create',
   ActionTeamsDelete = 'teams:delete',
   ActionTeamsRead = 'teams:read',

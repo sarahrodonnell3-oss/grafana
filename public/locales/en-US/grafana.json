@@ -11087,6 +11087,24 @@
     }
   },
   "label-dropdown-info": "Can't find your label? Enter it manually",
+  "labs": {
+    "column": {
+      "description": "Description",
+      "name": "Name",
+      "stage": "Stage",
+      "state": "State"
+    },
+    "load-error-title": "Failed to load feature toggles",
+    "loading": "Loading feature toggles...",
+    "reload-alert-body": "Reload the page for the change to fully take effect.",
+    "reload-alert-title": "Feature toggle updated",
+    "reload-button": "Reload page",
+    "requires-dev-mode-tooltip": "This flag can only be enabled when Grafana runs in development mode.",
+    "requires-restart-tooltip": "This flag is read at startup. Changing it at runtime may not fully take effect until Grafana is restarted.",
+    "runtime-only-alert-body": "Changes are kept in memory only and reset when Grafana restarts. Frontend features are read when the page loads, so reload the page after toggling for them to take effect.",
+    "runtime-only-alert-title": "Feature toggle changes are applied at runtime",
+    "search-placeholder": "Search feature toggles"
+  },
   "layers": {
     "layer-drag-drop-list": {
       "draggable-aria-label": "Drag and drop to reorder",
@@ -12210,6 +12228,10 @@
     },
     "kubernetes": {
       "title": "Kubernetes"
+    },
+    "labs": {
+      "subtitle": "Experiment with feature toggles",
+      "title": "Labs"
     },
     "library-panels": {
       "subtitle": "Reusable panels that can be added to multiple dashboards",

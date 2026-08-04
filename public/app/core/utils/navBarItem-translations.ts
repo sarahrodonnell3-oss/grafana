@@ -185,6 +185,8 @@ export function getNavTitle(navId: string | undefined) {
       return t('nav.sign-out.title', 'Sign out');
     case 'search':
       return t('nav.search-dashboards.title', 'Search dashboards');
+    case 'labs':
+      return t('nav.labs.title', 'Labs');
     case 'connections':
       return t('nav.connections.title', 'Connections');
     case 'connections-add-new-connection':
@@ -327,6 +329,8 @@ export function getNavSubTitle(navId: string | undefined) {
       );
     case 'plugin-page-grafana-ml-app':
       return t('nav.machine-learning.subtitle', 'Explore AI and machine learning features');
+    case 'labs':
+      return t('nav.labs.subtitle', 'Experiment with feature toggles');
     default:
       return undefined;
   }
