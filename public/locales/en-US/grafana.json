@@ -15989,6 +15989,18 @@
       "data-outside-time-range": "Data outside time range",
       "zoom-to-data": "Zoom to data"
     },
+    "overlay": {
+      "category": "Overlay",
+      "description-enabled": "Render an extra derived line per numeric series, computed from the visible data",
+      "description-window-size": "Number of trailing points averaged (minimum 2)",
+      "name-enabled": "Show overlay",
+      "name-type": "Overlay type",
+      "name-window-size": "Window size",
+      "type-options": {
+        "label-linear-regression": "Linear regression",
+        "label-moving-average": "Moving average"
+      }
+    },
     "presets": {
       "multi-many-points": "Lines with points",
       "multi-many-points-stacked": "Stacked lines",
