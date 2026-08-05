@@ -107,8 +107,9 @@ export function calcLinearRegression(xs: unknown[], values: unknown[]): Array<nu
 
   const slope = (n * sumXY - sumX * sumY) / denominator;
   const intercept = (sumY - slope * sumX) / n;
+  const origin = xOrigin;
 
-  return xs.map((x) => (typeof x === 'number' && Number.isFinite(x) ? intercept + slope * (x - xOrigin) : null));
+  return xs.map((x) => (typeof x === 'number' && Number.isFinite(x) ? intercept + slope * (x - origin) : null));
 }
 
 function getOverlayDisplayName(sourceName: string, overlay: TimeSeriesOverlayOptions): string {

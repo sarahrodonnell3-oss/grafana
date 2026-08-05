@@ -219,6 +219,20 @@ For more information, refer to the [Configure legend documentation](https://graf
 
 {{< docs/shared lookup="visualizations/annotations/options.md" source="grafana" version="<GRAFANA_VERSION>" >}}
 
+### Overlay options
+
+The options under the **Overlay** section let you add a series that Grafana calculates from the data that's already in the panel, so you don't have to change your query or add a transformation.
+
+Grafana adds one overlay for each visible series and draws it as a dashed line in the color of the series it's calculated from.
+Each overlay is named after its source series in the legend and the tooltip.
+Overlays are calculated output, so you can't configure them individually with field overrides.
+
+- **Show overlay**: Toggle this switch on to add an overlay for each visible series. This option is off by default.
+- **Overlay type**: Choose the calculation that Grafana applies:
+  - **Moving average**: Averages each point with the points that come before it, which smooths out short-term noise.
+  - **Trendline**: Fits a straight line through the series with linear regression, which shows the overall direction of the data.
+- **Window size**: Set how many trailing points the moving average includes. The minimum is `2` and the default is `10`. A larger window gives a smoother line that responds more slowly to change. This option is only available when you set **Overlay type** to **Moving average**.
+
 ### Graph styles options
 
 The options under the **Graph styles** section let you control the general appearance of the graph, excluding [color](#standard-options).
