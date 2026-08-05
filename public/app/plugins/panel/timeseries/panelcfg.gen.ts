@@ -22,10 +22,40 @@ export const defaultTimeSeriesLegendOptions: Partial<TimeSeriesLegendOptions> = 
   facetedFilterPinned: false,
 };
 
+/**
+ * Kind of derived series drawn on top of the source series
+ */
+export enum TimeSeriesOverlayType {
+  LinearRegression = 'linearRegression',
+  MovingAverage = 'movingAverage',
+}
+
+export interface TimeSeriesOverlayOptions {
+  /**
+   * Draw a derived series computed from the source data
+   */
+  enabled: boolean;
+  /**
+   * Which derived series to compute
+   */
+  type: TimeSeriesOverlayType;
+  /**
+   * Number of trailing points averaged by the moving average overlay
+   */
+  windowSize: number;
+}
+
+export const defaultTimeSeriesOverlayOptions: Partial<TimeSeriesOverlayOptions> = {
+  enabled: false,
+  type: TimeSeriesOverlayType.MovingAverage,
+  windowSize: 10,
+};
+
 export interface Options extends common.OptionsWithTimezones, common.OptionsWithAnnotations {
   disableKeyboardEvents?: boolean;
   legend: TimeSeriesLegendOptions;
   orientation?: common.VizOrientation;
+  overlay?: TimeSeriesOverlayOptions;
   timeCompare?: common.TimeCompareOptions;
   tooltip: common.VizTooltipOptions;
 }
