@@ -1,7 +1,15 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { createDataFrame, type DataFrame, DataFrameType, EventBusSrv, FieldType, type PanelProps } from '@grafana/data';
+import {
+  createDataFrame,
+  type DataFrame,
+  DataFrameType,
+  EventBusSrv,
+  FieldColorModeId,
+  FieldType,
+  type PanelProps,
+} from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { LegendDisplayMode, SortOrder, TooltipDisplayMode } from '@grafana/schema';
 import { PanelContextProvider } from '@grafana/ui';
@@ -9,7 +17,7 @@ import { PanelContextProvider } from '@grafana/ui';
 import { getPanelProps } from '../test-utils';
 
 import { TimeSeriesPanel } from './TimeSeriesPanel';
-import { type Options } from './panelcfg.gen';
+import { type Options, TimeSeriesOverlayType } from './panelcfg.gen';
 
 const defaultOptions: Options = {
   legend: {
@@ -179,6 +187,52 @@ describe('TimeSeriesPanel', () => {
         ...props.options,
         legend: { ...props.options.legend, facetedFilterPinned: false },
       });
+    });
+  });
+
+  describe('overlay', () => {
+    const overlayFrame = createDataFrame({
+      fields: [
+        { name: 'time', type: FieldType.time, values: [1000, 2000, 3000, 4000], config: {} },
+        {
+          name: 'cpu',
+          type: FieldType.number,
+          values: [10, 20, 30, 40],
+          config: { custom: {}, color: { mode: FieldColorModeId.PaletteClassic } },
+        },
+      ],
+    });
+
+    it('does not add an overlay series by default', () => {
+      renderPanel(undefined, [overlayFrame]);
+
+      expect(screen.getByTestId(selectors.components.VizLegend.seriesName('cpu'))).toBeInTheDocument();
+      expect(screen.queryAllByTestId(/moving avg|trendline/)).toHaveLength(0);
+    });
+
+    it('adds a dashed moving average series that shares the source color', () => {
+      renderPanel({ overlay: { enabled: true, type: TimeSeriesOverlayType.MovingAverage, windowSize: 3 } }, [
+        overlayFrame,
+      ]);
+
+      const source = screen.getByTestId(selectors.components.VizLegend.seriesName('cpu'));
+      const overlay = screen.getByTestId(selectors.components.VizLegend.seriesName('cpu (moving avg 3)'));
+
+      const sourceIcon = within(source).getByTestId('series-icon');
+      const overlayIcon = within(overlay).getByTestId('series-icon');
+
+      // Solid source icon vs dashed overlay icon. Color inheritance is asserted in overlay.test.ts;
+      // jsdom drops the gradient that carries it on the dashed icon.
+      expect(sourceIcon.style.borderRadius).toBeTruthy();
+      expect(overlayIcon.style.backgroundSize).toBe('6px 4px');
+    });
+
+    it('adds a trendline series', () => {
+      renderPanel({ overlay: { enabled: true, type: TimeSeriesOverlayType.LinearRegression, windowSize: 10 } }, [
+        overlayFrame,
+      ]);
+
+      expect(screen.getByTestId(selectors.components.VizLegend.seriesName('cpu (trendline)'))).toBeInTheDocument();
     });
   });
 

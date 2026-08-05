@@ -15989,6 +15989,20 @@
       "data-outside-time-range": "Data outside time range",
       "zoom-to-data": "Zoom to data"
     },
+    "overlay": {
+      "category": "Overlay",
+      "description-enabled": "Draw an extra series for each visible series, computed from the data already in the panel",
+      "description-window-size": "Number of trailing points averaged for each overlay point",
+      "name-enabled": "Show overlay",
+      "name-type": "Overlay type",
+      "name-window-size": "Window size",
+      "suffix-moving-average": "moving avg {{window}}",
+      "suffix-trendline": "trendline",
+      "type-options": {
+        "label-linear-regression": "Trendline",
+        "label-moving-average": "Moving average"
+      }
+    },
     "presets": {
       "multi-many-points": "Lines with points",
       "multi-many-points-stacked": "Stacked lines",

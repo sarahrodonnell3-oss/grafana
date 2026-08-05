@@ -8,7 +8,8 @@ import { TimeSeriesPanel } from './TimeSeriesPanel';
 import { TimezonesEditor } from './TimezonesEditor';
 import { defaultGraphConfig, getGraphFieldConfig } from './config';
 import { graphPanelChangedHandler } from './migrations';
-import { type FieldConfig, type Options } from './panelcfg.gen';
+import { MIN_MOVING_AVERAGE_WINDOW } from './overlay';
+import { defaultTimeSeriesOverlayOptions, type FieldConfig, type Options, TimeSeriesOverlayType } from './panelcfg.gen';
 import { timeseriesPresetsSupplier } from './presets';
 import { timeseriesSuggestionsSupplier } from './suggestions';
 
@@ -40,6 +41,51 @@ export const plugin = new PanelPlugin<Options, FieldConfig>(TimeSeriesPanel)
       editor: TimezonesEditor,
       defaultValue: undefined,
     });
+
+    const overlayCategory = [t('timeseries.overlay.category', 'Overlay')];
+
+    builder
+      .addBooleanSwitch({
+        path: 'overlay.enabled',
+        name: t('timeseries.overlay.name-enabled', 'Show overlay'),
+        description: t(
+          'timeseries.overlay.description-enabled',
+          'Draw an extra series for each visible series, computed from the data already in the panel'
+        ),
+        category: overlayCategory,
+        defaultValue: defaultTimeSeriesOverlayOptions.enabled,
+      })
+      .addRadio({
+        path: 'overlay.type',
+        name: t('timeseries.overlay.name-type', 'Overlay type'),
+        category: overlayCategory,
+        defaultValue: defaultTimeSeriesOverlayOptions.type,
+        settings: {
+          options: [
+            {
+              value: TimeSeriesOverlayType.MovingAverage,
+              label: t('timeseries.overlay.type-options.label-moving-average', 'Moving average'),
+            },
+            {
+              value: TimeSeriesOverlayType.LinearRegression,
+              label: t('timeseries.overlay.type-options.label-linear-regression', 'Trendline'),
+            },
+          ],
+        },
+        showIf: (c) => Boolean(c.overlay?.enabled),
+      })
+      .addNumberInput({
+        path: 'overlay.windowSize',
+        name: t('timeseries.overlay.name-window-size', 'Window size'),
+        description: t(
+          'timeseries.overlay.description-window-size',
+          'Number of trailing points averaged for each overlay point'
+        ),
+        category: overlayCategory,
+        defaultValue: defaultTimeSeriesOverlayOptions.windowSize,
+        settings: { min: MIN_MOVING_AVERAGE_WINDOW, step: 1, integer: true },
+        showIf: (c) => Boolean(c.overlay?.enabled) && c.overlay?.type === TimeSeriesOverlayType.MovingAverage,
+      });
 
     addAnnotationOptions(builder);
   })
