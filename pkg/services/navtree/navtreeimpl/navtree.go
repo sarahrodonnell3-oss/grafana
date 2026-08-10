@@ -163,6 +163,10 @@ func (s *ServiceImpl) GetNavTree(c *contextmodel.ReqContext, prefs *pref.Prefere
 
 	treeRoot.AddSection(s.buildDataConnectionsNavLink(c))
 
+	if labsNode := s.buildLabsNavLink(c); labsNode != nil {
+		treeRoot.AddSection(labsNode)
+	}
+
 	orgAdminNode, err := s.getAdminNode(c)
 
 	if orgAdminNode != nil && len(orgAdminNode.Children) > 0 {
