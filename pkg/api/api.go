@@ -167,6 +167,8 @@ func (hs *HTTPServer) registerRoutes() {
 	r.Get("/connections/datasources/edit/*", authorize(datasources.EditPageAccess), hs.Index)
 	r.Get("/connections", reqSignedIn, hs.Index)
 	r.Get("/connections/add-new-connection", authorize(datasources.ConfigurationPageAccess), hs.Index)
+
+	r.Get("/labs", reqSignedIn, hs.Index)
 	// Plugin details pages
 	r.Get("/connections/datasources/:id", middleware.CanAdminPlugins(hs.Cfg, hs.AccessControl), hs.Index)
 	r.Get("/connections/datasources/:id/page/:page", middleware.CanAdminPlugins(hs.Cfg, hs.AccessControl), hs.Index)
