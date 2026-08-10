@@ -37,23 +37,24 @@ function LabsPage() {
   return (
     <Page navId="labs">
       <Page.Contents>
-        <div className={styles.header}>
-          <Text element="h1">
-            <Trans i18nKey="labs.page.title">Labs</Trans>
-          </Text>
-          <Text color="secondary">
-            <Trans i18nKey="labs.page.description">
-              Experimental features currently enabled in your Grafana instance.
-            </Trans>
-          </Text>
-          <Text color="secondary">
-            <Trans i18nKey="labs.page.count" values={{ count: enabledFlags.length }}>
-              {'{{count}} feature flags enabled'}
-            </Trans>
-          </Text>
-        </div>
         {enabledFlags.length > 0 ? (
-          <InteractiveTable columns={columns} data={enabledFlags} getRowId={(row) => row.name} />
+          <>
+            <div className={styles.count}>
+              <Text color="secondary">
+                <Trans
+                  i18nKey="labs.page.count"
+                  count={enabledFlags.length}
+                  tOptions={{
+                    defaultValue_one: '{{count}} feature flag enabled',
+                    defaultValue_other: '{{count}} feature flags enabled',
+                  }}
+                >
+                  {{ count: enabledFlags.length }} feature flags enabled
+                </Trans>
+              </Text>
+            </div>
+            <InteractiveTable columns={columns} data={enabledFlags} getRowId={(row) => row.name} />
+          </>
         ) : (
           <Text color="secondary">
             <Trans i18nKey="labs.page.empty">No feature flags are currently enabled.</Trans>
@@ -65,10 +66,7 @@ function LabsPage() {
 }
 
 const getStyles = (theme: GrafanaTheme2) => ({
-  header: css({
-    display: 'flex',
-    flexDirection: 'column',
-    gap: theme.spacing(1),
+  count: css({
     marginBottom: theme.spacing(3),
   }),
 });
