@@ -356,6 +356,10 @@ export function getAppRoutes(): RouteDescriptor[] {
     },
     // ADMIN
     {
+      path: '/labs',
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "LabsPage" */ '../features/labs/LabsPage')),
+    },
+    {
       path: '/admin',
       component: () => <NavLandingPage navId="cfg" header={<ConnectionsRedirectNotice />} />,
     },
