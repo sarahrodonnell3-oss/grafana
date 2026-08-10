@@ -15,16 +15,16 @@ describe('LabsPage', () => {
     config.featureToggles = {
       ...originalFeatureToggles,
       alertingTriage: true,
-      exploreMetrics: false,
-      kubernetesDashboards: true,
+      featureHighlights: false,
+      awsAsyncQueryCaching: true,
     };
 
     render(<LabsPage />);
 
     expect(screen.getByText('Labs')).toBeInTheDocument();
     expect(screen.getByText('alertingTriage')).toBeInTheDocument();
-    expect(screen.getByText('kubernetesDashboards')).toBeInTheDocument();
-    expect(screen.queryByText('exploreMetrics')).not.toBeInTheDocument();
+    expect(screen.getByText('awsAsyncQueryCaching')).toBeInTheDocument();
+    expect(screen.queryByText('featureHighlights')).not.toBeInTheDocument();
   });
 
   it('shows empty state when no feature flags are enabled', () => {
