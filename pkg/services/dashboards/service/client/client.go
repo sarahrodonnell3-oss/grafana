@@ -125,7 +125,9 @@ func (h *K8sClientWithFallback) Get(
 	)
 
 	span.AddEvent(fmt.Sprintf("%s Get", storedVersion))
-	return h.newClientFunc(spanCtx, storedVersion).Get(spanCtx, name, orgID, options, subresources...)
+	result, err = h.newClientFunc(spanCtx, storedVersion).Get(spanCtx, name, orgID, options, subresources...)
+	h.recordStoredVersionFallbackResult(dashboardv0.VERSION, storedVersion, "get", 1, err)
+	return result, err
 }
 
 // GetWithPreferredAPIVersion loads using the requested API version first. When preferredVersion is empty, delegates to Get.
@@ -150,7 +152,9 @@ func (h *K8sClientWithFallback) GetWithPreferredAPIVersion(
 	if err != nil {
 		h.log.Info("falling back to default API version after preferred get failed", "name", name, "preferredVersion", preferredVersion, "err", err)
 		span.SetAttributes(attribute.Bool("preferred_get_failed", true))
-		return h.Get(ctx, name, orgID, options, subresources...)
+		result, err = h.Get(ctx, name, orgID, options, subresources...)
+		h.metrics.preferredVersionFallbackCounter.WithLabelValues(preferredVersion, metricOutcome(err)).Inc()
+		return result, err
 	}
 
 	failed, storedVersion, conversionErr := getConversionStatus(result)
@@ -167,7 +171,24 @@ func (h *K8sClientWithFallback) GetWithPreferredAPIVersion(
 		attribute.String("fallback.conversion_error", conversionErr),
 	)
 
-	return h.newClientFunc(spanCtx, storedVersion).Get(spanCtx, name, orgID, options, subresources...)
+	result, err = h.newClientFunc(spanCtx, storedVersion).Get(spanCtx, name, orgID, options, subresources...)
+	h.recordStoredVersionFallbackResult(preferredVersion, storedVersion, "get", 1, err)
+	return result, err
+}
+
+func (h *K8sClientWithFallback) recordStoredVersionFallbackResult(
+	requestedVersion string, storedVersion string, operation string, count int, err error,
+) {
+	h.metrics.fallbackResultCounter.
+		WithLabelValues(requestedVersion, storedVersion, operation, metricOutcome(err)).
+		Add(float64(count))
+}
+
+func metricOutcome(err error) string {
+	if err != nil {
+		return "error"
+	}
+	return "success"
 }
 
 type nameAndResourceVersion struct {
@@ -240,6 +261,7 @@ func (h *K8sClientWithFallback) List(
 		)
 
 		items, err := h.fetchWithVersion(ctx, orgID, version, names...)
+		h.recordStoredVersionFallbackResult(dashboardv0.VERSION, version, "list", len(names), err)
 		if err != nil {
 			return nil, tracing.Error(span, err)
 		}

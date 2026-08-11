@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/testutil"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -152,6 +153,9 @@ func TestK8sHandlerWithFallback_Get(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, expectedResultFallback, result)
 		require.Equal(t, 1, setup.mockFactoryCalls[v2alpha1.VERSION], "Factory should be called once with v2alpha1")
+		require.Equal(t, float64(1), testutil.ToFloat64(setup.mockMetrics.fallbackResultCounter.WithLabelValues(
+			v0alpha1.VERSION, storedVersion, "get", "success",
+		)))
 
 		setup.mockClientV1.AssertExpectations(t)
 		setup.mockClientV2Alpha1.AssertExpectations(t)
@@ -210,6 +214,9 @@ func TestK8sHandlerWithFallback_Get(t *testing.T) {
 		require.Error(t, err)
 		require.Equal(t, fallbackErr, err)
 		require.Equal(t, 1, setup.mockFactoryCalls[v2alpha1.VERSION], "Factory should be called once with v2alpha1")
+		require.Equal(t, float64(1), testutil.ToFloat64(setup.mockMetrics.fallbackResultCounter.WithLabelValues(
+			v0alpha1.VERSION, storedVersion, "get", "error",
+		)))
 
 		setup.mockClientV1.AssertExpectations(t)
 		setup.mockClientV2Alpha1.AssertExpectations(t)
@@ -261,6 +268,27 @@ func TestK8sHandlerWithFallback_GetWithPreferredAPIVersion(t *testing.T) {
 		result, err := setup.handler.GetWithPreferredAPIVersion(ctx, name, orgID, options, v2beta1.VERSION)
 		require.NoError(t, err)
 		require.Equal(t, fallbackResult, result)
+		require.Equal(t, float64(1), testutil.ToFloat64(setup.mockMetrics.preferredVersionFallbackCounter.WithLabelValues(
+			v2beta1.VERSION, "success",
+		)))
+		setup.mockClientV2Beta1.AssertExpectations(t)
+		setup.mockClientV1.AssertExpectations(t)
+	})
+
+	t.Run("preferred Get and default fallback errors are tracked", func(t *testing.T) {
+		setup := setupTest(t)
+		ctx := context.Background()
+		name := "d-fallback-error"
+		orgID := int64(1)
+		options := metav1.GetOptions{}
+		setup.mockClientV2Beta1.On("Get", mock.Anything, name, orgID, options, mock.Anything).Return(nil, errors.New("preferred get failed")).Once()
+		setup.mockClientV1.On("Get", mock.Anything, name, orgID, options, mock.Anything).Return(nil, errors.New("default get failed")).Once()
+
+		_, err := setup.handler.GetWithPreferredAPIVersion(ctx, name, orgID, options, v2beta1.VERSION)
+		require.Error(t, err)
+		require.Equal(t, float64(1), testutil.ToFloat64(setup.mockMetrics.preferredVersionFallbackCounter.WithLabelValues(
+			v2beta1.VERSION, "error",
+		)))
 		setup.mockClientV2Beta1.AssertExpectations(t)
 		setup.mockClientV1.AssertExpectations(t)
 	})
@@ -290,6 +318,9 @@ func TestK8sHandlerWithFallback_GetWithPreferredAPIVersion(t *testing.T) {
 		result, err := setup.handler.GetWithPreferredAPIVersion(ctx, name, orgID, options, v2beta1.VERSION)
 		require.NoError(t, err)
 		require.Equal(t, ok, result)
+		require.Equal(t, float64(1), testutil.ToFloat64(setup.mockMetrics.fallbackResultCounter.WithLabelValues(
+			v2beta1.VERSION, storedVersion, "get", "success",
+		)))
 		setup.mockClientV2Beta1.AssertExpectations(t)
 		setup.mockClientV2Alpha1.AssertExpectations(t)
 	})
@@ -376,6 +407,9 @@ func TestK8sHandlerWithFallback_List(t *testing.T) {
 			fallbackResult,
 		}
 		require.ElementsMatch(t, expectedItems, result.Items)
+		require.Equal(t, float64(1), testutil.ToFloat64(setup.mockMetrics.fallbackResultCounter.WithLabelValues(
+			v0alpha1.VERSION, v2alpha1.VERSION, "list", "success",
+		)))
 
 		setup.mockClientV1.AssertExpectations(t)
 		setup.mockClientV2Alpha1.AssertExpectations(t)
@@ -465,6 +499,9 @@ func TestK8sHandlerWithFallback_List(t *testing.T) {
 		_, err := setup.handler.List(context.Background(), 6, metav1.ListOptions{})
 		require.Error(t, err)
 		require.Equal(t, fallbackErr, err)
+		require.Equal(t, float64(1), testutil.ToFloat64(setup.mockMetrics.fallbackResultCounter.WithLabelValues(
+			v0alpha1.VERSION, v2alpha1.VERSION, "list", "error",
+		)))
 
 		setup.mockClientV1.AssertExpectations(t)
 		setup.mockClientV2Alpha1.AssertExpectations(t)
