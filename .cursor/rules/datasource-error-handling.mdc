@@ -1,0 +1,15 @@
+---
+description: SQL datasource maintenance and error-handling fixes (macros, query paths, regression tests)
+globs: pkg/tsdb/**/*
+alwaysApply: false
+---
+
+# Datasource error handling
+
+When fixing or maintaining SQL datasources (PostgreSQL, MySQL, MSSQL, shared `sqleng` / `sqlmacro`):
+
+- **Preserve behavior** — Successful queries and macro expansion must keep working. Prefer surfacing ignored errors over changing happy-path SQL.
+- **Reuse patterns** — Match surrounding Grafana/Go idioms first (e.g. package-level `regexp.MustCompile` for constant patterns, return errors from `Interpolate`, let `sqleng` report them). Do not invent new abstraction layers.
+- **Scope to the named datasource** — Change only the datasource (and its tests) named in the task. Do not “also fix” sibling SQL engines unless asked.
+- **Focused coverage** — Add or update targeted unit tests for the failure mode; run the narrow `go test` for that package (e.g. `-run TestMacroEngine`).
+- **No drive-by refactors** — Skip unrelated cleanups, renames, or cross-datasource consistency sweeps.
