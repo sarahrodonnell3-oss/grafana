@@ -1,6 +1,7 @@
 import { uniqueId } from 'lodash';
 
 import { config, getDataSourceSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import {
   AdHocFiltersVariable,
   type AdHocFilterWithLabels,
@@ -322,7 +323,7 @@ function createVariablesForDashboard(dashboard: DashboardV2Spec, defaultVariable
       try {
         return createSceneVariableFromVariableModel(v);
       } catch (err) {
-        console.error(err);
+        getLogger('features.dashboard-scene').logError(err instanceof Error ? err : new Error('Unknown error'));
         return null;
       }
     })
@@ -338,7 +339,7 @@ function createVariablesForDashboard(dashboard: DashboardV2Spec, defaultVariable
       try {
         return createSceneVariableFromVariableModel(v);
       } catch (err) {
-        console.error(err);
+        getLogger('features.dashboard-scene').logError(err instanceof Error ? err : new Error('Unknown error'));
         return null;
       }
     })
@@ -634,7 +635,7 @@ function createVariablesForSnapshot(dashboard: DashboardV2Spec): SceneVariableSe
         // for other variable types we are using the SnapshotVariable
         return createSnapshotVariable(v);
       } catch (err) {
-        console.error(err);
+        getLogger('features.dashboard-scene').logError(err instanceof Error ? err : new Error('Unknown error'));
         return null;
       }
     })

@@ -10,6 +10,7 @@ import { API_GROUP as DASHBOARD_API_GROUP } from '@grafana/api-clients/rtkq/dash
 import { API_GROUP as FOLDER_API_GROUP } from '@grafana/api-clients/rtkq/folder/v1beta1';
 import { type IconName, locationUtil } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { useAddStarMutation, useRemoveStarMutation, useListStarsQuery } from 'app/api/clients/collections/v1alpha1';
 import { setStarred, setStarredItems, type StarredNavItem } from 'app/core/reducers/navBarTree';
 import { contextSrv } from 'app/core/services/context_srv';
@@ -238,7 +239,9 @@ export const useSyncStarredItemsInNav = () => {
         setSearchFailed(false);
       })
       .catch((err) => {
-        console.error('Failed to sync starred items to nav', err);
+        getLogger('features.stars').logError(
+          err instanceof Error ? err : new Error('Failed to sync starred items to nav')
+        );
         // Resolve the loading state rather than showing it forever
         setHasSynced(true);
         setSearchFailed(true);

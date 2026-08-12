@@ -9,6 +9,7 @@ import {
   useFlagAssistantFrontendToolsDashboardTemplates,
   useFlagDashboardTemplatesAssistantButton,
 } from '@grafana/runtime/internal';
+import { getLogger } from '@grafana/runtime/unstable';
 import { EmptyState, Grid } from '@grafana/ui';
 
 import { DashboardCard } from './DashboardCard';
@@ -60,7 +61,9 @@ export const GrafanaTemplatesTab = ({
 
       return response.items;
     } catch (error) {
-      console.error('Error loading template dashboards ', error);
+      getLogger('features.dashboard').logError(
+        error instanceof Error ? error : new Error('Error loading template dashboards ')
+      );
       return [];
     }
   }, []);

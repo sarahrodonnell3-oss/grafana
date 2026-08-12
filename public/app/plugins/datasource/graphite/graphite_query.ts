@@ -2,6 +2,7 @@ import { compact, each, findIndex, flatten, get, join, keyBy, last, map, reduce,
 
 import { type ScopedVars } from '@grafana/data';
 import { type TemplateSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 
 import { type GraphiteDatasource } from './datasource';
 import { type FuncInstance } from './gfunc';
@@ -94,7 +95,7 @@ export default class GraphiteQuery {
       }
     } catch (err) {
       if (err instanceof Error) {
-        console.error('error parsing target:', err.message);
+        getLogger('plugins/datasource.graphite').logError(err);
         this.error = err.message;
       }
       this.target.textEditor = true;

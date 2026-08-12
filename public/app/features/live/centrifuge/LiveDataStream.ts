@@ -19,6 +19,7 @@ import {
   type StreamingFrameOptions,
   toDataQueryError,
 } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 
 import { StreamingResponseDataType } from '../data/utils';
 
@@ -154,7 +155,10 @@ export class LiveDataStream<T = unknown> {
   };
 
   private onError = (err: unknown) => {
-    console.log('LiveQuery [error]', { err }, this.deps.channelId);
+    getLogger('features.live').logInfo('LiveQuery [error]', {
+      channelId: this.deps.channelId,
+      err: err instanceof Error ? err.message : String(err),
+    });
     this.stream.next({
       type: InternalStreamMessageType.Error,
       error: toDataQueryError(err),
@@ -163,7 +167,7 @@ export class LiveDataStream<T = unknown> {
   };
 
   private onComplete = () => {
-    console.log('LiveQuery [complete]', this.deps.channelId);
+    getLogger('features.live').logInfo('LiveQuery [complete]', { channelId: String(this.deps.channelId) });
     this.shutdown();
   };
 
@@ -280,7 +284,9 @@ export class LiveDataStream<T = unknown> {
       }
 
       if (!messages.length) {
-        console.warn(`expected to find at least one non error message ${messages.map(({ type }) => type)}`);
+        getLogger('features.live').logWarning(
+          `expected to find at least one non error message ${messages.map(({ type }) => type)}`
+        );
         // send empty frame
         return {
           key: subKey,
@@ -358,7 +364,7 @@ export class LiveDataStream<T = unknown> {
 
         const newValueSameSchemaMessages = filterMessages(messages, InternalStreamMessageType.NewValuesSameSchema);
         if (newValueSameSchemaMessages.length !== messages.length) {
-          console.warn(`unsupported message type ${messages.map(({ type }) => type)}`);
+          getLogger('features.live').logWarning(`unsupported message type ${messages.map(({ type }) => type)}`);
         }
 
         return getNewValuesSameSchemaResponseData(newValueSameSchemaMessages);

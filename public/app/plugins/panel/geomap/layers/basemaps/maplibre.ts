@@ -2,6 +2,7 @@ import LayerGroup from 'ol/layer/Group';
 import { apply } from 'ol-mapbox-style';
 
 import { type MapLayerRegistryItem } from '@grafana/data';
+import { getLogger } from '@grafana/runtime/unstable';
 
 // MapLibre Style Specification constants
 const LAYER_TYPE_BACKGROUND = 'background';
@@ -61,7 +62,10 @@ const maplibreLayer: MapLayerRegistryItem<Partial<MaplibreConfig>> = {
         try {
           const res = await fetch(cfg.url);
           if (!res.ok) {
-            console.warn(`Failed to load MapLibre style from ${cfg.url}: ${res.status} ${res.statusText}`);
+            getLogger('plugins/panel.geomap').logWarning(
+              `Failed to load MapLibre style from ${cfg.url}: ${res.status} ${res.statusText}`,
+              { url: cfg.url, status: String(res.status), statusText: res.statusText }
+            );
             // Try fallback approach
             await tryFallbackApply();
             return;
@@ -82,7 +86,12 @@ const maplibreLayer: MapLayerRegistryItem<Partial<MaplibreConfig>> = {
           await apply(layer, style, { styleUrl: cfg.url, accessToken: cfg.accessToken });
           applyNoRepeat();
         } catch (error) {
-          console.warn('Failed to parse or apply MapLibre style JSON:', error);
+          getLogger('plugins/panel.geomap').logError(
+            error instanceof Error
+              ? error
+              : new Error('Failed to parse or apply MapLibre style JSON', { cause: error }),
+            { url: cfg.url }
+          );
           // Try fallback approach
           await tryFallbackApply();
         }
@@ -93,7 +102,14 @@ const maplibreLayer: MapLayerRegistryItem<Partial<MaplibreConfig>> = {
           await apply(layer, cfg.url, { accessToken: cfg.accessToken });
           applyNoRepeat();
         } catch (fallbackError) {
-          console.warn('Failed to load MapLibre style from both JSON and direct URL approaches:', fallbackError);
+          getLogger('plugins/panel.geomap').logError(
+            fallbackError instanceof Error
+              ? fallbackError
+              : new Error('Failed to load MapLibre style from both JSON and direct URL approaches', {
+                  cause: fallbackError,
+                }),
+            { url: cfg.url }
+          );
         }
       };
 

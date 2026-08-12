@@ -14,6 +14,8 @@
 
 import memoizeOne from 'memoize-one';
 
+import { getLogger } from '@grafana/runtime/unstable';
+
 import { type TraceSpan, type CriticalPathSection, type Trace } from '../types/trace';
 
 import findLastFinishingChildSpan from './utils/findLastFinishingChildSpan';
@@ -104,7 +106,9 @@ function criticalPathForTrace(trace: Trace) {
       criticalPath = computeCriticalPath(sanitizedSpanMap, rootSpanId, criticalPath);
     } catch (error) {
       /* eslint-disable no-console */
-      console.log('error while computing critical path for a trace', error);
+      getLogger('features.explore').logInfo('error while computing critical path for a trace', {
+        errorDetail: String(error),
+      });
     }
   }
   return criticalPath;

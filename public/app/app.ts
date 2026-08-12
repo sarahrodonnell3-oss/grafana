@@ -59,7 +59,7 @@ import {
   setPanelRenderer,
   setPluginPage,
 } from '@grafana/runtime/internal';
-import { initializeLoggersRegistry } from '@grafana/runtime/unstable';
+import { getLogger, initializeLoggersRegistry } from '@grafana/runtime/unstable';
 import { loadResources as loadScenesResources, sceneUtils } from '@grafana/scenes';
 import config, { updateConfig } from 'app/core/config';
 import { getStandardTransformers } from 'app/features/transformers/standardTransformers';
@@ -169,7 +169,7 @@ export class GrafanaApp {
         try {
           await initOpenFeature();
         } catch (err) {
-          console.error('Failed to initialize OpenFeature provider', err);
+          getLogger('app').logError(new Error('Failed to initialize OpenFeature provider', { cause: err }));
         }
       }
 
@@ -338,7 +338,9 @@ export class GrafanaApp {
       try {
         cleanupOldExpandedFolders();
       } catch (err) {
-        console.warn('Failed to clean up old expanded folders', err);
+        getLogger('app').logWarning('Failed to clean up old expanded folders', {
+          error: err instanceof Error ? err.message : String(err),
+        });
       }
 
       this.context = {

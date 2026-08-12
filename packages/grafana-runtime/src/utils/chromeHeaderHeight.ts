@@ -1,3 +1,5 @@
+import { logError } from './logging';
+
 type ChromeHeaderHeightHook = () => number;
 
 let chromeHeaderHeightHook: ChromeHeaderHeightHook | undefined = undefined;
@@ -11,7 +13,7 @@ export const useChromeHeaderHeight = () => {
     if (process.env.NODE_ENV !== 'production') {
       throw new Error('useChromeHeaderHeight hook not found in @grafana/runtime');
     }
-    console.error('useChromeHeaderHeight hook not found');
+    logError(new Error('useChromeHeaderHeight hook not found'));
   }
 
   return chromeHeaderHeightHook?.();

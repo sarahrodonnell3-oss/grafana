@@ -2,6 +2,7 @@ import { type ComponentProps, useMemo } from 'react';
 
 import { type RoutingTree } from '@grafana/api-clients/rtkq/notifications.alerting/v1beta1';
 import { t } from '@grafana/i18n';
+import { getLogger } from '@grafana/runtime/unstable';
 import { Alert, Combobox, type ComboboxOption, MultiCombobox } from '@grafana/ui';
 
 import { type CustomComboBoxProps } from '../../../common/ComboBox.types';
@@ -126,7 +127,12 @@ function RoutingTreeSelector(props: RoutingTreeSelectorProps) {
     if (selectedOption) {
       const tree = treeLookup.get(selectedOption.value);
       if (!tree) {
-        console.warn(`RoutingTreeSelector: could not find routing tree for value "${selectedOption.value}"`);
+        getLogger('features.alerting').logWarning(
+          `RoutingTreeSelector: could not find routing tree for value "${selectedOption.value}"`,
+          {
+            value: selectedOption.value,
+          }
+        );
         return;
       }
 

@@ -1,4 +1,5 @@
 import { getBackendSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type Team } from 'app/types/teams';
 import { type UserDTO, type UserOrg, type UserSession } from 'app/types/user';
 
@@ -8,7 +9,7 @@ async function changePassword(payload: ChangePasswordFields): Promise<void> {
   try {
     await getBackendSrv().put('/api/user/password', payload);
   } catch (err) {
-    console.error(err);
+    getLogger('features.profile').logError(err instanceof Error ? err : new Error('Unknown error'));
   }
 }
 
@@ -42,7 +43,7 @@ async function updateUserProfile(payload: ProfileUpdateFields): Promise<void> {
   try {
     await getBackendSrv().put('/api/user', payload);
   } catch (err) {
-    console.error(err);
+    getLogger('features.profile').logError(err instanceof Error ? err : new Error('Unknown error'));
   }
 }
 

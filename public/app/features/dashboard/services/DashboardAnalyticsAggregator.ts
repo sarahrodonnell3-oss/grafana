@@ -1,4 +1,5 @@
 import { logMeasurement, reportInteraction } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type performanceUtils } from '@grafana/scenes';
 
 import { consumeDashboardFetchTiming, FETCH_ATTRIBUTION_MAX_LEAD_MS } from './DashboardFetchTiming';
@@ -109,7 +110,9 @@ export class DashboardAnalyticsAggregator implements performanceUtils.ScenePerfo
     // Aggregate panel metrics without verbose logging (handled by ScenePerformanceLogger)
     const panel = this.panelMetrics.get(data.panelKey);
     if (!panel) {
-      console.warn('Panel not found for operation completion:', data.panelKey);
+      getLogger('features.dashboard').logWarning('Panel not found for operation completion:', {
+        panelKey: String(data.panelKey),
+      });
       return;
     }
 

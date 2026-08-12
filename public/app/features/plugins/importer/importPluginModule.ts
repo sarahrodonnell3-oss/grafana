@@ -78,7 +78,6 @@ export async function importPluginModule({
       errorMessage = `Could not load plugin. Updating the "${pluginName}" plugin to the latest version may fix the problem.`;
     }
     let error = new Error(errorMessage, { cause: e });
-    console.error(error);
     getLogger('features.plugins').logError(error, {
       path,
       pluginId,

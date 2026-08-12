@@ -4,6 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import { t } from '@grafana/i18n';
 import { reportInteraction } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { Button, Drawer, Stack, Text } from '@grafana/ui';
 import { type RepositoryView, useDeleteRepositoryFilesWithPathMutation } from 'app/api/clients/provisioning/v0alpha1';
 import {
@@ -292,7 +293,7 @@ export function SaveProvisionedResourceDrawer(props: SaveProvisionedResourceDraw
     // new kind wired into a page before its registry entry exists. Warn in dev so it's a visible signal
     // rather than a silent no-op where the user clicks save/delete and nothing happens.
     if (process.env.NODE_ENV !== 'production') {
-      console.warn(
+      getLogger('features.provisioning').logWarning(
         `SaveProvisionedResourceDrawer: no registered provisioning kind for "${props.resource.apiVersion}"/"${props.resource.kind}"; the drawer will not render.`
       );
     }

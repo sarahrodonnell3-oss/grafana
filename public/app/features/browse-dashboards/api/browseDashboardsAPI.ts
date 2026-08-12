@@ -7,6 +7,7 @@ import { invalidateQuotaUsage } from '@grafana/api-clients/rtkq/quotas/v0alpha1'
 import { AppEvents, locationUtil } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { config, getBackendSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type Dashboard } from '@grafana/schema';
 import { type Spec as DashboardV2Spec } from '@grafana/schema/apis/dashboard.grafana.app/v2';
 import { isProvisionedFolderCheck } from 'app/api/clients/folder/v1beta1/utils';
@@ -494,7 +495,9 @@ export const browseDashboardsAPI = createApi({
           try {
             await contextSrv.fetchUserPermissions();
           } catch (err) {
-            console.error('Failed to refresh user permissions after save', err);
+            getLogger('features.browse-dashboards').logError(
+              err instanceof Error ? err : new Error('Failed to refresh user permissions after save')
+            );
           }
           dispatch(
             refetchChildren({

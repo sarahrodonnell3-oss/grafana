@@ -1,4 +1,5 @@
 import { getBackendSrv, logInfo, logWarning } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type DashboardJson } from 'app/features/manage-dashboards/types';
 import { type PluginDashboard } from 'app/types/plugins';
 
@@ -102,7 +103,9 @@ export async function fetchCommunityDashboards(
   }
 
   // Fallback for unexpected response format
-  console.warn('Unexpected API response format from Grafana.com:', result);
+  getLogger('features.dashboard').logWarning('Unexpected API response format from Grafana.com:', {
+    result: String(result),
+  });
   return {
     page: params.page,
     pages: 1,
@@ -127,7 +130,9 @@ export async function fetchProvisionedDashboards(datasourceType: string): Promis
     });
     return Array.isArray(dashboards) ? dashboards.filter((dashboard) => !dashboard.removed) : [];
   } catch (error) {
-    console.error('Error loading provisioned dashboards', error);
+    getLogger('features.dashboard').logError(
+      error instanceof Error ? error : new Error('Error loading provisioned dashboards')
+    );
     return [];
   }
 }
@@ -144,7 +149,7 @@ const filterNonSafeDashboards = (dashboards: GnetDashboard[], dataSourceType?: s
     if (unsafePanelTypes.length > 0) {
       unsafeDashboardsCount++;
 
-      console.warn(
+      getLogger('features.dashboard').logWarning(
         `Community dashboard ${item.id} ${item.name} filtered out due to panel types ${item.panelTypeSlugs?.join(', ')} that can embed JavaScript`
       );
 

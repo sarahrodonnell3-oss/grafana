@@ -4,6 +4,7 @@ import useMountedState from 'react-use/lib/useMountedState';
 import { lastValueFrom } from 'rxjs';
 
 import { type DataFrame, type FieldConfigSource, transformDataFrame } from '@grafana/data';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type CustomCellRendererProps, TableCellDisplayMode } from '@grafana/ui';
 import { type LogsFrame } from 'app/features/logs/logsFrame';
 
@@ -68,7 +69,9 @@ export function useOrganizeFields({
         }
       })
       .catch((err) => {
-        console.error('LogsTable: Organize fields transform error', err);
+        getLogger('plugins/panel.logstable').logError(
+          err instanceof Error ? err : new Error('LogsTable: Organize fields transform error', { cause: err })
+        );
       });
   }, [
     bodyFieldName,

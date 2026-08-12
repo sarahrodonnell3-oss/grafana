@@ -10,6 +10,7 @@ import {
 } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { getListedPanelPluginMetas, getPanelPluginMeta } from '@grafana/runtime/internal';
+import { getLogger } from '@grafana/runtime/unstable';
 import { appEvents } from 'app/core/app_events';
 import { isBuiltinPluginPath } from 'app/features/plugins/built_in_plugins';
 import { importPanelPlugin } from 'app/features/plugins/importPanelPlugin';
@@ -51,7 +52,12 @@ export async function loadPlugins(pluginIds: string[]): Promise<PluginLoadResult
       plugins.push(settled.value);
     } else {
       const pluginId = pluginIds[i];
-      console.error(`Failed to load ${pluginId} for visualization suggestions:`, settled.reason);
+      getLogger('features.panel').logError(
+        settled.reason instanceof Error
+          ? settled.reason
+          : new Error(`Failed to load ${pluginId} for visualization suggestions:`),
+        { message: String(`Failed to load ${pluginId} for visualization suggestions:`) }
+      );
 
       if (await isBuiltInPlugin(pluginId)) {
         hasErrors = true;
@@ -156,7 +162,9 @@ export async function getAllSuggestions(series?: DataFrame[]): Promise<Suggestio
         list.push(...suggestions);
       }
     } catch (e) {
-      console.warn(`error when loading suggestions from plugin "${plugin.meta.id}"`, e);
+      getLogger('features.panel').logWarning(`error when loading suggestions from plugin "${plugin.meta.id}"`, {
+        e: String(e),
+      });
       pluginSuggestionsError = true;
     }
   }

@@ -69,7 +69,6 @@ export function useLLMStream(options: Options = defaultOptions): UseLLMStreamRes
         'Failed to generate content using LLM',
         'Please try again or if the problem persists, contact your organization admin.'
       );
-      console.error(e);
       getLogger('features.dashboards.genai').logError(e, {
         messages: JSON.stringify(messages),
         model,

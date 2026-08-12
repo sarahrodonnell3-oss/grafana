@@ -20,6 +20,7 @@ import {
 } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { config } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 
 export const standardAnnotationSupport: AnnotationSupport = {
   /**
@@ -232,7 +233,9 @@ export function getAnnotationsFromData(
       }
 
       if (!hasTime || !hasText) {
-        console.error('Cannot process annotation fields. No time or text present.');
+        getLogger('features.annotations').logError(
+          new Error('Cannot process annotation fields. No time or text present.')
+        );
         return [];
       }
 

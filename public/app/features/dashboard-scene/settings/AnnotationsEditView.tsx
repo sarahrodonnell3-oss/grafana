@@ -8,6 +8,7 @@ import {
 import { t, Trans } from '@grafana/i18n';
 import { config, getDataSourceSrv, locationService } from '@grafana/runtime';
 import { useFlagGrafanaDashboardSettingsRedesign } from '@grafana/runtime/internal';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type SceneComponentProps, SceneObjectBase, type VizPanel, dataLayers } from '@grafana/scenes';
 import { Alert, Button } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
@@ -73,7 +74,7 @@ export class AnnotationsEditView extends SceneObjectBase<AnnotationsEditViewStat
     const defaultInstanceDS = getDataSourceSrv().getInstanceSettings(null);
     // check for an annotation flag in the plugin json to see if it supports annotations
     if (!defaultInstanceDS || !defaultInstanceDS.meta.annotations) {
-      console.error('Default datasource does not support annotations');
+      getLogger('features.dashboard-scene').logError(new Error('Default datasource does not support annotations'));
       return undefined;
     }
     return getDataSourceRef(defaultInstanceDS);

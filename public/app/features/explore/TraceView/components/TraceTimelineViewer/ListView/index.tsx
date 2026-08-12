@@ -14,6 +14,8 @@
 
 import * as React from 'react';
 
+import { getLogger } from '@grafana/runtime/unstable';
+
 import type TNil from '../../types/TNil';
 
 import Positions from './Positions';
@@ -387,8 +389,7 @@ export default class ListView extends React.Component<TListViewProps> {
         // use `.getAttribute(...)` instead of `.dataset` for jest / JSDOM
         const itemKey = node.getAttribute('data-item-key');
         if (!itemKey) {
-          // eslint-disable-next-line no-console
-          console.warn('itemKey not found');
+          getLogger('features.explore').logWarning('itemKey not found');
           continue;
         }
         // measure the first child, if it's available, otherwise the node itself

@@ -2,6 +2,7 @@ import { uniq } from 'lodash';
 
 import { AzureCloud, getDefaultAzureCloud } from '@grafana/azure-sdk';
 import { DataSourceWithBackend, reportInteraction } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 
 import { logsResourceTypes } from '../azureMetadata/logsResourceTypes';
 import { resourceTypeDisplayNames, resourceTypes } from '../azureMetadata/resourceTypes';
@@ -355,7 +356,14 @@ export default class ResourcePickerData extends DataSourceWithBackend<
           }
         }
       } catch (e) {
-        console.warn(`Failed to fetch metric namespaces for region ${region}, falling back to predefined list:`, e);
+        getLogger('plugins/datasource.azuremonitor').logError(
+          e instanceof Error
+            ? e
+            : new Error(`Failed to fetch metric namespaces for region ${region}, falling back to predefined list`, {
+                cause: e,
+              }),
+          { region }
+        );
       }
     };
 

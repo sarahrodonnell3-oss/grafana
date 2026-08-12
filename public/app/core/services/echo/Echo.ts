@@ -8,6 +8,7 @@ import {
   MAX_PAGE_URL_LENGTH,
   TRUNCATION_MARKER,
 } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 
 import { contextSrv } from '../context_srv';
 
@@ -76,7 +77,12 @@ export class Echo implements EchoSrv {
             try {
               cb(payload.properties ?? {});
             } catch (err) {
-              console.error(`[Echo] onInteraction subscriber error for "${payload.interactionName}":`, err);
+              getLogger('core.echo').logError(
+                err instanceof Error
+                  ? err
+                  : new Error(`onInteraction subscriber error for "${payload.interactionName}"`),
+                { interactionName: payload.interactionName }
+              );
             }
           }
         }

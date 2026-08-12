@@ -8,6 +8,7 @@ import { Route, Routes } from 'react-router-dom-v5-compat';
 
 import { config, navigationLogger, reportInteraction } from '@grafana/runtime';
 import { getFeatureFlagClient } from '@grafana/runtime/internal';
+import { getLogger } from '@grafana/runtime/unstable';
 import { ErrorBoundaryAlert, getPortalContainer, GlobalStyles, PortalContainer, TimeRangeProvider } from '@grafana/ui';
 import { BrandingContext, type BrandingContextValue } from '@grafana/ui/internal';
 import { getAppRoutes } from 'app/routes/routes';
@@ -87,7 +88,7 @@ export function AppWrapper({ context }: AppWrapperProps) {
     if (preloader) {
       preloader.remove();
     } else {
-      console.warn('Preloader element not found');
+      getLogger('app').logWarning('Preloader element not found');
     }
   }
 

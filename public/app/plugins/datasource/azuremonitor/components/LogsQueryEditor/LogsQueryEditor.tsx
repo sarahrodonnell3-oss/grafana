@@ -4,6 +4,7 @@ import { type PanelData, type TimeRange } from '@grafana/data';
 import { Trans } from '@grafana/i18n';
 import { EditorFieldGroup, EditorRow, EditorRows } from '@grafana/plugin-ui';
 import { config, getTemplateSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { Alert, LinkButton, Space, Text, TextLink } from '@grafana/ui';
 
 import { LogsEditorMode, ResultFormat } from '../../dataquery.gen';
@@ -193,11 +194,17 @@ const LogsQueryEditor = ({
           setDataIngestedWarning(null);
         }
       } catch (err) {
-        console.error(err);
+        getLogger('plugins/datasource.azuremonitor').logError(
+          err instanceof Error ? err : new Error(String(err), { cause: err })
+        );
       }
     };
 
-    getBasicLogsUsage(query).catch((err) => console.error(err));
+    getBasicLogsUsage(query).catch((err) =>
+      getLogger('plugins/datasource.azuremonitor').logError(
+        err instanceof Error ? err : new Error(String(err), { cause: err })
+      )
+    );
   }, [datasource.azureLogAnalyticsDatasource, query, showBasicLogsToggle, from, to]);
   let portalLinkButton = null;
 

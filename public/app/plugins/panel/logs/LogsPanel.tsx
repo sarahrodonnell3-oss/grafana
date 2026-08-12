@@ -31,6 +31,7 @@ import {
   store,
 } from '@grafana/data';
 import { getAppEvents } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { usePanelContext, useStyles2 } from '@grafana/ui';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { getFieldLinksForExplore } from 'app/features/explore/utils/links';
@@ -417,7 +418,9 @@ export const LogsPanel = ({ data, timeZone, fieldConfig, options, onOptionsChang
         }
       } catch (e) {
         errored = true;
-        console.error(e);
+        getLogger('plugins/panel.logs').logError(
+          e instanceof Error ? e : new Error('Failed to request more logs', { cause: e })
+        );
       } finally {
         setLoadMoreState(errored ? LoadingState.Error : LoadingState.Done);
         loadingRef.current = false;
@@ -615,7 +618,9 @@ async function requestMoreLogs(
   for (const uid in targetGroups) {
     const dataSource = dataSourcesMap.get(panelData.request.targets[0].refId);
     if (!dataSource) {
-      console.warn(`Could not resolve data source for target ${panelData.request.targets[0].refId}`);
+      getLogger('plugins/panel.logs').logWarning('Could not resolve data source for target', {
+        refId: panelData.request.targets[0].refId,
+      });
       continue;
     }
     dataRequests.push(

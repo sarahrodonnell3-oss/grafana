@@ -27,12 +27,14 @@ import {
   toDataQueryResponse,
   type TemplateSrv,
   reportInteraction,
+  TracedError,
 } from '@grafana/runtime';
 
 import { ResponseParser } from '../ResponseParser';
 import { SqlQueryEditorLazy } from '../components/QueryEditorLazy';
 import { MACRO_NAMES } from '../constants';
 import { type DB, type SQLQuery, type SQLOptions, type SqlQueryModel, QueryFormat, type SQLDialect } from '../types';
+import { sqlPluginLogger } from '../utils/logging';
 import migrateAnnotation from '../utils/migration';
 
 export abstract class SqlDatasource extends DataSourceWithBackend<SQLQuery, SQLOptions> {
@@ -215,7 +217,7 @@ export abstract class SqlDatasource extends DataSourceWithBackend<SQLQuery, SQLO
     try {
       response = await this.runMetaQuery(interpolatedQuery, range);
     } catch (error) {
-      console.error(error);
+      sqlPluginLogger.logError(new TracedError('error when executing the sql query', error));
       throw new Error('error when executing the sql query');
     }
     return this.getResponseParser().transformMetricFindResponse(response);

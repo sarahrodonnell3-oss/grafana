@@ -1,5 +1,6 @@
 import { type ManagedBy } from '@grafana/api-clients/rtkq/dashboard/v0alpha1';
 import { type DataFrame, type DataFrameView, type IconName, fuzzySearch } from '@grafana/data';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type DashboardViewItemWithUIItems } from 'app/features/browse-dashboards/types';
 import {
   isSharedWithMe,
@@ -67,7 +68,7 @@ async function getCurrentFolderUID(): Promise<string | undefined> {
     }
     return Promise.resolve(dash?.meta?.folderUid);
   } catch (e) {
-    console.error(e);
+    getLogger('features.search').logError(e instanceof Error ? e : new Error('Unknown error'));
   }
   return undefined;
 }

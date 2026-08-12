@@ -1,5 +1,6 @@
 import { DEFAULT_LANGUAGE } from '@grafana/i18n';
 import { addResourceBundle } from '@grafana/i18n/internal';
+import { getLogger } from '@grafana/runtime/unstable';
 
 import { SystemJS } from '../loader/systemjs';
 import { resolveModulePath } from '../loader/utils';
@@ -26,14 +27,17 @@ export async function addTranslationsToI18n({
   const path = resolvedPath ?? fallbackPath;
 
   if (!path) {
-    console.warn(`Could not find any translation for plugin ${pluginId}`, { resolvedLanguage, fallbackLanguage });
+    getLogger('features.plugins').logWarning(`Could not find any translation for plugin ${pluginId}`, {
+      resolvedLanguage,
+      fallbackLanguage,
+    });
     return;
   }
 
   try {
     const module = await SystemJS.import(resolveModulePath(path));
     if (!module.default) {
-      console.warn(`Could not find default export for plugin ${pluginId}`, {
+      getLogger('features.plugins').logWarning(`Could not find default export for plugin ${pluginId}`, {
         resolvedLanguage,
         fallbackLanguage,
         path,
@@ -44,11 +48,11 @@ export async function addTranslationsToI18n({
     const language = resolvedPath ? resolvedLanguage : fallbackLanguage;
     addResourceBundle(language, pluginId, module.default);
   } catch (error) {
-    console.warn(`Could not load translation for plugin ${pluginId}`, {
+    getLogger('features.plugins').logWarning(`Could not load translation for plugin ${pluginId}`, {
       resolvedLanguage,
       fallbackLanguage,
-      error,
       path,
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 }

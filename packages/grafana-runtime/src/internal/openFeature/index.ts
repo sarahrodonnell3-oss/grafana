@@ -20,7 +20,6 @@ function checkDefaultProvider(event?: EventDetails) {
       'OpenFeature default domain provider has been unexpectedly changed. This may be caused by a plugin that is incorrectly using the default domain.',
       { cause: OpenFeature.getProvider() }
     );
-    console.error(err);
     logError(err);
   }
 }

@@ -13,6 +13,7 @@ import {
   useDataLinksContext,
 } from '@grafana/data';
 import { getTemplateSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { useTheme2 } from '@grafana/ui';
 
 import { getLogsTableFieldConfigRegistry } from '../logsTableFieldConfig';
@@ -61,7 +62,9 @@ export function useExtractFields({ rawTableFrame, fieldConfig, timeZone, replace
         }
       })
       .catch((err) => {
-        console.error('LogsTable: Extract fields transform error', err);
+        getLogger('plugins/panel.logstable').logError(
+          err instanceof Error ? err : new Error('LogsTable: Extract fields transform error', { cause: err })
+        );
       });
   }, [dataLinkPostProcessor, fieldConfig, isMounted, loadingState, rawTableFrame, replaceVariables, theme, timeZone]);
 

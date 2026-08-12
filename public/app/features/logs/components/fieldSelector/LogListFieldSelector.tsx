@@ -5,6 +5,7 @@ import { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 import { type DataFrame, store } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { reportInteraction } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { getDragStyles, IconButton, useStyles2 } from '@grafana/ui';
 
 import { useLogListContext } from '../panel/LogListContext';
@@ -116,7 +117,7 @@ export const LogListFieldSelector = ({ containerElement, dataFrames, logs }: Log
   const fields = useMemo(() => getFieldsWithStats(dataFrames), [dataFrames]);
 
   if (!onClickShowField || !onClickHideField || !setDisplayedFields) {
-    console.warn(
+    getLogger('features.logs').logWarning(
       'LogListFieldSelector: Missing required props: onClickShowField, onClickHideField, setDisplayedFields'
     );
     return null;

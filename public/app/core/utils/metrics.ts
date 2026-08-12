@@ -1,3 +1,5 @@
+import { getLogger } from '@grafana/runtime/unstable';
+
 import { reportPerformance } from '../services/echo/EchoSrv';
 
 export function startMeasure(eventName: string) {
@@ -8,7 +10,10 @@ export function startMeasure(eventName: string) {
   try {
     performance.mark(`${eventName}_started`);
   } catch (error) {
-    console.error(`[Metrics] Failed to startMeasure ${eventName}`, error);
+    getLogger('core.utils.metrics').logError(
+      error instanceof Error ? error : new Error(`Failed to startMeasure ${eventName}`),
+      { eventName }
+    );
   }
 }
 
@@ -31,7 +36,10 @@ export function stopMeasure(eventName: string) {
     performance.clearMeasures(measured);
     return measure;
   } catch (error) {
-    console.error(`[Metrics] Failed to stopMeasure ${eventName}`, error);
+    getLogger('core.utils.metrics').logError(
+      error instanceof Error ? error : new Error(`Failed to stopMeasure ${eventName}`),
+      { eventName }
+    );
     return;
   }
 }

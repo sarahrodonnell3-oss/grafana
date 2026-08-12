@@ -11,6 +11,7 @@ import {
 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Trans, t } from '@grafana/i18n';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type DataQuery } from '@grafana/schema';
 import { Alert, type AlertVariant, Button, Space, Spinner } from '@grafana/ui';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
@@ -211,7 +212,9 @@ export default memo(function StandardAnnotationQueryEditor({
       skipNextVerificationRef.current = true;
       onChange(preparedAnnotation);
     } catch (error) {
-      console.error('Failed to replace annotation query:', error);
+      getLogger('features.annotations').logError(
+        error instanceof Error ? error : new Error('Failed to replace annotation query:')
+      );
       // On error, reset the replacing state but don't change the annotation
     }
   };

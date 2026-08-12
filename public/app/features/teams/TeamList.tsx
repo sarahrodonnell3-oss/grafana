@@ -6,6 +6,7 @@ import { type SortingRule } from 'react-table';
 import { type DashboardHit } from '@grafana/api-clients/rtkq/dashboard/v0alpha1';
 import { Trans, t } from '@grafana/i18n';
 import { reportInteraction } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import {
   Avatar,
   type CellProps,
@@ -234,7 +235,7 @@ const TeamList = () => {
                   'Failed to check if the team owns folders. Please try again.'
                 )
               );
-              console.error(error);
+              getLogger('features.teams').logError(error instanceof Error ? error : new Error('Unknown error'));
               return;
             }
 

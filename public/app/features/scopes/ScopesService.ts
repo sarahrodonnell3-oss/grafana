@@ -3,6 +3,7 @@ import { BehaviorSubject, type Observable, combineLatest, type Subscription } fr
 import { map, distinctUntilChanged } from 'rxjs/operators';
 
 import { type LocationService, type ScopesContextValue, type ScopesContextValueState } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 
 import { type ScopesApiClient } from './ScopesApiClient';
 import { type ScopesDashboardsService } from './dashboards/ScopesDashboardsService';
@@ -102,7 +103,9 @@ export class ScopesService implements ScopesContextValue {
           const tree = this.selectorService.state.tree;
           if (derivedNodeId && tree) {
             this.selectorService.resolvePathToRoot(derivedNodeId, tree, firstApplied.scopeId).catch((error) => {
-              console.error('Failed to pre-load node path from defaultPath', error);
+              getLogger('features.scopes').logError(
+                error instanceof Error ? error : new Error('Failed to pre-load node path from defaultPath')
+              );
             });
           }
         }
@@ -112,7 +115,9 @@ export class ScopesService implements ScopesContextValue {
     // Preload scope node (which loads parent too)
     if (scopeNodeId) {
       this.selectorService.resolvePathToRoot(scopeNodeId, this.selectorService.state.tree!).catch((error) => {
-        console.error('Failed to pre-load node path', error);
+        getLogger('features.scopes').logError(
+          error instanceof Error ? error : new Error('Failed to pre-load node path')
+        );
       });
     }
 
@@ -294,7 +299,9 @@ export class ScopesService implements ScopesContextValue {
               // calls elsewhere in this file so a rejection from either
               // fetchDefaultScope or the changeScopes chain above is logged
               // instead of surfacing as an unhandled rejection.
-              console.error('Failed to apply default scope:', err);
+              getLogger('features.scopes').logError(
+                err instanceof Error ? err : new Error('Failed to apply default scope:')
+              );
             });
         }
         // Defer the URL write when scope metadata has not loaded yet.

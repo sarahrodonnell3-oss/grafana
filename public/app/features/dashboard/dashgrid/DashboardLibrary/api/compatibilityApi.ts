@@ -1,5 +1,6 @@
 import { getAPINamespace } from '@grafana/api-clients';
 import { getBackendSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type DashboardJson } from 'app/features/manage-dashboards/types';
 
 /**
@@ -138,7 +139,9 @@ export async function checkDashboardCompatibility(
     return response;
   } catch (error) {
     // Log error for debugging
-    console.error('Dashboard compatibility check failed:', error);
+    getLogger('features.dashboard').logError(
+      error instanceof Error ? error : new Error('Dashboard compatibility check failed:')
+    );
 
     // Re-throw original error for caller to handle
     throw error;

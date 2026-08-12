@@ -10,7 +10,7 @@ import {
   type ScopedVars,
 } from '@grafana/data';
 import { config, isExpressionReference, reportInteraction } from '@grafana/runtime';
-import { getDataSourceInstance, getDataSourceInstanceSettings } from '@grafana/runtime/unstable';
+import { getDataSourceInstance, getDataSourceInstanceSettings, getLogger } from '@grafana/runtime/unstable';
 import {
   SceneDataTransformer,
   SceneObjectBase,
@@ -228,7 +228,9 @@ export class PanelDataPaneNext extends SceneObjectBase<PanelDataPaneNextState> {
       this.setState({ datasource, dsSettings, dsError: undefined });
       storeLastUsedDataSourceInLocalStorage(getDataSourceRef(dsSettings) || { default: true });
     } catch (err) {
-      console.error('Failed to load datasource:', err);
+      getLogger('features.dashboard-scene').logError(
+        err instanceof Error ? err : new Error('Failed to load datasource:')
+      );
 
       // Fallback to default datasource (parity with PanelDataQueriesTab)
       try {
@@ -242,7 +244,9 @@ export class PanelDataPaneNext extends SceneObjectBase<PanelDataPaneNextState> {
           // resolveDatasourceRef() handles the stale-ref case on the next activation.
         }
       } catch (fallbackErr) {
-        console.error('Failed to load default datasource:', fallbackErr);
+        getLogger('features.dashboard-scene').logError(new Error('Failed to load default datasource:'), {
+          fallbackErr: String(fallbackErr),
+        });
         this.setState({
           datasource: undefined,
           dsSettings: undefined,

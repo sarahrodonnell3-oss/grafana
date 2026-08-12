@@ -1,3 +1,4 @@
+import { getLogger } from '@grafana/runtime/unstable';
 import { QueryVariable, type SceneVariable } from '@grafana/scenes';
 
 import { OptionsPaneItemDescriptor } from '../../../../../dashboard/components/PanelEditor/OptionsPaneItemDescriptor';
@@ -6,7 +7,7 @@ import { PaneItem } from './PaneItem';
 
 export function getQueryVariableOptions(variable: SceneVariable): OptionsPaneItemDescriptor[] {
   if (!(variable instanceof QueryVariable)) {
-    console.warn('getQueryVariableOptions: variable is not a QueryVariable');
+    getLogger('features.dashboard-scene').logWarning('getQueryVariableOptions: variable is not a QueryVariable');
     return [];
   }
 

@@ -1,3 +1,4 @@
+import { getLogger } from '@grafana/runtime/unstable';
 import { formatRegistry } from '@grafana/scenes';
 import { VariableFormatID } from '@grafana/schema';
 
@@ -42,7 +43,9 @@ export function formatVariableValue(value: any, format?: any, variable?: any, te
   let formatItem = formatRegistry.getIfExists(format);
 
   if (!formatItem) {
-    console.error(`Variable format ${format} not found. Using glob format as fallback.`);
+    getLogger('features.templating').logError(
+      new Error(`Variable format ${format} not found. Using glob format as fallback.`)
+    );
     formatItem = formatRegistry.get(VariableFormatID.Glob);
   }
 

@@ -3,6 +3,7 @@ import { type ChangeEvent } from 'react';
 import { PageLayoutType } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
 import { config } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type SceneComponentProps, SceneObjectBase, behaviors, sceneGraph } from '@grafana/scenes';
 import { type TimeZone } from '@grafana/schema';
 import {
@@ -159,7 +160,7 @@ export class GeneralSettingsEditView
       const liveNow = this.getLiveNowTimer();
       enable ? liveNow.enable() : liveNow.disable();
     } catch (err) {
-      console.error(err);
+      getLogger('features.dashboard-scene').logError(err instanceof Error ? err : new Error('Unknown error'));
     }
   };
 

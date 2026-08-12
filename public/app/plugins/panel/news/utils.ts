@@ -1,4 +1,5 @@
 import { FieldType, type DataFrame, dateTime } from '@grafana/data';
+import { getLogger } from '@grafana/runtime/unstable';
 
 import { type Feed } from './types';
 
@@ -23,7 +24,10 @@ export function feedToDataFrame(feed: Feed): DataFrame {
         content.push(body);
       }
     } catch (err) {
-      console.warn('Error reading news item:', err, item);
+      getLogger('plugins/panel.news').logError(
+        err instanceof Error ? err : new Error('Error reading news item', { cause: err }),
+        { title: item.title ?? '', link: item.link ?? '' }
+      );
     }
   }
 

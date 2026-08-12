@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { rangeUtil } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { getLogger } from '@grafana/runtime/unstable';
 import { Input } from '@grafana/ui';
 
 export enum InputPrefix {
@@ -31,7 +32,9 @@ export const NullsThresholdInput = ({ value, onChange, inputPrefix, isTime }: Pr
           val = Number(txt);
         }
       } catch (err) {
-        console.warn('ERROR', err);
+        getLogger('plugins/panel.timeseries').logError(
+          err instanceof Error ? err : new Error('Nulls threshold parse error', { cause: err })
+        );
       }
     }
     onChange(val);

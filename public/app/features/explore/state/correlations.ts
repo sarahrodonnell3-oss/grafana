@@ -6,7 +6,7 @@ import {
 } from '@grafana/api-clients/rtkq/correlations/v0alpha1';
 import { type DataLinkTransformationConfig } from '@grafana/data';
 import { type CorrelationData, reportInteraction, config } from '@grafana/runtime';
-import { getDataSourceInstance } from '@grafana/runtime/unstable';
+import { getDataSourceInstance, getLogger } from '@grafana/runtime/unstable';
 import { createErrorNotification } from 'app/core/copy/appNotification';
 import { notifyApp } from 'app/core/reducers/appNotification';
 import { getMessageFromError } from 'app/core/utils/errors';
@@ -117,7 +117,9 @@ export function saveCurrentCorrelation(
           dispatch(
             notifyApp(createErrorNotification('Error creating correlation', getMessageFromError(response.error)))
           );
-          console.error(response.error);
+          getLogger('features.explore').logError(
+            response.error instanceof Error ? response.error : new Error('Unknown error')
+          );
         }
       } else {
         const correlation: CreateCorrelationParams = {
@@ -145,7 +147,7 @@ export function saveCurrentCorrelation(
           })
           .catch((err) => {
             dispatch(notifyApp(createErrorNotification('Error creating correlation', err)));
-            console.error(err);
+            getLogger('features.explore').logError(err instanceof Error ? err : new Error('Unknown error'));
           });
       }
     }

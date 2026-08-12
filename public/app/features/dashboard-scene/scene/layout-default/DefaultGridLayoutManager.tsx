@@ -4,6 +4,7 @@ import { AppEvents, type GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { t } from '@grafana/i18n';
 import { config, getAppEvents } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import {
   type SceneObjectState,
   SceneGridLayout,
@@ -264,7 +265,9 @@ export class DefaultGridLayoutManager
   public duplicatePanel(vizPanel: VizPanel) {
     const gridItem = vizPanel.parent;
     if (!(gridItem instanceof DashboardGridItem)) {
-      console.error('Trying to duplicate a panel that is not inside a DashboardGridItem');
+      getLogger('features.dashboard-scene').logError(
+        new Error('Trying to duplicate a panel that is not inside a DashboardGridItem')
+      );
       return;
     }
 

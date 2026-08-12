@@ -1,4 +1,5 @@
 import { getBackendSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 
 interface AnonServerStat {
   activeDevices?: number;
@@ -28,7 +29,7 @@ export const getServerStats = async (): Promise<ServerStat | null> => {
   return getBackendSrv()
     .get('api/admin/stats')
     .catch((err) => {
-      console.error(err);
+      getLogger('features.admin').logError(err instanceof Error ? err : new Error('Unknown error'));
       return null;
     });
 };

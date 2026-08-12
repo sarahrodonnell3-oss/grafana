@@ -12,7 +12,7 @@ import {
   DataSourceUpdatedSuccessfully,
 } from '@grafana/data';
 import { usePluginComponents, type UsePluginComponentsResult } from '@grafana/runtime';
-import { useDataSourceInstanceSettings } from '@grafana/runtime/unstable';
+import { useDataSourceInstanceSettings, getLogger } from '@grafana/runtime/unstable';
 import { appEvents } from 'app/core/app_events';
 import PageLoader from 'app/core/components/PageLoader/PageLoader';
 import { type DataSourceSettingsState } from 'app/types/datasources';
@@ -196,7 +196,9 @@ export function EditDataSourceView({
         return;
       }
       retryAdvisorCheck(dataSource.uid).catch((error) => {
-        console.warn('Error retrying datasource advisor check', error);
+        getLogger('features.datasources').logWarning('Error retrying datasource advisor check', {
+          errorDetail: String(error),
+        });
       });
       onTest();
     },

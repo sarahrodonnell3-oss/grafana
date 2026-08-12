@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from 'react';
 
 import { DashboardCursorSync, type PanelProps, type TimeRange } from '@grafana/data';
 import { PanelDataErrorView } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type LegendPlacement, type ScaleDistributionConfig } from '@grafana/schema';
 import {
   EventBusPlugin,
@@ -54,7 +55,9 @@ export const HeatmapPanel = (props: HeatmapPanelProps) => {
         timeRange,
       });
     } catch (ex) {
-      console.error(ex);
+      getLogger('plugins/panel.heatmap').logError(
+        ex instanceof Error ? ex : new Error('Failed to prepare heatmap data', { cause: ex })
+      );
       return { warning: `${ex}` };
     }
   }, [data.series, data.annotations, options, palette, theme, replaceVariables, timeRange]);

@@ -9,6 +9,7 @@ import {
   type Field,
 } from '@grafana/data';
 import { config, getDataSourceSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { InlineField, Select, Alert, Input, InlineFieldRow, Stack, InlineLabel } from '@grafana/ui';
 import { getManagedChannelInfo } from 'app/features/live/info';
 
@@ -143,7 +144,9 @@ export const QueryEditor = memo(function QueryEditor(props: Props) {
         try {
           buffer = rangeUtil.intervalToSeconds(txt) * 1000;
         } catch (err) {
-          console.warn('ERROR', err);
+          getLogger('plugins/datasource.grafana').logError(
+            err instanceof Error ? err : new Error('ERROR', { cause: err })
+          );
         }
       }
       onChange({

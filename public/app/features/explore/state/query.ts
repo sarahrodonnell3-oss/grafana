@@ -21,7 +21,7 @@ import {
 } from '@grafana/data';
 import { combinePanelData } from '@grafana/o11y-ds-frontend';
 import { config } from '@grafana/runtime';
-import { getDataSourceInstance } from '@grafana/runtime/unstable';
+import { getDataSourceInstance, getLogger } from '@grafana/runtime/unstable';
 import { type DataQuery } from '@grafana/schema';
 import { notifyApp } from 'app/core/reducers/appNotification';
 import {
@@ -675,7 +675,7 @@ export const runQueries = createAsyncThunk<void, RunQueriesOptions>(
         error(error) {
           dispatch(notifyApp(createErrorNotification('Query processing error', error)));
           dispatch(changeLoadingStateAction({ exploreId, loadingState: LoadingState.Error }));
-          console.error(error);
+          getLogger('features.explore').logError(error instanceof Error ? error : new Error('Unknown error'));
         },
         complete() {
           // In case we don't get any response at all but the observable completed, make sure we stop loading state.
@@ -797,7 +797,7 @@ export const runLoadMoreLogsQueries = createAsyncThunk<void, RunLoadMoreLogsQuer
       error(error) {
         dispatch(notifyApp(createErrorNotification('Query processing error', error)));
         dispatch(changeLoadingStateAction({ exploreId, loadingState: LoadingState.Error }));
-        console.error(error);
+        getLogger('features.explore').logError(error instanceof Error ? error : new Error('Unknown error'));
       },
       complete() {
         dispatch(changeLoadingStateAction({ exploreId, loadingState: LoadingState.Done }));

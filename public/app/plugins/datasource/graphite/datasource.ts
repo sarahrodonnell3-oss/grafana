@@ -32,6 +32,7 @@ import {
   getTemplateSrv,
   type TemplateSrv,
 } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type TimeZone } from '@grafana/schema';
 
 import { AnnotationEditor } from './components/AnnotationsEditor';
@@ -583,7 +584,7 @@ export class GraphiteDatasource
       return this.events({ range: range, tags: tags }).then((results) => {
         const list = [];
         if (!isArray(results.data)) {
-          console.error(`Unable to get annotations.`);
+          getLogger('plugins/datasource.graphite').logError(new Error('Unable to get annotations.'));
           return [];
         }
         for (let i = 0; i < results.data.length; i++) {
@@ -1075,7 +1076,9 @@ export class GraphiteDatasource
         this.funcDefs = gfunc.parseFuncDefs(functions);
         return this.funcDefs;
       } catch (error) {
-        console.error('Fetching graphite functions error', error);
+        getLogger('plugins/datasource.graphite').logError(
+          error instanceof Error ? error : new Error('Fetching graphite functions error', { cause: error })
+        );
         this.funcDefs = gfunc.getFuncDefs(this.graphiteVersion);
         return this.funcDefs;
       }
@@ -1094,7 +1097,9 @@ export class GraphiteDatasource
           return this.funcDefs;
         }),
         catchError((error) => {
-          console.error('Fetching graphite functions error', error);
+          getLogger('plugins/datasource.graphite').logError(
+            error instanceof Error ? error : new Error('Fetching graphite functions error', { cause: error })
+          );
           this.funcDefs = gfunc.getFuncDefs(this.graphiteVersion);
           return of(this.funcDefs);
         })

@@ -1,5 +1,6 @@
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 
+import { getLogger } from '@grafana/runtime/unstable';
 import { type LogListModel } from 'app/features/logs/components/panel/processing';
 
 export interface LogDetailsContextData {
@@ -82,7 +83,10 @@ export const LogDetailsContextProvider = ({ children, enableLogDetails, logs }: 
       }
       const log = typeof logRef === 'number' ? logs.at(logRef) : logRef;
       if (!log) {
-        console.error(`LogDetailsContext: undefined log with reference ${logRef}`);
+        getLogger('plugins/panel.logstable').logError(
+          new Error(`LogDetailsContext: undefined log with reference ${logRef}`),
+          { logRef: String(logRef) }
+        );
         return;
       }
       const found = showDetails.find((stateLog) => stateLog.uid === log.uid);

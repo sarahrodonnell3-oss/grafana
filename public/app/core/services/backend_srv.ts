@@ -33,6 +33,7 @@ import {
   type FetchError,
   type FetchResponse,
 } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { appEvents } from 'app/core/app_events';
 import { getConfig } from 'app/core/config';
 import { getSessionExpiry, hasSessionExpiry } from 'app/core/utils/auth';
@@ -115,7 +116,9 @@ export class BackendSrv implements BackendService {
       const result = await fp.get();
       this.deviceID = result.visitorId;
     } catch (error) {
-      console.error(error);
+      getLogger('core.services.backend').logError(
+        error instanceof Error ? error : new Error('Failed to initialize Grafana device ID')
+      );
     }
   }
 
@@ -240,7 +243,10 @@ export class BackendSrv implements BackendService {
             observer.complete();
           }) // runs in background
           .catch((e) => {
-            console.log(requestId, 'catch', e);
+            getLogger('core.services.backend').logDebug('chunked response process catch', {
+              requestId: String(requestId),
+              error: e instanceof Error ? e.message : String(e),
+            });
             observer.error(e);
           }); // from abort
       },

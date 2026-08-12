@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs';
 import { DataHoverEvent, type PanelData, type PanelProps } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { config, locationService } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type PanelContext, PanelContextRoot } from '@grafana/ui';
 import { appEvents } from 'app/core/app_events';
 import { VariablesChanged } from 'app/features/variables/types';
@@ -327,7 +328,9 @@ export class GeomapPanel extends Component<Props, State> {
         layers.push(await initLayer(this, map, lyr, false));
       }
     } catch (ex) {
-      console.error('error loading layers', ex);
+      getLogger('plugins/panel.geomap').logError(
+        ex instanceof Error ? ex : new Error('error loading layers', { cause: ex })
+      );
     }
 
     for (const lyr of layers) {

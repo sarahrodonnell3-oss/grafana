@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import { type GrafanaTheme2, type NavModelItem } from '@grafana/data';
 import { usePluginComponents, usePluginLinks } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { useStyles2 } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { useNavModel } from 'app/core/hooks/useNavModel';
@@ -36,10 +37,11 @@ export function NavLandingPage({ navId, header }: Props) {
   // Warn if both extension points are being used (they are mutually exclusive)
   React.useEffect(() => {
     if (components && components.length > 0 && additionalCards && additionalCards.length > 0) {
-      console.warn(
-        `[NavLandingPage] Both NavLandingPage and NavLandingPageCards extensions are registered for "${node.id}". ` +
+      getLogger('core.components.nav-landing-page').logWarning(
+        `Both NavLandingPage and NavLandingPageCards extensions are registered for "${node.id}". ` +
           `The NavLandingPage extension will take precedence and NavLandingPageCards will be ignored. ` +
-          `Please use only one extension point.`
+          `Please use only one extension point.`,
+        { nodeId: String(node.id) }
       );
     }
   }, [components, additionalCards, node.id]);

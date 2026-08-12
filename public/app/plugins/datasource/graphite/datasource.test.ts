@@ -22,9 +22,11 @@ import {
   config,
   type FetchResponse,
   getTemplateSrv,
+  type MonitoringLogger,
   type TemplateSrv,
   type VariableInterpolation,
 } from '@grafana/runtime';
+import { clearLoggerRegistry, setLogger } from '@grafana/runtime/unstable';
 
 import { fromString } from './configuration/parseLokiLabelMappings';
 import { GraphiteDatasource } from './datasource';
@@ -382,14 +384,21 @@ describe('graphiteDatasource', () => {
       title: string;
       tags?: string[];
     }>;
-    let errorSpy: jest.SpyInstance;
+    let logger: MonitoringLogger;
 
     beforeEach(() => {
-      errorSpy = jest.spyOn(console, 'error').mockImplementation();
+      logger = {
+        logDebug: jest.fn(),
+        logInfo: jest.fn(),
+        logWarning: jest.fn(),
+        logError: jest.fn(),
+        logMeasurement: jest.fn(),
+      };
+      setLogger('plugins/datasource.graphite', logger);
     });
 
     afterEach(() => {
-      errorSpy.mockRestore();
+      clearLoggerRegistry();
     });
 
     const options = {
@@ -483,7 +492,7 @@ describe('graphiteDatasource', () => {
         results = data;
       });
       expect(results).toEqual([]);
-      expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/Unable to get annotations/));
+      expect(logger.logError).toHaveBeenCalledWith(expect.objectContaining({ message: 'Unable to get annotations.' }));
     });
   });
 
@@ -494,15 +503,22 @@ describe('graphiteDatasource', () => {
       title: string;
       tags?: string[];
     }>;
-    let errorSpy: jest.SpyInstance;
+    let logger: MonitoringLogger;
 
     beforeEach(() => {
-      errorSpy = jest.spyOn(console, 'error').mockImplementation();
+      logger = {
+        logDebug: jest.fn(),
+        logInfo: jest.fn(),
+        logWarning: jest.fn(),
+        logError: jest.fn(),
+        logMeasurement: jest.fn(),
+      };
+      setLogger('plugins/datasource.graphite', logger);
       config.featureToggles.graphiteBackendMode = true;
     });
 
     afterEach(() => {
-      errorSpy.mockRestore();
+      clearLoggerRegistry();
       config.featureToggles.graphiteBackendMode = false;
     });
 
@@ -597,7 +613,7 @@ describe('graphiteDatasource', () => {
         results = data;
       });
       expect(results).toEqual([]);
-      expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/Unable to get annotations/));
+      expect(logger.logError).toHaveBeenCalledWith(expect.objectContaining({ message: 'Unable to get annotations.' }));
     });
   });
 

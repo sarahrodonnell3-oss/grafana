@@ -21,6 +21,7 @@ import {
   type DataSourceGetDrilldownsApplicabilityOptions,
   type DrilldownsApplicability,
 } from '@grafana/data';
+import { getLogger } from '@grafana/runtime/unstable';
 import {
   isSceneObject,
   sceneGraph,
@@ -313,7 +314,10 @@ export class DashboardDatasource extends DataSourceApi<DashboardQuery> {
         options: { value: filter.value },
       });
     } catch (error) {
-      console.warn('Failed to create value matcher for filter:', filter, error);
+      getLogger('plugins/datasource.dashboard').logError(
+        error instanceof Error ? error : new Error('Failed to create value matcher for filter', { cause: error }),
+        { filter: JSON.stringify(filter) }
+      );
       return null;
     }
   }

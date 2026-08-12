@@ -9,6 +9,7 @@ import {
   type TemplateSrv,
   type VariableInterpolation,
 } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 
 import { getCredentials } from '../credentials';
 import { type AzureMetricQuery, AzureQueryType } from '../dataquery.gen';
@@ -267,7 +268,9 @@ export default class AzureMonitorDatasource extends DataSourceWithBackend<
         return result;
       })
       .catch((reason) => {
-        console.error(`Failed to get metric namespaces: ${reason}`);
+        getLogger('plugins/datasource.azuremonitor').logError(
+          reason instanceof Error ? reason : new Error(`Failed to get metric namespaces: ${reason}`, { cause: reason })
+        );
         return [];
       });
   }

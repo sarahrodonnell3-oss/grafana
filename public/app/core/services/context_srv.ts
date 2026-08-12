@@ -10,6 +10,7 @@ import {
   userHasAnyPermission,
 } from '@grafana/data';
 import { featureEnabled, getBackendSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { getSessionExpiry } from 'app/core/utils/auth';
 import { type UserPermission, AccessControlAction } from 'app/types/accessControl';
 import { type CurrentUserInternal } from 'app/types/config';
@@ -108,7 +109,7 @@ export class ContextSrv {
         reloadcache: true,
       });
     } catch (e) {
-      console.error(e);
+      getLogger('core.services.context').logError(e instanceof Error ? e : new Error(String(e)));
     }
   }
 
@@ -258,7 +259,7 @@ export class ContextSrv {
         }
       })
       .catch((e) => {
-        console.error(e);
+        getLogger('core.services.context').logError(e instanceof Error ? e : new Error(String(e)));
       });
   }
 }

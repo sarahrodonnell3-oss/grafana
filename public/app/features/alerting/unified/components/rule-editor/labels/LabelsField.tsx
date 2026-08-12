@@ -7,6 +7,7 @@ import { type GrafanaTheme2, type SelectableValue } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
 import { Button, type ComboboxOption, Field, InlineLabel, Input, Space, Stack, Text, useStyles2 } from '@grafana/ui';
 
+import { logError } from '../../../Analytics';
 import { labelsApi } from '../../../api/labelsApi';
 import { usePluginBridge } from '../../../hooks/usePluginBridge';
 import { SupportedPlugin } from '../../../types/pluginBridges';
@@ -183,7 +184,9 @@ function useCombinedLabels(
               opsValues = result.values.map((value) => value.name);
             }
           } catch (error) {
-            console.error('Failed to fetch label values for key:', key, error);
+            logError(error instanceof Error ? error : new Error(`Failed to fetch label values for key: ${key}`), {
+              key: String(key),
+            });
           }
         }
 

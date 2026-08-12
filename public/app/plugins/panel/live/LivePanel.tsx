@@ -20,6 +20,7 @@ import {
 } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
 import { config, getGrafanaLiveSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { Alert, stylesFactory, JSONFormatter, CustomScrollbar } from '@grafana/ui';
 
 import { TablePanel } from '../table/TablePanel';
@@ -72,7 +73,7 @@ export class LivePanel extends PureComponent<Props, State> {
       } else if (isLiveChannelMessageEvent(event)) {
         this.setState({ message: event.message, changed: Date.now() });
       } else {
-        console.log('ignore', event);
+        getLogger('plugins/panel.live').logInfo('ignore', { event: JSON.stringify(event) });
       }
     },
   };
@@ -87,7 +88,7 @@ export class LivePanel extends PureComponent<Props, State> {
   async loadChannel() {
     const addr = this.props.options?.channel;
     if (!isValidLiveChannelAddress(addr)) {
-      console.log('INVALID', addr);
+      getLogger('plugins/panel.live').logInfo('INVALID', { addr: JSON.stringify(addr ?? null) });
       this.unsubscribe();
       this.setState({
         addr: undefined,
@@ -96,13 +97,13 @@ export class LivePanel extends PureComponent<Props, State> {
     }
 
     if (isEqual(addr, this.state.addr)) {
-      console.log('Same channel', this.state.addr);
+      getLogger('plugins/panel.live').logInfo('Same channel', { addr: JSON.stringify(this.state.addr ?? null) });
       return;
     }
 
     const live = getGrafanaLiveSrv();
     if (!live) {
-      console.log('INVALID', addr);
+      getLogger('plugins/panel.live').logInfo('INVALID', { addr: JSON.stringify(addr ?? null) });
       this.unsubscribe();
       this.setState({
         addr: undefined,
@@ -111,7 +112,7 @@ export class LivePanel extends PureComponent<Props, State> {
     }
     this.unsubscribe();
 
-    console.log('LOAD', addr);
+    getLogger('plugins/panel.live').logInfo('LOAD', { addr: JSON.stringify(addr ?? null) });
 
     // Subscribe to new events
     try {

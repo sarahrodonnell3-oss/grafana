@@ -14,6 +14,8 @@
 
 import { uniq as _uniq } from 'lodash';
 
+import { getLogger } from '@grafana/runtime/unstable';
+
 import { type Trace } from '../types/trace';
 
 const parameterRegExp = /#\{([^{}]*)\}/g;
@@ -109,8 +111,9 @@ export function processLinkPattern(pattern: any): ProcessedLinkPattern | null {
       parameters: _uniq(url.parameters.concat(text.parameters)),
     };
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(`Ignoring invalid link pattern: ${error}`, pattern);
+    getLogger('features.explore').logError(new Error(`Ignoring invalid link pattern: ${error}`), {
+      pattern: String(pattern),
+    });
     return null;
   }
 }

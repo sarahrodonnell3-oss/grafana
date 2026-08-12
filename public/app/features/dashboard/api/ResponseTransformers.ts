@@ -1,5 +1,6 @@
 import { type MetricFindValue, type TypedVariableModel, type AnnotationQuery } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import {
   type DataQuery,
   type DataSourceRef,
@@ -728,7 +729,7 @@ function getVariables(vars: TypedVariableModel[]): DashboardV2Spec['variables'] 
         let query = v.query || {};
 
         if (typeof query === 'string') {
-          console.warn(
+          getLogger('features.dashboard').logWarning(
             'Query variable query is a string which is deprecated in the schema v2. It should extend DataQuery'
           );
           query = {
@@ -941,7 +942,7 @@ function getVariables(vars: TypedVariableModel[]): DashboardV2Spec['variables'] 
         break;
       default:
         // do not throw error, just log it
-        console.error(`Variable transformation not implemented: ${v.type}`);
+        getLogger('features.dashboard').logError(new Error(`Variable transformation not implemented: ${v.type}`));
     }
   }
   return variables;
@@ -1154,7 +1155,7 @@ function getVariablesV1(vars: DashboardV2Spec['variables']): VariableModel[] {
         break;
       default:
         // do not throw error, just log it
-        console.error(`Variable transformation not implemented: ${v}`);
+        getLogger('features.dashboard').logError(new Error(`Variable transformation not implemented: ${v}`));
     }
   }
   return variables;
@@ -1410,7 +1411,7 @@ function transformSpecialValueMatchToV1(match: SpecialValueMatch): SpecialValueM
     case 'empty':
       return SpecialValueMatchV1.Empty;
     default:
-      console.warn(`Skipping special value mapping with unknown match type: "${match}"`);
+      getLogger('features.dashboard').logWarning(`Skipping special value mapping with unknown match type: "${match}"`);
       return undefined;
   }
 }

@@ -1,3 +1,5 @@
+import { mockLogger } from '@grafana/test-utils/unstable';
+
 import { patchFetchForLegacyAPIMode } from './legacyAPIHandling';
 
 describe('patchFetchForLegacyAPIMode', () => {
@@ -5,10 +7,12 @@ describe('patchFetchForLegacyAPIMode', () => {
   const originalMode = window.__grafanaLegacyAPIMode;
 
   let fetchMock: jest.Mock;
+  let logger: ReturnType<typeof mockLogger>;
 
   beforeEach(() => {
     fetchMock = jest.fn().mockResolvedValue(new Response('ok'));
     window.fetch = fetchMock;
+    logger = mockLogger('core.legacy-api');
   });
 
   afterEach(() => {
@@ -48,21 +52,21 @@ describe('patchFetchForLegacyAPIMode', () => {
 
     it('warns but still forwards same-origin /api/ calls', async () => {
       patchFetchForLegacyAPIMode();
-      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       await window.fetch('/api/dashboards');
 
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('/api/dashboards'));
+      expect(logger.logWarning).toHaveBeenCalledWith('Request made to legacy api', {
+        pathname: '/api/dashboards',
+      });
       expect(fetchMock).toHaveBeenCalledWith('/api/dashboards', undefined);
     });
 
     it('does not warn on non-/api/ calls', async () => {
       patchFetchForLegacyAPIMode();
-      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       await window.fetch('/apis/preferences.grafana.app/v1');
 
-      expect(warn).not.toHaveBeenCalled();
+      expect(logger.logWarning).not.toHaveBeenCalled();
       expect(fetchMock).toHaveBeenCalled();
     });
   });

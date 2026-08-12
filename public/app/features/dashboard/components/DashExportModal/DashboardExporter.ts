@@ -3,6 +3,7 @@ import { defaults, each, sortBy } from 'lodash';
 import { type DataSourceRef, type VariableOption, VariableRefresh } from '@grafana/data';
 import { getDataSourceSrv } from '@grafana/runtime';
 import { getPanelPluginMeta } from '@grafana/runtime/internal';
+import { getLogger } from '@grafana/runtime/unstable';
 import config from 'app/core/config';
 import { type PanelModel } from 'app/features/dashboard/state/PanelModel';
 import { getLibraryPanel } from 'app/features/library-panels/state/api';
@@ -318,7 +319,7 @@ export class DashboardExporter {
 
       return newObj;
     } catch (err) {
-      console.error('Export failed:', err);
+      getLogger('features.dashboard').logError(err instanceof Error ? err : new Error('Export failed:'));
       return {
         error: err,
       };

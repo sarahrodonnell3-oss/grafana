@@ -10,6 +10,7 @@ import {
 
 import { type TextBoxVariableModel, isEmptyObject } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { getLogger } from '@grafana/runtime/unstable';
 import { Input } from '@grafana/ui';
 import { useDispatch } from 'app/types/store';
 
@@ -31,7 +32,7 @@ export function TextBoxVariablePicker({ variable, onVariableChange, readOnly }: 
 
   const updateVariable = useCallback(() => {
     if (!variable.rootStateKey) {
-      console.error('Cannot update variable without rootStateKey');
+      getLogger('features.variables').logError(new Error('Cannot update variable without rootStateKey'));
       return;
     }
 

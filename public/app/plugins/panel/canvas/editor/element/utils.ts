@@ -1,5 +1,6 @@
 import { AppEvents, textUtil } from '@grafana/data';
 import { type BackendSrvRequest, getBackendSrv, getTemplateSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { appEvents } from 'app/core/app_events';
 import { createAbsoluteUrl, type RelativeUrl } from 'app/features/alerting/unified/utils/url';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
@@ -23,7 +24,9 @@ export const callApi = (api: APIEditorConfig, updateLoadingStateCallback?: IsLoa
     .subscribe({
       error: (error) => {
         appEvents.emit(AppEvents.alertError, ['An error has occurred. Check console output for more details.']);
-        console.error('API call error: ', error);
+        getLogger('plugins/panel.canvas').logError(
+          error instanceof Error ? error : new Error('API call error', { cause: error })
+        );
         updateLoadingStateCallback && updateLoadingStateCallback(false);
       },
       complete: () => {

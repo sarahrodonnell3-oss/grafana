@@ -5,6 +5,7 @@ import WebGLPointsLayer from 'ol/layer/WebGLPoints';
 
 import { getFrameMatchers, type MapLayerHandler, type MapLayerOptions, type PanelData, textUtil } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 
 import { type GeomapPanel } from '../GeomapPanel';
 import { MARKERS_LAYER_ID } from '../layers/data/markersLayer';
@@ -90,7 +91,7 @@ async function updateLayer(panel: GeomapPanel, uid: string, newOptions: MapLayer
     // initialize with new data
     applyLayerFilter(info.handler, newOptions, panel.props.data);
   } catch (err) {
-    console.warn('ERROR', err); // eslint-disable-line no-console
+    getLogger('plugins/panel.geomap').logError(err instanceof Error ? err : new Error('ERROR', { cause: err }));
     return false;
   }
 

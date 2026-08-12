@@ -2,6 +2,7 @@ import { memo, useState, useCallback, type JSX } from 'react';
 
 import { t } from '@grafana/i18n';
 import { type FetchError, getBackendSrv, isFetchError } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import config from 'app/core/config';
 
 import { type LoginDTO } from './types';
@@ -88,7 +89,9 @@ const LoginCtrl = memo(({ resetCode, children }: Props) => {
           .then(() => {
             toGrafana();
           })
-          .catch((err) => console.error(err));
+          .catch((err) =>
+            getLogger('core.components.login').logError(err instanceof Error ? err : new Error(String(err)))
+          );
       }
     },
     [resetCode, toGrafana]

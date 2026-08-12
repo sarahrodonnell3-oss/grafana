@@ -3,6 +3,7 @@ import { css } from '@emotion/css';
 import { textUtil } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { config, locationService } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { ConfirmModal, ToolbarButton } from '@grafana/ui';
 
 import { appEvents } from '../../../core/app_events';
@@ -59,6 +60,8 @@ export const onOpenSnapshotOriginalDashboard = (originalUrl: string) => {
       locationService.push(sanitizedRelativeURL);
     }
   } catch (err) {
-    console.error('Failed to open original dashboard', err);
+    getLogger('features.dashboard-scene').logError(
+      err instanceof Error ? err : new Error('Failed to open original dashboard')
+    );
   }
 };

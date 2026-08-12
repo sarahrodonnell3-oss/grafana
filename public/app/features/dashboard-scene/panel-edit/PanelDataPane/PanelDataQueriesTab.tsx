@@ -4,6 +4,7 @@ import { CoreApp, type DataSourceApi, type DataSourceInstanceSettings, getDataSo
 import { selectors } from '@grafana/e2e-selectors';
 import { t, Trans } from '@grafana/i18n';
 import { config, getDataSourceSrv, reportInteraction } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import {
   SafeSerializableSceneObject,
   type SceneComponentProps,
@@ -165,7 +166,7 @@ export class PanelDataQueriesTab extends SceneObjectBase<PanelDataQueriesTabStat
         });
       }
 
-      console.error(err);
+      getLogger('features.dashboard-scene').logError(err instanceof Error ? err : new Error('Unknown error'));
     }
   }
 

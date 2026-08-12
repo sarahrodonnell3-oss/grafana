@@ -1,6 +1,7 @@
 import { createSelector, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 import { store } from '@grafana/data';
+import { getLogger } from '@grafana/runtime/unstable';
 import { type AppNotification, AppNotificationSeverity, type AppNotificationsState } from 'app/types/appNotifications';
 
 const MAX_STORED_NOTIFICATIONS = 25;
@@ -121,7 +122,8 @@ function serializeNotifications(notifs: Record<string, StoredNotification>) {
   try {
     store.set(STORAGE_KEY, JSON.stringify(reducedNotifs));
   } catch (err) {
-    console.error('Unable to persist notifications to local storage');
-    console.error(err);
+    getLogger('core.notifications').logError(
+      err instanceof Error ? err : new Error('Unable to persist notifications to local storage')
+    );
   }
 }

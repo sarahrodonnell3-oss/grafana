@@ -2,6 +2,7 @@ import { attempt, isError } from 'lodash';
 
 import { type PromRuleDTO, type PromRuleGroupDTO } from 'app/types/unified-alerting-dto';
 
+import { logWarning } from '../../Analytics';
 import { type GrafanaPromRulesOptions } from '../../api/prometheusApi';
 import { shouldUseBackendFilters, shouldUseFullyCompatibleBackendFilters } from '../../featureToggles';
 import { type RulesFilter } from '../../search/rulesSearchParser';
@@ -154,7 +155,10 @@ function labelMatchersToBackendFormat(labels: string[]): string[] {
     const result = attempt(() => JSON.stringify(parseMatcher(label)));
 
     if (isError(result)) {
-      console.warn('Failed to parse label matcher:', label, result);
+      logWarning('Failed to parse label matcher:', {
+        label: String(label),
+        result: String(result),
+      });
     } else {
       acc.push(result);
     }

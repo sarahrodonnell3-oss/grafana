@@ -21,7 +21,7 @@ import {
   type URLRange,
   type URLRangeValue,
 } from '@grafana/data';
-import { getDataSourceInstance } from '@grafana/runtime/unstable';
+import { getDataSourceInstance, getLogger } from '@grafana/runtime/unstable';
 import { type DataQuery, type DataSourceJsonData, type DataSourceRef, type TimeZone } from '@grafana/schema';
 import { getLocalRichHistoryStorage } from 'app/core/history/richHistoryStorageProvider';
 import { SortOrder } from 'app/core/utils/richHistoryTypes';
@@ -117,7 +117,7 @@ export async function loadAndInitDatasource(
       instance.init();
     } catch (err) {
       // TODO: should probably be handled better
-      console.error(err);
+      getLogger('features.explore').logError(err instanceof Error ? err : new Error('Unknown error'));
     }
   }
 

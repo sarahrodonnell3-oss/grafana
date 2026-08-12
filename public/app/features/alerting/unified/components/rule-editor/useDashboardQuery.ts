@@ -8,6 +8,7 @@ import { isDashboardV2Resource } from 'app/features/dashboard/api/utils';
 import { type DashboardDTO } from 'app/types/dashboard';
 
 import { DashboardModel } from '../../../../dashboard/state/DashboardModel';
+import { logError } from '../../Analytics';
 
 export type DashboardResponse = DashboardDTO | DashboardWithAccessInfo<DashboardV2Spec>;
 
@@ -36,11 +37,11 @@ export function useDashboardQuery(dashboardUid?: string) {
           } else if (isDashboardV2Resource(dashboardDTO)) {
             setDashboard(dashboardDTO);
           } else {
-            console.error('Something went wrong, unexpected dashboard format');
+            logError(new Error('Something went wrong, unexpected dashboard format'));
           }
         })
         .catch((error) => {
-          console.error('Failed to fetch dashboard', error);
+          logError(error instanceof Error ? error : new Error('Failed to fetch dashboard'));
         })
         .finally(() => {
           setIsFetching(false);

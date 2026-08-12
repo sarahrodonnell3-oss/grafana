@@ -1,6 +1,7 @@
 import { debounce } from 'lodash';
 
 import { getBackendSrv } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { fetchRoleOptions } from 'app/core/components/RolePicker/api';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AccessControlAction } from 'app/types/accessControl';
@@ -31,7 +32,7 @@ export function fetchACOptions(): ThunkResult<void> {
         dispatch(acOptionsLoaded(options));
       }
     } catch (error) {
-      console.error(error);
+      getLogger('features.serviceaccounts').logError(error instanceof Error ? error : new Error('Unknown error'));
     }
   };
 }
@@ -76,7 +77,7 @@ export function fetchServiceAccounts(
         dispatch(serviceAccountsFetched(result));
       }
     } catch (error) {
-      console.error(error);
+      getLogger('features.serviceaccounts').logError(error instanceof Error ? error : new Error('Unknown error'));
     } finally {
       dispatch(serviceAccountsFetchEnd());
     }

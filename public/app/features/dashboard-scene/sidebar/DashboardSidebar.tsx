@@ -1,5 +1,6 @@
 import { isEqual } from 'lodash';
 
+import { getLogger } from '@grafana/runtime/unstable';
 import {
   NewSceneObjectAddedEvent,
   type SceneObject,
@@ -232,7 +233,9 @@ export class DashboardSidebar extends SceneObjectBase<DashboardSidebarState> imp
   private selectElement(element: ElementSelectionContextItem, options: ElementSelectionOnSelectOptions) {
     let obj = sceneGraph.findByKey(this, element.id);
     if (!obj) {
-      console.warn('Cannot find element by key="%s"!', element.id);
+      getLogger('features.dashboard-scene').logWarning(`Cannot find element by key="${element.id}"!`, {
+        id: element.id,
+      });
       return;
     }
 
@@ -240,7 +243,9 @@ export class DashboardSidebar extends SceneObjectBase<DashboardSidebarState> imp
     if (sourceKey) {
       obj = sceneGraph.findByKey(this, sourceKey);
       if (!obj) {
-        console.warn('Cannot find element by source key="%s"!', sourceKey);
+        getLogger('features.dashboard-scene').logWarning(`Cannot find element by source key="${sourceKey}"!`, {
+          sourceKey,
+        });
         return;
       }
     }

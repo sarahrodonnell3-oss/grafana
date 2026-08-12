@@ -4,6 +4,7 @@ import tinycolor from 'tinycolor2';
 
 import { Registry, type RegistryItem, textUtil } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { getPublicOrAbsoluteUrl } from 'app/features/dimensions/resource';
 
 import { defaultStyleConfig, DEFAULT_SIZE, type StyleConfigValues, type StyleMaker } from './types';
@@ -297,7 +298,9 @@ async function prepareSVG(url: string, size?: number, backgroundOpacity?: number
       return `data:image/svg+xml,${svgURI}`;
     })
     .catch((error) => {
-      console.error(error); // eslint-disable-line no-console
+      getLogger('plugins/panel.geomap').logError(
+        error instanceof Error ? error : new Error(String(error), { cause: error })
+      );
       return '';
     });
 }

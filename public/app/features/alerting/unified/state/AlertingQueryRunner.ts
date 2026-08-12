@@ -22,6 +22,7 @@ import { cancelNetworkRequestsOnUnsubscribe } from 'app/features/query/state/pro
 import { setStructureRevision } from 'app/features/query/state/processing/revision';
 import { type AlertQuery } from 'app/types/unified-alerting-dto';
 
+import { logWarning } from '../../Analytics';
 import { type LinkError, createDAGFromQueriesSafe, getDescendants } from '../components/rule-editor/dag';
 import { getTimeRangeForExpression } from '../utils/timeRange';
 
@@ -210,7 +211,7 @@ const getTimeRange = (query: AlertQuery, queries: AlertQuery[]): TimeRange => {
   }
 
   if (!query.relativeTimeRange) {
-    console.warn(`Query with refId: ${query.refId} did not have any relative time range, using default.`);
+    logWarning(`Query with refId: ${query.refId} did not have any relative time range, using default.`);
     return getDefaultTimeRange();
   }
 

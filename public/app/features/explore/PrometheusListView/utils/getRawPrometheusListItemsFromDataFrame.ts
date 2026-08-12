@@ -1,4 +1,5 @@
 import { type DataFrame, formattedValueToString } from '@grafana/data';
+import { getLogger } from '@grafana/runtime/unstable';
 
 import { type instantQueryRawVirtualizedListData } from '../RawListContainer';
 
@@ -51,7 +52,7 @@ export const getRawPrometheusListItemsFromDataFrame = (dataFrame: DataFrame): in
             }
           }
         } else {
-          console.warn('Field display method is missing!');
+          getLogger('features.explore').logWarning('Field display method is missing!');
         }
       }
     }
