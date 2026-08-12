@@ -4,7 +4,6 @@ import { type OrgRole } from '@grafana/data';
 import { selectors as e2eSelectors } from '@grafana/e2e-selectors';
 import { Trans, t } from '@grafana/i18n';
 import { config } from '@grafana/runtime';
-import { getLogger } from '@grafana/runtime/unstable';
 import {
   Avatar,
   Box,
@@ -30,6 +29,7 @@ import { contextSrv } from 'app/core/services/context_srv';
 import { AccessControlAction, type Role } from 'app/types/accessControl';
 import { type OrgUser } from 'app/types/user';
 
+import { logAdminError } from '../logging';
 import { OrgRolePicker } from '../OrgRolePicker';
 
 type Cell<T extends keyof OrgUser = keyof OrgUser> = CellProps<OrgUser, OrgUser[T]>;
@@ -80,7 +80,7 @@ export const OrgUsersTable = ({
           setRoleOptions(options);
         }
       } catch (e) {
-        getLogger('features.admin').logError(new Error('Error loading options'));
+        logAdminError(e, 'Error loading options');
       }
     }
     if (contextSrv.licensedAccessControlEnabled()) {

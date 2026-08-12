@@ -19,7 +19,7 @@ export const Loggers = {
   'features.query-history.local-storage': {},
   'features.query-history.indexeddb': {},
   /* public/app/features domain loggers */
-  'features.actions': {},
+  'features.actions': { logToConsole: true },
   'features.admin': {},
   'features.annotations': {},
   'features.apiserver': {},
@@ -62,7 +62,7 @@ export const Loggers = {
   'core.trusted-types': { logToConsole: true },
   'core.journeys': { logToConsole: true },
   'core.notifications': {},
-  'core.navigation': {},
+  'core.navigation': { logToConsole: true },
   'core.services.meticulous': {},
   'core.services.context': {},
   'core.services.backend': {},

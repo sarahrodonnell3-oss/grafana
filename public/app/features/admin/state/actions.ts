@@ -2,7 +2,6 @@ import { debounce } from 'lodash';
 
 import { dateTimeFormatTimeAgo } from '@grafana/data';
 import { featureEnabled, getBackendSrv, isFetchError, locationService } from '@grafana/runtime';
-import { getLogger } from '@grafana/runtime/unstable';
 import { type FetchDataArgs } from '@grafana/ui';
 import config from 'app/core/config';
 import { contextSrv } from 'app/core/services/context_srv';
@@ -11,6 +10,8 @@ import { AccessControlAction } from 'app/types/accessControl';
 import { type LdapUser } from 'app/types/ldap';
 import { type ThunkResult } from 'app/types/store';
 import { type UserDTO, type UserSession, type UserFilter, type AnonUserFilter } from 'app/types/user';
+
+import { logAdminError } from '../logging';
 
 import {
   userAdminPageLoadedAction,
@@ -37,6 +38,7 @@ import {
   anonPageChanged,
   anonQueryChanged,
 } from './reducers';
+
 // UserAdminPage
 
 export function loadAdminUserPage(userUid: string): ThunkResult<void> {
@@ -51,7 +53,7 @@ export function loadAdminUserPage(userUid: string): ThunkResult<void> {
       }
       dispatch(userAdminPageLoadedAction(true));
     } catch (error) {
-      getLogger('features.admin').logError(error instanceof Error ? error : new Error('Unknown error'));
+      logAdminError(error);
 
       if (isFetchError(error)) {
         const userError = {
@@ -301,7 +303,7 @@ export function fetchUsers(): ThunkResult<void> {
       dispatch(usersFetched(result));
     } catch (error) {
       usersFetchEnd();
-      getLogger('features.admin').logError(error instanceof Error ? error : new Error('Unknown error'));
+      logAdminError(error);
     }
   };
 }
@@ -367,7 +369,7 @@ export function fetchUsersAnonymousDevices(): ThunkResult<void> {
       const result = await getBackendSrv().get(url);
       dispatch(usersAnonymousDevicesFetched(result));
     } catch (error) {
-      getLogger('features.admin').logError(error instanceof Error ? error : new Error('Unknown error'));
+      logAdminError(error);
     }
   };
 }

@@ -6,6 +6,7 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 
 import { type GrafanaTheme2 } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
+import { isFetchError } from '@grafana/runtime';
 import { getLogger } from '@grafana/runtime/unstable';
 import { Text, Box, Button, useStyles2, LoadingPlaceholder } from '@grafana/ui';
 import { SlideDown } from 'app/core/components/Animations/SlideDown';
@@ -240,9 +241,22 @@ const getDescription = async (resource: string, queryParams?: Record<string, str
   try {
     return await getBackendSrv().get(`/api/access-control/${resource}/description`, queryParams);
   } catch (e) {
-    getLogger('core.components.access-control').logError(
-      e instanceof Error ? e : new Error('failed to load resource description')
-    );
+    if (e instanceof Error) {
+      getLogger('core.components.access-control').logError(e);
+    } else if (isFetchError(e)) {
+      const dataMessage =
+        typeof e.data === 'object' && e.data && 'message' in e.data ? String(e.data.message) : undefined;
+      getLogger('core.components.access-control').logError(
+        new Error(e.message || dataMessage || 'failed to load resource description'),
+        {
+          status: String(e.status),
+          ...(e.statusText ? { statusText: e.statusText } : {}),
+          ...(e.data != null ? { data: JSON.stringify(e.data) } : {}),
+        }
+      );
+    } else {
+      getLogger('core.components.access-control').logError(new Error('failed to load resource description'));
+    }
     return INITIAL_DESCRIPTION;
   }
 };

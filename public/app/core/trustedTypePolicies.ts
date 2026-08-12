@@ -12,7 +12,6 @@ export const defaultTrustedTypesPolicy = {
     getLogger('core.trusted-types').logError(new Error('HTML not sanitized with Trusted Types'), {
       source,
       sink,
-      value: string.slice(0, 200),
     });
     return string;
   },
@@ -24,7 +23,6 @@ export const defaultTrustedTypesPolicy = {
     getLogger('core.trusted-types').logError(new Error('ScriptURL not sanitized with Trusted Types'), {
       source,
       sink,
-      value: string.slice(0, 200),
     });
     return string;
   },
