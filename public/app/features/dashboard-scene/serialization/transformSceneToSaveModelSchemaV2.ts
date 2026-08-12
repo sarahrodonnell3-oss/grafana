@@ -180,13 +180,11 @@ export function transformSceneToSaveModelSchemaV2(scene: DashboardScene, isSnaps
     // should never reach this point, validation should throw an error
     throw new Error('Error we could transform the dashboard to schema v2: ' + dashboardSchemaV2);
   } catch (reason) {
-    getLogger('features.dashboard-scene').logError(
-      'Error transforming dashboard to schema v2: ' + reason instanceof Error
-        ? 'Error transforming dashboard to schema v2: ' + reason
-        : new Error('Unknown error'),
-      { dashboardSchemaV2: String(dashboardSchemaV2) }
-    );
-    throw new Error('Error transforming dashboard to schema v2: ' + reason);
+    const error = new Error(`Error transforming dashboard to schema v2: ${String(reason)}`, { cause: reason });
+    getLogger('features.dashboard-scene').logError(error, {
+      dashboardSchemaV2: String(dashboardSchemaV2),
+    });
+    throw error;
   }
 }
 

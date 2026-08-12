@@ -22,7 +22,7 @@ import { cancelNetworkRequestsOnUnsubscribe } from 'app/features/query/state/pro
 import { setStructureRevision } from 'app/features/query/state/processing/revision';
 import { type AlertQuery } from 'app/types/unified-alerting-dto';
 
-import { logWarning } from '../../Analytics';
+import { logWarning } from '../Analytics';
 import { type LinkError, createDAGFromQueriesSafe, getDescendants } from '../components/rule-editor/dag';
 import { getTimeRangeForExpression } from '../utils/timeRange';
 
