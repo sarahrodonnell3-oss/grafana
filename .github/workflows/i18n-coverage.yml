@@ -1,4 +1,7 @@
 # Fieldsphere fork: i18n coverage gate for PRs touching public/app UI (GRAF-212).
+# Always runs so the required "i18n coverage" check reports a status; expensive
+# steps run only when i18n-relevant paths change (workflow-level paths filters
+# would leave the required check pending on other PRs).
 name: i18n coverage
 
 on:
@@ -6,15 +9,6 @@ on:
     branches:
       - main
       - 'release-*.*.*'
-    paths:
-      - 'public/app/**'
-      - 'packages/grafana-ui/**'
-      - 'packages/grafana-data/**'
-      - 'packages/grafana-sql/**'
-      - 'packages/grafana-alerting/**'
-      - 'i18next.config.ts'
-      - 'public/locales/en-US/**'
-      - '.github/workflows/i18n-coverage.yml'
 
 concurrency:
   group: i18n-coverage-${{ github.workflow }}-${{ github.ref }}
@@ -32,11 +26,47 @@ jobs:
       - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/yarn-install
+          fetch-depth: 0
+      - name: Check for i18n-relevant path changes
+        id: filter
+        run: |
+          set -euo pipefail
+          base="${{ github.event.pull_request.base.sha }}"
+          head="${{ github.event.pull_request.head.sha }}"
+          if git diff --name-only --quiet "$base"..."$head" -- \
+            'public/app' \
+            'packages/grafana-ui' \
+            'packages/grafana-data' \
+            'packages/grafana-sql' \
+            'packages/grafana-alerting' \
+            'i18next.config.ts' \
+            'public/locales/en-US' \
+            '.github/workflows/i18n-coverage.yml'
+          then
+            echo "relevant=false" >> "$GITHUB_OUTPUT"
+            echo "No i18n-relevant paths changed; skipping coverage check"
+          else
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+            echo "i18n-relevant paths changed; running coverage check"
+            git diff --name-only "$base"..."$head" -- \
+              'public/app' \
+              'packages/grafana-ui' \
+              'packages/grafana-data' \
+              'packages/grafana-sql' \
+              'packages/grafana-alerting' \
+              'i18next.config.ts' \
+              'public/locales/en-US' \
+              '.github/workflows/i18n-coverage.yml'
+          fi
+      - if: steps.filter.outputs.relevant == 'true'
+        uses: ./.github/actions/setup-node
+      - if: steps.filter.outputs.relevant == 'true'
+        uses: ./.github/actions/yarn-install
       - name: Extract i18n messages
+        if: steps.filter.outputs.relevant == 'true'
         run: yarn i18n-extract
       - name: Verify translations were extracted and committed
+        if: steps.filter.outputs.relevant == 'true'
         run: |
           if ! git diff --exit-code; then
             echo "::error title=i18n coverage::New/changed user-facing strings are not extracted. Run 'make i18n-extract', commit the updated public/locales/en-US files, and push. See contribute/internationalization.md"
