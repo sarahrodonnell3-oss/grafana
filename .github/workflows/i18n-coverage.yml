@@ -1,0 +1,44 @@
+# Fieldsphere fork: i18n coverage gate for PRs touching public/app UI (GRAF-212).
+name: i18n coverage
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'release-*.*.*'
+    paths:
+      - 'public/app/**'
+      - 'packages/grafana-ui/**'
+      - 'packages/grafana-data/**'
+      - 'packages/grafana-sql/**'
+      - 'packages/grafana-alerting/**'
+      - 'i18next.config.ts'
+      - 'public/locales/en-US/**'
+      - '.github/workflows/i18n-coverage.yml'
+
+concurrency:
+  group: i18n-coverage-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  i18n-coverage:
+    name: i18n coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/yarn-install
+      - name: Extract i18n messages
+        run: yarn i18n-extract
+      - name: Verify translations were extracted and committed
+        run: |
+          if ! git diff --exit-code; then
+            echo "::error title=i18n coverage::New/changed user-facing strings are not extracted. Run 'make i18n-extract', commit the updated public/locales/en-US files, and push. See contribute/internationalization.md"
+            exit 1
+          fi

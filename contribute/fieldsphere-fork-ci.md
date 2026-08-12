@@ -6,6 +6,7 @@ This repository fork uses a **minimal GitHub Actions workflow** ([`.github/workf
 
 - **Backend:** Four **parallel** shards (`./scripts/ci/backend-tests/shard.sh -N1/4` … `-N4/4`), each running `CGO_ENABLED=0 go test -short` on its package subset (~quarter of the tree), so wall time is roughly the slowest shard instead of one long `./...` run. A final job **Backend unit tests (short)** fails the workflow if any shard fails (single check name for branch protection).
 - **Frontend:** `yarn run prettier:check`, `yarn run lint`, then `yarn workspace @grafana/data themes-schema` (generates `schema.generated.json`, which is gitignored but required by `tsc`), then `yarn run typecheck`. Typecheck uses `NODE_OPTIONS=--max-old-space-size=6144` so `tsc` / Nx do not hit the default heap limit on standard runners.
+- **i18n coverage:** On pull requests that touch `public/app/**` (or related extraction inputs), [`.github/workflows/i18n-coverage.yml`](../.github/workflows/i18n-coverage.yml) runs `yarn i18n-extract` and fails if locale catalogs are not committed. Fix by running `make i18n-extract`, committing the updated `public/locales/en-US/` files, and pushing again. See [internationalization.md](internationalization.md) for markup and extraction guidance.
 
 Fork-local paths (`.cursor/`, `.vscode/`, and root `manifest.json`) are listed in [`.prettierignore`](../.prettierignore) so `prettier:check` matches upstream expectations without formatting IDE tooling.
 
@@ -44,9 +45,10 @@ After this workflow is on your default branch:
 
 1. Open **Settings → Rules** (or **Branches → Branch protection**) for `main`.
 2. Remove required status checks that pointed at **removed** jobs (for example old matrix shards or Grafana-specific names).
-3. Add required checks that match **Fieldsphere CI** job names in GitHub’s picker, for example:
+3. Add required checks that match **Fieldsphere CI** and **i18n coverage** job names in GitHub’s picker, for example:
    - `Backend unit tests (short)`
    - `Frontend lint and typecheck`
+   - `i18n coverage`
 
 Names must match what the Actions UI shows for the workflow run (they use the `name:` field on each job).
 
