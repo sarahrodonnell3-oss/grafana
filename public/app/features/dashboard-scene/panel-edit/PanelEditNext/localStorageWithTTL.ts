@@ -1,6 +1,5 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { store } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 interface StoredValueWithTTL<T> {
   value: T;

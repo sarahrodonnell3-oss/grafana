@@ -1,5 +1,3 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { customAlphabet } from 'nanoid';
 import { type Unsubscribable } from 'rxjs';
 
@@ -26,6 +24,7 @@ import {
   urlUtil,
   generateUUID,
 } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { getDataSourceInstance } from '@grafana/runtime/unstable';
 import { RefreshPicker } from '@grafana/ui';
 import { ExpressionDatasourceUID } from 'app/features/expressions/types';

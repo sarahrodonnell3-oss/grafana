@@ -1,9 +1,8 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import LayerGroup from 'ol/layer/Group';
 import { apply } from 'ol-mapbox-style';
 
 import { type MapLayerRegistryItem } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 // MapLibre Style Specification constants
 const LAYER_TYPE_BACKGROUND = 'background';

@@ -1,7 +1,7 @@
 import { LogLevel } from '@grafana/faro-web-sdk';
 
+import { type TracedError } from './TracedError';
 import { logStructured } from './logging';
-import { TracedError } from './TracedError';
 
 const mockPushLog = jest.fn();
 const mockPushError = jest.fn();
@@ -28,7 +28,7 @@ describe('logStructured', () => {
   });
 
   it('records additional values as structured context', () => {
-    logStructured('features.example', 'warn', 'Request failed', { status: 503 }, 2n);
+    logStructured('features.example', 'warn', 'Request failed', { status: 503 }, BigInt(2));
 
     expect(mockPushLog).toHaveBeenCalledWith(['Request failed'], {
       level: LogLevel.WARN,

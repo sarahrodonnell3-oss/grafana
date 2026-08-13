@@ -1,7 +1,7 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { useRegisterActions } from 'kbar';
 import { useEffect, useMemo, useState } from 'react';
+
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 import { type CommandPaletteAction } from '../types';
 

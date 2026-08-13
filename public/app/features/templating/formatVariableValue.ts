@@ -1,5 +1,4 @@
 import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { formatRegistry } from '@grafana/scenes';
 import { VariableFormatID } from '@grafana/schema';
 

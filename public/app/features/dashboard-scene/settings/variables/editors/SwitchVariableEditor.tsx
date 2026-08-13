@@ -1,5 +1,4 @@
 import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { type SceneVariable, SwitchVariable } from '@grafana/scenes';
 import { OptionsPaneItemDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneItemDescriptor';
 

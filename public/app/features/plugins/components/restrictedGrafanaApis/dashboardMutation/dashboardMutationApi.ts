@@ -1,5 +1,3 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 /**
  * Dashboard Mutation API -- Restricted API wrapper with built-in store.
  *
@@ -13,6 +11,7 @@ import { logStructured as structuredLog } from '@grafana/runtime';
  */
 
 import type { DashboardMutationAPI } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { ALL_COMMANDS } from 'app/features/dashboard-scene/mutation-api';
 import { DashboardMutationClient } from 'app/features/dashboard-scene/mutation-api/DashboardMutationClient';
 import type { MutationClient, MutationRequest } from 'app/features/dashboard-scene/mutation-api/types';

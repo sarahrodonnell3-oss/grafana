@@ -1,8 +1,7 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { createSelector, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 import { store } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { type AppNotification, AppNotificationSeverity, type AppNotificationsState } from 'app/types/appNotifications';
 
 const MAX_STORED_NOTIFICATIONS = 25;

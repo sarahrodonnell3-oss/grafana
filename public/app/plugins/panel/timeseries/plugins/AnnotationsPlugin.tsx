@@ -1,5 +1,3 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import * as React from 'react';
 import { useCallback, useEffect, useLayoutEffect, useReducer, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -7,6 +5,7 @@ import tinycolor from 'tinycolor2';
 import uPlot from 'uplot';
 
 import { colorManipulator, type DataFrame, type InterpolateFunction } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { type TimeZone, type VizAnnotations } from '@grafana/schema';
 import {
   DEFAULT_ANNOTATION_COLOR,

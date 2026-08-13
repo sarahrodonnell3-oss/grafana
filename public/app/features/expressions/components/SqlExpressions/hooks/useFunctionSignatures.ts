@@ -1,6 +1,6 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { useEffect, useState } from 'react';
+
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 import { type SqlFunctionSignature } from '../SqlEditor/signatureHelp';
 

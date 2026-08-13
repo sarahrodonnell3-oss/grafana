@@ -16,10 +16,10 @@ import {
 } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import {
-  logStructured as structuredLog,
   DataSourceWithBackend,
   type FetchResponse,
   getDataSourceSrv,
+  logStructured as structuredLog,
   toDataQueryError,
 } from '@grafana/runtime';
 import { type BackendSrv, getBackendSrv } from 'app/core/services/backend_srv';

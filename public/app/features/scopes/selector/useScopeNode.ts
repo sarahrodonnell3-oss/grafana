@@ -1,8 +1,7 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { useEffect, useState } from 'react';
 
 import { type ScopeNode } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 import { useScopesServices } from '../ScopesContextProvider';
 

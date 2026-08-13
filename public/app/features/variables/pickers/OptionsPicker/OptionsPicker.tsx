@@ -1,5 +1,3 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { css } from '@emotion/css';
 import { type ComponentType, memo } from 'react';
 import { connect, type ConnectedProps } from 'react-redux';
@@ -12,6 +10,7 @@ import {
   type VariableWithOptions,
 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { ClickOutsideWrapper } from '@grafana/ui';
 import { type StoreState, type ThunkDispatch } from 'app/types/store';
 

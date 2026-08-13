@@ -1,5 +1,4 @@
 import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { type FormatVariable, type SceneObject, sceneUtils } from '@grafana/scenes';
 
 import { getDashboardSceneFor } from '../utils/utils';

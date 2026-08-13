@@ -1,10 +1,9 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { css } from '@emotion/css';
 import { useEffect, useState } from 'react';
 import { type UseFormReturn, Controller } from 'react-hook-form';
 
 import { type SelectableValue } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { Checkbox, Field, Input, SecretInput, Select, Switch, useTheme2 } from '@grafana/ui';
 
 import { fieldMap } from './fields';

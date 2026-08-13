@@ -1,8 +1,7 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import debounce from 'debounce-promise';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { getGrafanaSearcher } from 'app/features/search/service/searcher';
 
 import { type DeepSearchPanelResult, searchDashboardVector } from '../api/deepSearch';

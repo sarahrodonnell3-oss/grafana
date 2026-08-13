@@ -1,7 +1,6 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { DEFAULT_LANGUAGE } from '@grafana/i18n';
 import { addResourceBundle } from '@grafana/i18n/internal';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 import { SystemJS } from '../loader/systemjs';
 import { resolveModulePath } from '../loader/utils';

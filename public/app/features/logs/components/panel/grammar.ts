@@ -1,8 +1,7 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { type Grammar } from 'prismjs';
 
 import { escapeRegex, parseFlags } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 import { type LogListModel } from './processing';
 

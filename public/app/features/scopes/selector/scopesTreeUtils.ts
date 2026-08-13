@@ -1,6 +1,5 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { type ScopeNode } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 import { type NodesMap, type TreeNode } from './types';
 

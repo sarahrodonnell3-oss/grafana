@@ -1,10 +1,9 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { css } from '@emotion/css';
 import { useCallback } from 'react';
 
 import { type GrafanaTheme2 } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { ClipboardButton, type CustomCellRendererProps, IconButton, useTheme2 } from '@grafana/ui';
 import { type LogsFrame } from 'app/features/logs/logsFrame';
 

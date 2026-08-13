@@ -1,5 +1,4 @@
 import { logStructured as structuredLog } from '@grafana/runtime';
-
 import impressionSrv from 'app/core/services/impression_srv';
 import { getGrafanaSearcher } from 'app/features/search/service/searcher';
 import { type DashboardQueryResult } from 'app/features/search/service/types';

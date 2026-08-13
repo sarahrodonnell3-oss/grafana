@@ -1,6 +1,5 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { urlUtil } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 interface LogsPermalinkUrlState {
   logs?: {

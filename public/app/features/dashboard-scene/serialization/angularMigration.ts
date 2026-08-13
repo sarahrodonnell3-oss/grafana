@@ -1,8 +1,7 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { defaults, cloneDeep } from 'lodash';
 
 import { type PanelModel as PanelModelFromData, type PanelPlugin } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { autoMigrateAngular, type PanelModel } from 'app/features/dashboard/state/PanelModel';
 
 /**

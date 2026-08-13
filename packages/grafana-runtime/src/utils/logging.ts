@@ -95,7 +95,8 @@ function formatLogValue(value: unknown): string {
  */
 export function logStructured(source: string, level: StructuredLogLevel, ...values: unknown[]): void {
   const errorIndex = values.findIndex((value) => value instanceof Error);
-  const error = errorIndex >= 0 ? (values[errorIndex] as Error) : undefined;
+  const errorValue = values[errorIndex];
+  const error = errorValue instanceof Error ? errorValue : undefined;
   const messageIndex = values.findIndex((_value, index) => index !== errorIndex);
   const messageValue = messageIndex >= 0 ? values[messageIndex] : undefined;
   const message = formatLogValue(messageValue ?? error ?? 'No log message provided');

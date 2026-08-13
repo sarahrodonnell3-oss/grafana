@@ -1,5 +1,3 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import {
   type Subscription,
   type JoinContext,
@@ -21,6 +19,7 @@ import {
   type DataFrameJSON,
   isValidLiveChannelAddress,
 } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 /**
  * Internal class that maps Centrifuge support to GrafanaLive

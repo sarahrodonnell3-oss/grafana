@@ -1,10 +1,9 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { css } from '@emotion/css';
 import { memo } from 'react';
 
 import { LogsDedupStrategy, type LogsMetaItem, LogsMetaKind, type Labels, store, shallowCompare } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { Button, useStyles2 } from '@grafana/ui';
 
 import { LogLabels, LogLabelsList, type Props as LogLabelsProps } from '../../logs/components/LogLabels';

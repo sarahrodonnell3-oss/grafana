@@ -1,6 +1,5 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { escapeStringForRegex, Registry, type RegistryItem, stringStartsAsRegEx, stringToJsRegex } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 import { type ExtractFieldsOptions, FieldExtractorID } from './types';
 

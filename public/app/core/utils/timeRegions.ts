@@ -1,8 +1,7 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { Cron } from 'croner';
 
 import { type AbsoluteTimeRange, type TimeRange, durationToMilliseconds, parseDuration } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 export type TimeRegionMode = null | 'cron';
 export interface TimeRegionConfig {

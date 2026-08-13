@@ -1,9 +1,8 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { getCenter } from 'ol/extent';
 import { type Geometry, Point } from 'ol/geom';
 
 import { type DataFrame, type Field, FieldType, type KeyValue, toDataFrame } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 import { frameFromGeoJSON } from '../format/geojson';
 import { pointFieldFromLonLat, pointFieldFromGeohash } from '../format/utils';

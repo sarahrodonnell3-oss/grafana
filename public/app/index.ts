@@ -1,10 +1,9 @@
+import type { Preferences } from '@grafana/api-clients/rtkq/preferences/v1';
 import { logStructured as structuredLog } from '@grafana/runtime';
 
 // The new index.html fetches window.grafanaBootData asynchronously.
 // Since much of Grafana depends on it in includes side effects at import time,
 // we delay loading the rest of the app using import() until the boot data is ready.
-
-import type { Preferences } from '@grafana/api-clients/rtkq/preferences/v1';
 
 import { initPreferences } from './initPreferences';
 import { patchFetchForLegacyAPIMode } from './legacyAPIHandling';

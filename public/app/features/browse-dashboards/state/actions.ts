@@ -1,5 +1,4 @@
 import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { STARRED_FOLDERS_UID, TEAM_FOLDERS_UID, isRootFolderUID } from 'app/features/search/constants';
 import { type DashboardViewItem, type DashboardViewItemKind } from 'app/features/search/types';
 import { createAsyncThunk } from 'app/types/store';

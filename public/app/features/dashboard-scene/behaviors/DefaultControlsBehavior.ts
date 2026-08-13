@@ -1,7 +1,6 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { type Subscription } from 'rxjs';
 
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { SceneObjectBase, type SceneObjectState } from '@grafana/scenes';
 
 import { loadDefaultControlsShared$, loadDefaultLinks$, loadDefaultVariables$ } from '../utils/dashboardControls';

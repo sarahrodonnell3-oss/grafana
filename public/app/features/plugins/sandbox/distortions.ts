@@ -1,9 +1,8 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { type ProxyTarget } from '@locker/near-membrane-shared';
 import DOMPurify from 'dompurify';
 import { cloneDeep, isFunction } from 'lodash';
 
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { type Monaco } from '@grafana/ui';
 
 import { loadScriptIntoSandbox } from './codeLoader';

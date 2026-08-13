@@ -1,5 +1,4 @@
 import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { iamAPIv0alpha1, type DisplayList } from 'app/api/clients/iam/v0alpha1';
 import {
   AnnoKeyFolder,

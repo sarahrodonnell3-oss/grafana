@@ -1,6 +1,5 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { type PanelModel } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { SceneDataTransformer, type VizPanel } from '@grafana/scenes';
 import { type DataSourceRef, type DataTransformerConfig } from '@grafana/schema';
 

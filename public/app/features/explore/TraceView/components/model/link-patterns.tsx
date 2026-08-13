@@ -1,3 +1,5 @@
+import { uniq as _uniq } from 'lodash';
+
 import { logStructured as structuredLog } from '@grafana/runtime';
 
 // Copyright (c) 2017 The Jaeger Authors.
@@ -13,8 +15,6 @@ import { logStructured as structuredLog } from '@grafana/runtime';
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-import { uniq as _uniq } from 'lodash';
 
 import { type Trace } from '../types/trace';
 

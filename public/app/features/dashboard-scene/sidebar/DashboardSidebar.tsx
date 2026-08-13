@@ -1,7 +1,6 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { isEqual } from 'lodash';
 
+import { logStructured as structuredLog } from '@grafana/runtime';
 import {
   NewSceneObjectAddedEvent,
   type SceneObject,

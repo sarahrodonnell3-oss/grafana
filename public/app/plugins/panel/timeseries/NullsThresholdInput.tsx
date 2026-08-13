@@ -1,9 +1,8 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import * as React from 'react';
 
 import { rangeUtil } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { Input } from '@grafana/ui';
 
 export enum InputPrefix {

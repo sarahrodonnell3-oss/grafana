@@ -1,5 +1,3 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import {
   AppEvents,
   type DataFrame,
@@ -11,6 +9,7 @@ import {
   VisualizationSuggestionScore,
 } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { getListedPanelPluginMetas, getPanelPluginMeta } from '@grafana/runtime/internal';
 import { appEvents } from 'app/core/app_events';
 import { isBuiltinPluginPath } from 'app/features/plugins/built_in_plugins';

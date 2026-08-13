@@ -1,6 +1,5 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { type DataFrame, formattedValueToString } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 import { type instantQueryRawVirtualizedListData } from '../RawListContainer';
 

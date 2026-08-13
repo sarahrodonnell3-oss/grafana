@@ -1,5 +1,3 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { omitBy, pickBy, isNil, isNumber, isString } from 'lodash';
 
 import {
@@ -18,6 +16,7 @@ import {
   type Threshold,
   ThresholdsMode,
 } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import {
   LegendDisplayMode,
   TooltipDisplayMode,

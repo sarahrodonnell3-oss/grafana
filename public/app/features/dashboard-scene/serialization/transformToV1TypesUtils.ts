@@ -1,6 +1,5 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { type FieldConfigSource as FieldConfigSourceV1, SpecialValueMatch as SpecialValueMatchV1 } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import {
   VariableHide as VariableHideV1,
   VariableRefresh as VariableRefreshV1,

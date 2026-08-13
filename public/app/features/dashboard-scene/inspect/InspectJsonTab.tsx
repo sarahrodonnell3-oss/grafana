@@ -1,11 +1,10 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { isEqual } from 'lodash';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import { type SelectableValue } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Trans, t } from '@grafana/i18n';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import {
   type SceneComponentProps,
   SceneDataTransformer,

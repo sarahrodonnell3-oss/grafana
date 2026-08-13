@@ -1,6 +1,5 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { type Scope, type ScopeDashboardBinding, type ScopeNode } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { FlagKeys, getFeatureFlagClient } from '@grafana/runtime/internal';
 import { scopeAPIv0alpha1 } from 'app/api/clients/scope/v0alpha1';
 import type { FindDefaultScope } from 'app/api/clients/scope/v0alpha1/endpoints.gen';

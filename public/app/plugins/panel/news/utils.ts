@@ -1,6 +1,5 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { FieldType, type DataFrame, dateTime } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 import { type Feed } from './types';
 

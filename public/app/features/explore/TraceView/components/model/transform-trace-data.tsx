@@ -1,5 +1,3 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 // Copyright (c) 2017 Uber Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +16,7 @@ import { isEqual as _isEqual } from 'lodash';
 
 // @ts-ignore
 import { type TraceKeyValuePair } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 
 import { AGGREGATION_PREFIX } from '../constants/aggregation';
 import { getTraceSpanIdsAsTree } from '../selectors/trace';

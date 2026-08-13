@@ -1,9 +1,8 @@
-import { logStructured as structuredLog } from '@grafana/runtime';
-
 import { noop } from 'lodash';
 import { type ChangeEvent, type FormEvent } from 'react';
 
 import { type SelectableValue } from '@grafana/data';
+import { logStructured as structuredLog } from '@grafana/runtime';
 import { IntervalVariable, type SceneVariable } from '@grafana/scenes';
 import { OptionsPaneItemDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneItemDescriptor';
 import {
