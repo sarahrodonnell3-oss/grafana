@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { css } from '@emotion/css';
 import { memo } from 'react';
 
@@ -119,6 +121,10 @@ function renderMetaItem(value: string | number | Labels, kind: LogsMetaKind, log
   if (kind === LogsMetaKind.Error) {
     return <span className="logs-meta-item__error">{value.toString()}</span>;
   }
-  console.error(`Meta type ${typeof value} ${value} not recognized.`);
+  structuredLog(
+    'grafana/frontend.features.explore.Logs.LogsMetaRow',
+    'error',
+    `Meta type ${typeof value} ${value} not recognized.`
+  );
   return <></>;
 }

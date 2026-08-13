@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { css, cx } from '@emotion/css';
 import { memo, type ReactElement, useEffect, useRef, useState } from 'react';
 
@@ -128,7 +130,7 @@ const OrgRow = memo(({ user, org, isExternalUser, onOrgRemove, onOrgRoleChange }
       if (contextSrv.hasPermission(AccessControlAction.ActionRolesList)) {
         fetchRoleOptions(org.orgId)
           .then((roles) => setRoleOptions(roles))
-          .catch((e) => console.error(e));
+          .catch((e) => structuredLog('grafana/frontend.features.admin.UserOrgs', 'error', e));
       }
     }
   }, [org.orgId]);
@@ -266,7 +268,7 @@ const AddToOrgModal = memo(({ isOpen, user, userOrgs, onOrgAdd, onDismiss }: Add
       if (contextSrv.hasPermission(AccessControlAction.ActionRolesList)) {
         fetchRoleOptions(org.value?.id)
           .then((roles) => setRoleOptions(roles))
-          .catch((e) => console.error(e));
+          .catch((e) => structuredLog('grafana/frontend.features.admin.UserOrgs', 'error', e));
       }
     }
   };

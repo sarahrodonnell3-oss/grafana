@@ -1,7 +1,7 @@
 import { defaults, each, sortBy } from 'lodash';
 
 import { type DataSourceRef, type VariableOption, VariableRefresh } from '@grafana/data';
-import { getDataSourceSrv } from '@grafana/runtime';
+import { logStructured as structuredLog, getDataSourceSrv } from '@grafana/runtime';
 import { getPanelPluginMeta } from '@grafana/runtime/internal';
 import config from 'app/core/config';
 import { type PanelModel } from 'app/features/dashboard/state/PanelModel';
@@ -318,7 +318,12 @@ export class DashboardExporter {
 
       return newObj;
     } catch (err) {
-      console.error('Export failed:', err);
+      structuredLog(
+        'grafana/frontend.features.dashboard.components.DashExportModal.DashboardExporter',
+        'error',
+        'Export failed:',
+        err
+      );
       return {
         error: err,
       };

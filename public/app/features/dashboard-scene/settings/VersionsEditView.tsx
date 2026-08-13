@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { skipToken } from '@reduxjs/toolkit/query/react';
 import * as React from 'react';
 import { useMemo } from 'react';
@@ -133,7 +135,7 @@ export class VersionsEditView extends SceneObjectBase<VersionsEditViewState> imp
         // Update the continueToken for the next request, if available
         this._continueToken = result.metadata.continue ?? '';
       })
-      .catch((err) => console.log(err))
+      .catch((err) => structuredLog('grafana/frontend.features.dashboard-scene.settings.VersionsEditView', 'info', err))
       .finally(() => this.setState({ isAppending: false }));
   };
 

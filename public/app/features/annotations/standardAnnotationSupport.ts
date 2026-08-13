@@ -19,7 +19,7 @@ import {
   standardTransformersRegistry,
 } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { config } from '@grafana/runtime';
+import { logStructured as structuredLog, config } from '@grafana/runtime';
 
 export const standardAnnotationSupport: AnnotationSupport = {
   /**
@@ -232,7 +232,11 @@ export function getAnnotationsFromData(
       }
 
       if (!hasTime || !hasText) {
-        console.error('Cannot process annotation fields. No time or text present.');
+        structuredLog(
+          'grafana/frontend.features.annotations.standardAnnotationSupport',
+          'error',
+          'Cannot process annotation fields. No time or text present.'
+        );
         return [];
       }
 

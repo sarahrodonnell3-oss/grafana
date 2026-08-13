@@ -2,6 +2,10 @@ import { faro, type LogContext, LogLevel } from '@grafana/faro-web-sdk';
 
 import { config } from '../config';
 
+import { TracedError } from './TracedError';
+
+export type StructuredLogLevel = 'debug' | 'info' | 'warn' | 'error';
+
 /**
  * Log a message at INFO level
  * @public
@@ -53,6 +57,71 @@ export function logError(err: Error, contexts?: LogContext) {
     faro.api.pushError(err, {
       context: contexts,
     });
+  }
+}
+
+function formatLogValue(value: unknown): string {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (value instanceof Error) {
+    return `${value.name}: ${value.message}`;
+  }
+
+  if (value === undefined) {
+    return 'undefined';
+  }
+
+  if (typeof value === 'bigint') {
+    return value.toString();
+  }
+
+  try {
+    return (
+      JSON.stringify(value, (_key, nestedValue) =>
+        typeof nestedValue === 'bigint' ? nestedValue.toString() : nestedValue
+      ) ?? String(value)
+    );
+  } catch {
+    return String(value);
+  }
+}
+
+/**
+ * Sends console-style values to the monitoring backend as a structured log.
+ *
+ * @public
+ */
+export function logStructured(source: string, level: StructuredLogLevel, ...values: unknown[]): void {
+  const errorIndex = values.findIndex((value) => value instanceof Error);
+  const error = errorIndex >= 0 ? (values[errorIndex] as Error) : undefined;
+  const messageIndex = values.findIndex((_value, index) => index !== errorIndex);
+  const messageValue = messageIndex >= 0 ? values[messageIndex] : undefined;
+  const message = formatLogValue(messageValue ?? error ?? 'No log message provided');
+  const context = values.reduce<LogContext>(
+    (result, value, index) => {
+      if (index !== messageIndex && index !== errorIndex) {
+        result[`argument${index}`] = formatLogValue(value);
+      }
+      return result;
+    },
+    { source }
+  );
+
+  switch (level) {
+    case 'debug':
+      logDebug(message, context);
+      break;
+    case 'info':
+      logInfo(message, context);
+      break;
+    case 'warn':
+      logWarning(message, context);
+      break;
+    case 'error':
+      logError(error ? new TracedError(message, error) : new Error(message), context);
+      break;
   }
 }
 

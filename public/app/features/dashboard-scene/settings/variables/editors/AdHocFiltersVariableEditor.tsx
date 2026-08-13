@@ -9,7 +9,7 @@ import {
   getDataSourceRef,
 } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { config, getDataSourceSrv, reportInteraction } from '@grafana/runtime';
+import { logStructured as structuredLog, config, getDataSourceSrv, reportInteraction } from '@grafana/runtime';
 import { AdHocFiltersVariable, type AdHocFilterWithLabels, type SceneVariable } from '@grafana/scenes';
 import { OptionsPaneItemDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneItemDescriptor';
 
@@ -173,7 +173,11 @@ export function AdHocFiltersVariableEditor(props: AdHocFiltersVariableEditorProp
 
 export function getAdHocFilterOptions(variable: SceneVariable): OptionsPaneItemDescriptor[] {
   if (!(variable instanceof AdHocFiltersVariable)) {
-    console.warn('getAdHocFilterOptions: variable is not an AdHocFiltersVariable');
+    structuredLog(
+      'grafana/frontend.features.dashboard-scene.settings.variables.editors.AdHocFiltersVariableEditor',
+      'warn',
+      'getAdHocFilterOptions: variable is not an AdHocFiltersVariable'
+    );
     return [];
   }
 

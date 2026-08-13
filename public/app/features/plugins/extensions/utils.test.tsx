@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { type Unsubscribable } from 'rxjs';
 
 import { dateTime, usePluginContext, PluginLoadingStrategy, type PluginMeta } from '@grafana/data';
-import { config, type AppPluginConfig } from '@grafana/runtime';
+import { config, logStructured, type AppPluginConfig } from '@grafana/runtime';
 import { setAppPluginMetas } from '@grafana/runtime/internal';
 import { appEvents } from 'app/core/app_events';
 import { ShowModalReactEvent } from 'app/types/events';
@@ -27,6 +27,10 @@ import {
 jest.mock('@grafana/runtime/unstable', () => ({
   ...jest.requireActual('@grafana/runtime/unstable'),
   getPluginSettings: () => Promise.resolve({ info: { version: '1.0.0' }, id: 'test-plugin' }),
+}));
+jest.mock('@grafana/runtime', () => ({
+  ...jest.requireActual('@grafana/runtime'),
+  logStructured: jest.fn(),
 }));
 
 describe('Plugin Extensions / Utils', () => {
@@ -226,9 +230,7 @@ describe('Plugin Extensions / Utils', () => {
   });
 
   describe('handleErrorsInFn()', () => {
-    test('should catch errors thrown by the provided function and print them as console warnings', () => {
-      global.console.warn = jest.fn();
-
+    test('should catch and log errors thrown by the provided function', () => {
       expect(() => {
         const fn = handleErrorsInFn((foo: string) => {
           throw new Error('Error: ' + foo);
@@ -236,8 +238,11 @@ describe('Plugin Extensions / Utils', () => {
 
         fn('TEST');
 
-        // Logs the errors
-        expect(console.warn).toHaveBeenCalledWith('Error: TEST');
+        expect(logStructured).toHaveBeenCalledWith(
+          'grafana/frontend.features.plugins.extensions.utils',
+          'warn',
+          'Error: TEST'
+        );
       }).not.toThrow();
     });
   });

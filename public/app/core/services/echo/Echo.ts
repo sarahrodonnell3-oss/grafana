@@ -1,4 +1,5 @@
 import {
+  logStructured as structuredLog,
   type EchoBackend,
   type EchoMeta,
   type EchoEvent,
@@ -76,7 +77,12 @@ export class Echo implements EchoSrv {
             try {
               cb(payload.properties ?? {});
             } catch (err) {
-              console.error(`[Echo] onInteraction subscriber error for "${payload.interactionName}":`, err);
+              structuredLog(
+                'grafana/frontend.core.services.echo.Echo',
+                'error',
+                `[Echo] onInteraction subscriber error for "${payload.interactionName}":`,
+                err
+              );
             }
           }
         }

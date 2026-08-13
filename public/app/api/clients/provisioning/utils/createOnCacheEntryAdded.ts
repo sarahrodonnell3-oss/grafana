@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { type ThunkDispatch, type UnknownAction } from '@reduxjs/toolkit';
 import { type Subscription } from 'rxjs';
 
@@ -108,7 +110,12 @@ export function createOnCacheEntryAdded<Spec, Status>(
           },
         });
     } catch (error) {
-      console.error('Error in onCacheEntryAdded:', error);
+      structuredLog(
+        'grafana/frontend.api.clients.provisioning.utils.createOnCacheEntryAdded',
+        'error',
+        'Error in onCacheEntryAdded:',
+        error
+      );
       return;
     }
 

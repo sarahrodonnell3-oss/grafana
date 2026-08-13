@@ -30,7 +30,7 @@ import {
   type StreamingDataFrame,
   DataTopic,
 } from '@grafana/data';
-import { toDataQueryError } from '@grafana/runtime';
+import { logStructured as structuredLog, toDataQueryError } from '@grafana/runtime';
 import { ExpressionDatasourceRef } from '@grafana/runtime/internal';
 import { isStreamingDataFrame } from 'app/features/live/data/utils';
 import { getDatasourceSrv } from 'app/features/plugins/datasource_srv';
@@ -257,7 +257,12 @@ export class PanelQueryRunner {
         return { ...data, series, annotations };
       }),
       catchError((err) => {
-        console.warn('Error running transformation:', err);
+        structuredLog(
+          'grafana/frontend.features.query.state.PanelQueryRunner',
+          'warn',
+          'Error running transformation:',
+          err
+        );
         return of({
           ...data,
           state: LoadingState.Error,

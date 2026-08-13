@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { css } from '@emotion/css';
 import { useEffect, useState } from 'react';
 import { type UseFormReturn, Controller } from 'react-hook-form';
@@ -78,7 +80,7 @@ export const FieldRenderer = ({
   }, [isDisabled, disabledWhen?.disabledValue, name, setValue]);
 
   if (!field) {
-    console.log('missing field:', name);
+    structuredLog('grafana/frontend.features.auth-config.FieldRenderer', 'info', 'missing field:', name);
     return null;
   }
 
@@ -190,7 +192,11 @@ export const FieldRenderer = ({
         </Field>
       );
     default:
-      console.error(`Unknown field type: ${fieldData.type}`);
+      structuredLog(
+        'grafana/frontend.features.auth-config.FieldRenderer',
+        'error',
+        `Unknown field type: ${fieldData.type}`
+      );
       return null;
   }
 };

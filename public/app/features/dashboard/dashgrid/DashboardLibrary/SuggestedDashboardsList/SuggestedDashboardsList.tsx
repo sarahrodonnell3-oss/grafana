@@ -5,7 +5,7 @@ import { useAsyncFn, useDebounce } from 'react-use';
 
 import { type GrafanaTheme2 } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { config, isFetchError, locationService } from '@grafana/runtime';
+import { logStructured as structuredLog, config, isFetchError, locationService } from '@grafana/runtime';
 import { getDataSourceInstanceSettings } from '@grafana/runtime/unstable';
 import { FilterInput, Grid, Pagination, Stack, useStyles2 } from '@grafana/ui';
 import { type PluginDashboard } from 'app/types/plugins';
@@ -253,7 +253,12 @@ export const SuggestedDashboardsList = ({
           });
         }
       } catch (err) {
-        console.error('Error loading community dashboards', err);
+        structuredLog(
+          'grafana/frontend.features.dashboard.dashgrid.DashboardLibrary.SuggestedDashboardsList.SuggestedDashboardsList',
+          'error',
+          'Error loading community dashboards',
+          err
+        );
       } finally {
         setIsCommunityLoading(false);
       }
@@ -424,7 +429,12 @@ export const SuggestedDashboardsList = ({
         sourceEntryPoint,
       });
     } catch (err) {
-      console.error('Error checking dashboard compatibility:', err);
+      structuredLog(
+        'grafana/frontend.features.dashboard.dashgrid.DashboardLibrary.SuggestedDashboardsList.SuggestedDashboardsList',
+        'error',
+        'Error checking dashboard compatibility:',
+        err
+      );
 
       const errorMessage = isFetchError(err) ? err.data?.message : 'Failed to check compatibility';
       const errorCode = isFetchError(err) ? err.data?.code : undefined;

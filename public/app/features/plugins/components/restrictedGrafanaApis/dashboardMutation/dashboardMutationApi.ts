@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 /**
  * Dashboard Mutation API -- Restricted API wrapper with built-in store.
  *
@@ -26,7 +28,12 @@ provideMutationClientFactory((sceneObject) => {
   try {
     _client = new DashboardMutationClient(scene);
   } catch (error) {
-    console.error('Failed to register Dashboard Mutation API:', error);
+    structuredLog(
+      'grafana/frontend.features.plugins.components.restrictedGrafanaApis.dashboardMutation.dashboardMutationApi',
+      'error',
+      'Failed to register Dashboard Mutation API:',
+      error
+    );
   }
 
   return () => {

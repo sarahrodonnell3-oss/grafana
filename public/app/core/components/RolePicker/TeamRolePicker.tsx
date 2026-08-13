@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useMemo } from 'react';
 
@@ -79,7 +81,12 @@ export const TeamRolePicker = ({
           },
         }).unwrap();
       } catch (error) {
-        console.error('Error updating team roles', error);
+        structuredLog(
+          'grafana/frontend.core.components.RolePicker.TeamRolePicker',
+          'error',
+          'Error updating team roles',
+          error
+        );
       }
     } else if (onApplyRoles) {
       onApplyRoles(newRoles);

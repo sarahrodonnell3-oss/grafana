@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk, type Update } from '@reduxjs/toolkit';
 import { from, forkJoin, timeout, lastValueFrom, catchError, of } from 'rxjs';
 
 import { type PanelPlugin, type PluginError } from '@grafana/data';
-import { config, getBackendSrv, isFetchError } from '@grafana/runtime';
+import { logStructured as structuredLog, config, getBackendSrv, isFetchError } from '@grafana/runtime';
 import { refetchPanelPluginMetas } from '@grafana/runtime/internal';
 import { importPanelPlugin } from 'app/features/plugins/importPanelPlugin';
 import { type StoreState, type ThunkResult } from 'app/types/store';
@@ -46,7 +46,7 @@ export const fetchAll = createAsyncThunk(`${STATE_PREFIX}/fetchAll`, async (_, t
     const remote$ = from(getRemotePlugins()).pipe(
       catchError((err) => {
         thunkApi.dispatch({ type: `${STATE_PREFIX}/fetchRemote/rejected` });
-        console.error(err);
+        structuredLog('grafana/frontend.features.plugins.admin.state.actions', 'error', err);
         return of([]);
       })
     );
@@ -121,7 +121,7 @@ export const fetchAll = createAsyncThunk(`${STATE_PREFIX}/fetchAll`, async (_, t
           }
         },
         (error) => {
-          console.log(error);
+          structuredLog('grafana/frontend.features.plugins.admin.state.actions', 'info', error);
           thunkApi.dispatch({ type: `${STATE_PREFIX}/fetchLocal/rejected` });
           thunkApi.dispatch({ type: `${STATE_PREFIX}/fetchRemote/rejected` });
           return thunkApi.rejectWithValue('Unknown error.');
@@ -219,7 +219,7 @@ export const install = createAsyncThunk<
 
     return { id, changes };
   } catch (e) {
-    console.error(e);
+    structuredLog('grafana/frontend.features.plugins.admin.state.actions', 'error', e);
     if (isFetchError(e)) {
       // add id to identify errors in multiple requests
       e.data.id = id;
@@ -246,7 +246,7 @@ export const uninstall = createAsyncThunk<Update<CatalogPlugin, string>, string>
         changes: { isInstalled: false, installedVersion: undefined, isFullyInstalled: false },
       };
     } catch (e) {
-      console.error(e);
+      structuredLog('grafana/frontend.features.plugins.admin.state.actions', 'error', e);
 
       return thunkApi.rejectWithValue('Unknown error.');
     }

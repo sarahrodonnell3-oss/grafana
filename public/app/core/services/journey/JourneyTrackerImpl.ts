@@ -1,6 +1,7 @@
 import { type Span, type Tracer, context, trace, SpanStatusCode, type Link } from '@opentelemetry/api';
 
 import {
+  logStructured as structuredLog,
   type JourneyHandle,
   type JourneyOutcome,
   type JourneyTracker,
@@ -422,7 +423,12 @@ class JourneyHandleImpl implements JourneyHandle {
       try {
         cb();
       } catch (err) {
-        console.error(`[JourneyTracker] onEnd callback error for "${this.journeyType}":`, err);
+        structuredLog(
+          'grafana/frontend.core.services.journey.JourneyTrackerImpl',
+          'error',
+          `[JourneyTracker] onEnd callback error for "${this.journeyType}":`,
+          err
+        );
       }
     }
   }

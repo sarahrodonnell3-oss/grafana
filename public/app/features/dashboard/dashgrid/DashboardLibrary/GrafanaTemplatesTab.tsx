@@ -3,7 +3,7 @@ import { useAsync } from 'react-use';
 
 import { type DataSourceInstanceListItem } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { getBackendSrv, locationService } from '@grafana/runtime';
+import { logStructured as structuredLog, getBackendSrv, locationService } from '@grafana/runtime';
 import {
   useFlagAnalyticsFramework,
   useFlagAssistantFrontendToolsDashboardTemplates,
@@ -60,7 +60,12 @@ export const GrafanaTemplatesTab = ({
 
       return response.items;
     } catch (error) {
-      console.error('Error loading template dashboards ', error);
+      structuredLog(
+        'grafana/frontend.features.dashboard.dashgrid.DashboardLibrary.GrafanaTemplatesTab',
+        'error',
+        'Error loading template dashboards ',
+        error
+      );
       return [];
     }
   }, []);

@@ -1,5 +1,5 @@
 import { type ScopeNode, store as storeImpl } from '@grafana/data';
-import { config, locationService } from '@grafana/runtime';
+import { logStructured as structuredLog, config, locationService } from '@grafana/runtime';
 import { type performanceUtils } from '@grafana/scenes';
 import { getDashboardSceneProfiler } from 'app/features/dashboard/services/DashboardProfiler';
 import { isRenderTarget } from 'app/features/dashboard/services/isRenderTarget';
@@ -99,7 +99,12 @@ export class ScopesSelectorService extends ScopesServiceBase<ScopesSelectorServi
       }
       return node;
     } catch (error) {
-      console.error('Failed to load node', error);
+      structuredLog(
+        'grafana/frontend.features.scopes.selector.ScopesSelectorService',
+        'error',
+        'Failed to load node',
+        error
+      );
       return undefined;
     }
   };
@@ -107,7 +112,12 @@ export class ScopesSelectorService extends ScopesServiceBase<ScopesSelectorServi
   private getNodePath = async (scopeNodeId: string, visited: Set<string> = new Set()): Promise<ScopeNode[]> => {
     // Protect against circular references
     if (visited.has(scopeNodeId)) {
-      console.error('Circular reference detected in node path', scopeNodeId);
+      structuredLog(
+        'grafana/frontend.features.scopes.selector.ScopesSelectorService',
+        'error',
+        'Circular reference detected in node path',
+        scopeNodeId
+      );
       return [];
     }
 
@@ -440,7 +450,12 @@ export class ScopesSelectorService extends ScopesServiceBase<ScopesSelectorServi
 
     // Validate API response is an array
     if (!Array.isArray(fetchedScopes)) {
-      console.error('Expected fetchedScopes to be an array, got:', typeof fetchedScopes);
+      structuredLog(
+        'grafana/frontend.features.scopes.selector.ScopesSelectorService',
+        'error',
+        'Expected fetchedScopes to be an array, got:',
+        typeof fetchedScopes
+      );
       this.updateState({ scopes: newScopesState, loading: false });
       return;
     }
@@ -603,7 +618,12 @@ export class ScopesSelectorService extends ScopesServiceBase<ScopesSelectorServi
           newTree = expandNodes(newTree, parentPath);
         }
       } catch (error) {
-        console.error('Failed to expand to selected scope', error);
+        structuredLog(
+          'grafana/frontend.features.scopes.selector.ScopesSelectorService',
+          'error',
+          'Failed to expand to selected scope',
+          error
+        );
       }
     }
 

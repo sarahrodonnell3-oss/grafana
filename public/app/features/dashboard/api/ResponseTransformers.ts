@@ -1,5 +1,5 @@
 import { type MetricFindValue, type TypedVariableModel, type AnnotationQuery } from '@grafana/data';
-import { config } from '@grafana/runtime';
+import { logStructured as structuredLog, config } from '@grafana/runtime';
 import {
   type DataQuery,
   type DataSourceRef,
@@ -728,7 +728,9 @@ function getVariables(vars: TypedVariableModel[]): DashboardV2Spec['variables'] 
         let query = v.query || {};
 
         if (typeof query === 'string') {
-          console.warn(
+          structuredLog(
+            'grafana/frontend.features.dashboard.api.ResponseTransformers',
+            'warn',
             'Query variable query is a string which is deprecated in the schema v2. It should extend DataQuery'
           );
           query = {
@@ -941,7 +943,11 @@ function getVariables(vars: TypedVariableModel[]): DashboardV2Spec['variables'] 
         break;
       default:
         // do not throw error, just log it
-        console.error(`Variable transformation not implemented: ${v.type}`);
+        structuredLog(
+          'grafana/frontend.features.dashboard.api.ResponseTransformers',
+          'error',
+          `Variable transformation not implemented: ${v.type}`
+        );
     }
   }
   return variables;
@@ -1154,7 +1160,11 @@ function getVariablesV1(vars: DashboardV2Spec['variables']): VariableModel[] {
         break;
       default:
         // do not throw error, just log it
-        console.error(`Variable transformation not implemented: ${v}`);
+        structuredLog(
+          'grafana/frontend.features.dashboard.api.ResponseTransformers',
+          'error',
+          `Variable transformation not implemented: ${v}`
+        );
     }
   }
   return variables;
@@ -1410,7 +1420,11 @@ function transformSpecialValueMatchToV1(match: SpecialValueMatch): SpecialValueM
     case 'empty':
       return SpecialValueMatchV1.Empty;
     default:
-      console.warn(`Skipping special value mapping with unknown match type: "${match}"`);
+      structuredLog(
+        'grafana/frontend.features.dashboard.api.ResponseTransformers',
+        'warn',
+        `Skipping special value mapping with unknown match type: "${match}"`
+      );
       return undefined;
   }
 }

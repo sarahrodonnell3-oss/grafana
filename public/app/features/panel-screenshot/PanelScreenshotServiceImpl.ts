@@ -1,5 +1,10 @@
 import { type PanelPlugin, type PanelScreenshotContext } from '@grafana/data';
-import { type PanelScreenshotOptions, type PanelScreenshotService, reportInteraction } from '@grafana/runtime';
+import {
+  logStructured as structuredLog,
+  type PanelScreenshotOptions,
+  type PanelScreenshotService,
+  reportInteraction,
+} from '@grafana/runtime';
 import { isSceneObject } from '@grafana/scenes';
 
 import { syncGetPanelPlugin } from '../plugins/importPanelPlugin';
@@ -115,7 +120,9 @@ function warnOnMimeMismatch(blob: Blob, format: Format, panelType: string): void
   if (!actual || actual === expected) {
     return;
   }
-  console.warn(
+  structuredLog(
+    'grafana/frontend.features.panel-screenshot.PanelScreenshotServiceImpl',
+    'warn',
     `[panel-screenshot] plugin "${panelType}" returned ${actual} but ${expected} was requested. ` +
       'Update onScreenshot to honour the requested format, or return null to defer to the default renderer.'
   );

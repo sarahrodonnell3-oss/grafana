@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 // Copyright (c) 2017 The Jaeger Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -110,7 +112,12 @@ export function processLinkPattern(pattern: any): ProcessedLinkPattern | null {
     };
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`Ignoring invalid link pattern: ${error}`, pattern);
+    structuredLog(
+      'grafana/frontend.features.explore.TraceView.components.model.link-patterns',
+      'error',
+      `Ignoring invalid link pattern: ${error}`,
+      pattern
+    );
     return null;
   }
 }

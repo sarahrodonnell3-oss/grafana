@@ -1,7 +1,7 @@
 import { compact, each, findIndex, flatten, get, join, keyBy, last, map, reduce, without } from 'lodash';
 
 import { type ScopedVars } from '@grafana/data';
-import { type TemplateSrv } from '@grafana/runtime';
+import { logStructured as structuredLog, type TemplateSrv } from '@grafana/runtime';
 
 import { type GraphiteDatasource } from './datasource';
 import { type FuncInstance } from './gfunc';
@@ -94,7 +94,12 @@ export default class GraphiteQuery {
       }
     } catch (err) {
       if (err instanceof Error) {
-        console.error('error parsing target:', err.message);
+        structuredLog(
+          'grafana/frontend.plugins.datasource.graphite.graphite_query',
+          'error',
+          'error parsing target:',
+          err.message
+        );
         this.error = err.message;
       }
       this.target.textEditor = true;

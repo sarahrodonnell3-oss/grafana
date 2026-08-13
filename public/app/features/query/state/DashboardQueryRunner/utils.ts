@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 import { type Observable, of } from 'rxjs';
 
 import { type AnnotationEvent, type AnnotationQuery, type DataSourceApi } from '@grafana/data';
-import { config, toDataQueryError } from '@grafana/runtime';
+import { logStructured as structuredLog, config, toDataQueryError } from '@grafana/runtime';
 import { dispatch } from 'app/store/store';
 
 import { createErrorNotification } from '../../../../core/copy/appNotification';
@@ -38,7 +38,12 @@ export function handleDashboardQueryRunnerWorkerError(err: any): Observable<Dash
 
 function notifyWithError(title: string, err: any) {
   const error = toDataQueryError(err);
-  console.error('handleAnnotationQueryRunnerError', error);
+  structuredLog(
+    'grafana/frontend.features.query.state.DashboardQueryRunner.utils',
+    'error',
+    'handleAnnotationQueryRunnerError',
+    error
+  );
   const notification = createErrorNotification(title, error.message);
   dispatch(notifyApp(notification));
 }

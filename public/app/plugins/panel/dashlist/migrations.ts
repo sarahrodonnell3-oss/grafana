@@ -1,5 +1,5 @@
 import { type PanelModel } from '@grafana/data';
-import { getBackendSrv } from '@grafana/runtime';
+import { logStructured as structuredLog, getBackendSrv } from '@grafana/runtime';
 import { type FolderDTO } from 'app/types/folders';
 
 import { type Options } from './panelcfg.gen';
@@ -67,7 +67,12 @@ export async function dashlistMigrationHandler(panel: PanelModel<Options> & Angu
       newOptions.folderUID = folderUID;
       delete newOptions.folderId;
     } catch (err) {
-      console.warn('Dashlist: Error migrating folder ID to UID', err);
+      structuredLog(
+        'grafana/frontend.plugins.panel.dashlist.migrations',
+        'warn',
+        'Dashlist: Error migrating folder ID to UID',
+        err
+      );
     }
   }
 

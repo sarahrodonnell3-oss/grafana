@@ -2,7 +2,7 @@ import memoizeOne from 'memoize-one';
 
 import { type AbsoluteTimeRange, type LogRowModel, type UrlQueryMap } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { getBackendSrv, config, locationService } from '@grafana/runtime';
+import { logStructured as structuredLog, getBackendSrv, config, locationService } from '@grafana/runtime';
 import { FlagKeys, getFeatureFlagClient } from '@grafana/runtime/internal';
 import { sceneGraph, type SceneTimeRangeLike, type VizPanel } from '@grafana/scenes';
 import { shortURLAPIv1beta1 } from 'app/api/clients/shorturl/v1beta1';
@@ -74,7 +74,7 @@ export const createShortLink = memoizeOne(async (path: string): Promise<string> 
       return await createShortLinkLegacy(path);
     }
   } catch (err) {
-    console.error('Error when creating shortened link: ', err);
+    structuredLog('grafana/frontend.core.utils.shortLinks', 'error', 'Error when creating shortened link: ', err);
     dispatch(notifyApp(createErrorNotification('Error generating shortened link')));
     createShortLink.clear();
     throw err; // Re-throw so callers know it failed
@@ -105,7 +105,7 @@ export const createAndCopyShortLink = async (path: string) => {
     }
   } catch (error) {
     // createShortLink already handles error notifications, just log
-    console.error('Error in createAndCopyShortLink:', error);
+    structuredLog('grafana/frontend.core.utils.shortLinks', 'error', 'Error in createAndCopyShortLink:', error);
   }
 };
 

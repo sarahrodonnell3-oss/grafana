@@ -11,7 +11,7 @@ import {
   type PluginExtensionDataSourceConfigContext,
   DataSourceUpdatedSuccessfully,
 } from '@grafana/data';
-import { usePluginComponents, type UsePluginComponentsResult } from '@grafana/runtime';
+import { logStructured as structuredLog, usePluginComponents, type UsePluginComponentsResult } from '@grafana/runtime';
 import { useDataSourceInstanceSettings } from '@grafana/runtime/unstable';
 import { appEvents } from 'app/core/app_events';
 import PageLoader from 'app/core/components/PageLoader/PageLoader';
@@ -196,7 +196,12 @@ export function EditDataSourceView({
         return;
       }
       retryAdvisorCheck(dataSource.uid).catch((error) => {
-        console.warn('Error retrying datasource advisor check', error);
+        structuredLog(
+          'grafana/frontend.features.datasources.components.EditDataSource',
+          'warn',
+          'Error retrying datasource advisor check',
+          error
+        );
       });
       onTest();
     },

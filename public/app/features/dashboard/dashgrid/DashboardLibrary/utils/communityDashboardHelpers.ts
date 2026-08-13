@@ -1,6 +1,6 @@
 import { type PanelModel } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { locationService } from '@grafana/runtime';
+import { logStructured as structuredLog, locationService } from '@grafana/runtime';
 import { createErrorNotification } from 'app/core/copy/appNotification';
 import { notifyApp } from 'app/core/reducers/appNotification';
 import { interpolateV1Dashboard } from 'app/features/manage-dashboards/import/utils/inputs';
@@ -165,7 +165,12 @@ function canPanelContainJS(panel: PanelModel): boolean {
   try {
     panelJson = JSON.stringify(panelWithoutSanitizedFields);
   } catch (e) {
-    console.warn('Failed to stringify panel', e);
+    structuredLog(
+      'grafana/frontend.features.dashboard.dashgrid.DashboardLibrary.utils.communityDashboardHelpers',
+      'warn',
+      'Failed to stringify panel',
+      e
+    );
     return true;
   }
 
@@ -196,7 +201,11 @@ function canPanelContainJS(panel: PanelModel): boolean {
 
   const hasSuspiciousValue = valuePatterns.some((pattern) => {
     if (pattern.test(panelJson)) {
-      console.warn('Panel contains JavaScript code in value');
+      structuredLog(
+        'grafana/frontend.features.dashboard.dashgrid.DashboardLibrary.utils.communityDashboardHelpers',
+        'warn',
+        'Panel contains JavaScript code in value'
+      );
       return true;
     }
     return false;
@@ -204,7 +213,11 @@ function canPanelContainJS(panel: PanelModel): boolean {
 
   const hasSuspiciousKey = keyPatterns.some((pattern) => {
     if (pattern.test(panelJson)) {
-      console.warn('Panel contains JavaScript code in key');
+      structuredLog(
+        'grafana/frontend.features.dashboard.dashgrid.DashboardLibrary.utils.communityDashboardHelpers',
+        'warn',
+        'Panel contains JavaScript code in key'
+      );
       return true;
     }
     return false;
@@ -320,7 +333,12 @@ export async function onUseCommunityDashboard({
       }
     }
   } catch (err) {
-    console.error('Error loading community dashboard:', err);
+    structuredLog(
+      'grafana/frontend.features.dashboard.dashgrid.DashboardLibrary.utils.communityDashboardHelpers',
+      'error',
+      'Error loading community dashboard:',
+      err
+    );
     dispatch(
       notifyApp(
         createErrorNotification(t('dashboard-library.community-error-title', 'Error loading community dashboard'))

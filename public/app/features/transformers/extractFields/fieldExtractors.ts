@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { escapeStringForRegex, Registry, type RegistryItem, stringStartsAsRegEx, stringToJsRegex } from '@grafana/data';
 
 import { type ExtractFieldsOptions, FieldExtractorID } from './types';
@@ -29,7 +31,7 @@ const extRegExp: FieldExtractor = {
         regex = stringToJsRegex(options.regExp!);
       } catch (error) {
         if (error instanceof Error) {
-          console.warn(error.message);
+          structuredLog('grafana/frontend.features.transformers.extractFields.fieldExtractors', 'warn', error.message);
         }
       }
     }

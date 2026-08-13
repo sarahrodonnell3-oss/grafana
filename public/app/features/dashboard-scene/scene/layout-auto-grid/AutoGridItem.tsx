@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { isEqual } from 'lodash';
 import React from 'react';
 
@@ -91,7 +93,11 @@ export class AutoGridItem extends SceneObjectBase<AutoGridItemState> implements 
       });
 
     if (!(variable instanceof MultiValueVariable)) {
-      console.error('DashboardGridItem: Variable is not a MultiValueVariable');
+      structuredLog(
+        'grafana/frontend.features.dashboard-scene.scene.layout-auto-grid.AutoGridItem',
+        'error',
+        'DashboardGridItem: Variable is not a MultiValueVariable'
+      );
       return;
     }
 

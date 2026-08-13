@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { EditorField, EditorRow } from '@grafana/plugin-ui';
-import { config } from '@grafana/runtime';
+import { logStructured as structuredLog, config } from '@grafana/runtime';
 import { Box, Stack } from '@grafana/ui';
 
 import { type LogGroup, type LogGroupClass, LogsQueryLanguage, type LogsQueryScope } from '../../../dataquery.gen';
@@ -92,7 +92,11 @@ export const LogGroupsField = ({
           onChange([...logGroups, ...variables.map((v) => ({ name: v, arn: v }))]);
         })
         .catch((err) => {
-          console.error(err);
+          structuredLog(
+            'grafana/frontend.plugins.datasource.cloudwatch.components.shared.LogGroups.LogGroupsField',
+            'error',
+            err
+          );
         });
     }
   }, [datasource, legacyLogGroupNames, logGroups, onChange, region, loadingLogGroupsStarted]);

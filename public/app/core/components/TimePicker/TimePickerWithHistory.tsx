@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { uniqBy } from 'lodash';
 
 import {
@@ -136,7 +138,11 @@ function convertToISOString(value: DateTime | string): string {
   }
 
   if (!value?.toISOString) {
-    throw console.error('Invalid DateTime object passed to convertToISOString');
+    throw structuredLog(
+      'grafana/frontend.core.components.TimePicker.TimePickerWithHistory',
+      'error',
+      'Invalid DateTime object passed to convertToISOString'
+    );
   }
 
   return value.toISOString();

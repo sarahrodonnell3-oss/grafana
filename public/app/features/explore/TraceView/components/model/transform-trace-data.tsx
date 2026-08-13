@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 // Copyright (c) 2017 Uber Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -188,10 +190,20 @@ export default function transformTraceData(data: TraceResponse | undefined): Tra
     const idCount = spanIdCounts.get(spanID);
     if (idCount != null) {
       // eslint-disable-next-line no-console
-      console.warn(`Dupe spanID, ${idCount + 1} x ${spanID}`, span, spanMap.get(spanID));
+      structuredLog(
+        'grafana/frontend.features.explore.TraceView.components.model.transform-trace-data',
+        'warn',
+        `Dupe spanID, ${idCount + 1} x ${spanID}`,
+        span,
+        spanMap.get(spanID)
+      );
       if (_isEqual(span, spanMap.get(spanID))) {
         // eslint-disable-next-line no-console
-        console.warn('\t two spans with same ID have `isEqual(...) === true`');
+        structuredLog(
+          'grafana/frontend.features.explore.TraceView.components.model.transform-trace-data',
+          'warn',
+          '\t two spans with same ID have `isEqual(...) === true`'
+        );
       }
       spanIdCounts.set(spanID, idCount + 1);
       spanID = `${spanID}_${idCount}`;

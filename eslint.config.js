@@ -255,6 +255,20 @@ module.exports = [
     },
   },
   {
+    name: 'grafana/no-unstructured-console-logging',
+    files: ['public/app/**/*.{ts,tsx,js,jsx}'],
+    ignores: [
+      ...commonTestIgnores,
+      '**/*.{story,mock}.{ts,tsx,js,jsx}',
+      'public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts',
+      'public/app/core/utils/debugLog.ts',
+      'public/app/features/dashboard/services/performanceUtils.ts',
+    ],
+    rules: {
+      'no-console': 'error',
+    },
+  },
+  {
     name: 'grafana/uplot-overrides',
     files: ['packages/grafana-ui/src/components/uPlot/**/*.{ts,tsx}'],
     rules: {

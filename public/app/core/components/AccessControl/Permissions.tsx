@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { css } from '@emotion/css';
 import { sortBy } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
@@ -239,7 +241,12 @@ const getDescription = async (resource: string, queryParams?: Record<string, str
   try {
     return await getBackendSrv().get(`/api/access-control/${resource}/description`, queryParams);
   } catch (e) {
-    console.error('failed to load resource description: ', e);
+    structuredLog(
+      'grafana/frontend.core.components.AccessControl.Permissions',
+      'error',
+      'failed to load resource description: ',
+      e
+    );
     return INITIAL_DESCRIPTION;
   }
 };

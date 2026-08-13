@@ -1,4 +1,5 @@
 import { PathValidationError } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 
 import {
   isContentTypeJson,
@@ -13,6 +14,10 @@ import {
 jest.mock('@grafana/data', () => ({
   ...jest.requireActual('@grafana/data'),
   deprecationWarning: () => {},
+}));
+jest.mock('@grafana/runtime', () => ({
+  ...jest.requireActual('@grafana/runtime'),
+  logStructured: jest.fn(),
 }));
 
 describe('parseUrlFromOptions', () => {
@@ -192,7 +197,11 @@ describe('parseResponseBody', () => {
 
     expect(body).toEqual({});
     expect(json).not.toHaveBeenCalled();
-    expect(console.warn).toHaveBeenCalledTimes(1);
+    expect(logStructured).toHaveBeenCalledWith(
+      'grafana/frontend.core.utils.fetch',
+      'warn',
+      expect.stringContaining('returned an invalid JSON')
+    );
   });
 
   it('parses text', async () => {

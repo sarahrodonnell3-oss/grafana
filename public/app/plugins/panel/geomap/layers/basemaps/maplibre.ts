@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import LayerGroup from 'ol/layer/Group';
 import { apply } from 'ol-mapbox-style';
 
@@ -61,7 +63,11 @@ const maplibreLayer: MapLayerRegistryItem<Partial<MaplibreConfig>> = {
         try {
           const res = await fetch(cfg.url);
           if (!res.ok) {
-            console.warn(`Failed to load MapLibre style from ${cfg.url}: ${res.status} ${res.statusText}`);
+            structuredLog(
+              'grafana/frontend.plugins.panel.geomap.layers.basemaps.maplibre',
+              'warn',
+              `Failed to load MapLibre style from ${cfg.url}: ${res.status} ${res.statusText}`
+            );
             // Try fallback approach
             await tryFallbackApply();
             return;
@@ -82,7 +88,12 @@ const maplibreLayer: MapLayerRegistryItem<Partial<MaplibreConfig>> = {
           await apply(layer, style, { styleUrl: cfg.url, accessToken: cfg.accessToken });
           applyNoRepeat();
         } catch (error) {
-          console.warn('Failed to parse or apply MapLibre style JSON:', error);
+          structuredLog(
+            'grafana/frontend.plugins.panel.geomap.layers.basemaps.maplibre',
+            'warn',
+            'Failed to parse or apply MapLibre style JSON:',
+            error
+          );
           // Try fallback approach
           await tryFallbackApply();
         }
@@ -93,7 +104,12 @@ const maplibreLayer: MapLayerRegistryItem<Partial<MaplibreConfig>> = {
           await apply(layer, cfg.url, { accessToken: cfg.accessToken });
           applyNoRepeat();
         } catch (fallbackError) {
-          console.warn('Failed to load MapLibre style from both JSON and direct URL approaches:', fallbackError);
+          structuredLog(
+            'grafana/frontend.plugins.panel.geomap.layers.basemaps.maplibre',
+            'warn',
+            'Failed to load MapLibre style from both JSON and direct URL approaches:',
+            fallbackError
+          );
         }
       };
 

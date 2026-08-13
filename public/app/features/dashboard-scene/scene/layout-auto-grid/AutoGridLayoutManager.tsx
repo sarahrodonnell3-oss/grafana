@@ -1,6 +1,6 @@
 import { AppEvents } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { config, getAppEvents } from '@grafana/runtime';
+import { logStructured as structuredLog, config, getAppEvents } from '@grafana/runtime';
 import {
   type SceneComponentProps,
   type SceneObject,
@@ -253,7 +253,11 @@ export class AutoGridLayoutManager
   public duplicatePanel(panel: VizPanel) {
     const gridItem = panel.parent;
     if (!(gridItem instanceof AutoGridItem)) {
-      console.error('Trying to duplicate a panel that is not inside a DashboardGridItem');
+      structuredLog(
+        'grafana/frontend.features.dashboard-scene.scene.layout-auto-grid.AutoGridLayoutManager',
+        'error',
+        'Trying to duplicate a panel that is not inside a DashboardGridItem'
+      );
       return;
     }
 

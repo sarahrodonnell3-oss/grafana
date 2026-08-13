@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { type PanelData, type TimeRange } from '@grafana/data';
 import { Trans } from '@grafana/i18n';
 import { EditorFieldGroup, EditorRow, EditorRows } from '@grafana/plugin-ui';
-import { config, getTemplateSrv } from '@grafana/runtime';
+import { logStructured as structuredLog, config, getTemplateSrv } from '@grafana/runtime';
 import { Alert, LinkButton, Space, Text, TextLink } from '@grafana/ui';
 
 import { LogsEditorMode, ResultFormat } from '../../dataquery.gen';
@@ -193,11 +193,21 @@ const LogsQueryEditor = ({
           setDataIngestedWarning(null);
         }
       } catch (err) {
-        console.error(err);
+        structuredLog(
+          'grafana/frontend.plugins.datasource.azuremonitor.components.LogsQueryEditor.LogsQueryEditor',
+          'error',
+          err
+        );
       }
     };
 
-    getBasicLogsUsage(query).catch((err) => console.error(err));
+    getBasicLogsUsage(query).catch((err) =>
+      structuredLog(
+        'grafana/frontend.plugins.datasource.azuremonitor.components.LogsQueryEditor.LogsQueryEditor',
+        'error',
+        err
+      )
+    );
   }, [datasource.azureLogAnalyticsDatasource, query, showBasicLogsToggle, from, to]);
   let portalLinkButton = null;
 

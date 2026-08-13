@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 // Copyright (c) 2017 Uber Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -106,7 +108,11 @@ export default class ScrollManager {
     const position = xrs.getRowPosition(rowIndex);
     if (!position) {
       // eslint-disable-next-line no-console
-      console.warn('Invalid row index');
+      structuredLog(
+        'grafana/frontend.features.explore.TraceView.components.ScrollManager',
+        'warn',
+        'Invalid row index'
+      );
       return;
     }
     let { y } = position;

@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { type EngineSchema, getKustoWorker } from '@kusto/monaco-kusto';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -29,11 +31,21 @@ const QueryField = ({ query, onQueryChange, schema }: AzureQueryEditorFieldProps
           await kustoMode.setSchema(schema);
         }
       } catch (err) {
-        console.error(err);
+        structuredLog(
+          'grafana/frontend.plugins.datasource.azuremonitor.components.LogsQueryEditor.QueryField',
+          'error',
+          err
+        );
       }
     };
 
-    setupEditor(monaco, schema).catch((err) => console.error(err));
+    setupEditor(monaco, schema).catch((err) =>
+      structuredLog(
+        'grafana/frontend.plugins.datasource.azuremonitor.components.LogsQueryEditor.QueryField',
+        'error',
+        err
+      )
+    );
   }, [schema, monaco]);
 
   const handleEditorMount = useCallback((editor: MonacoEditor, monaco: Monaco) => {

@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { type FormEvent } from 'react';
 import { lastValueFrom } from 'rxjs';
 
@@ -24,7 +26,11 @@ export function ConstantVariableEditor({ variable }: ConstantVariableEditorProps
 
 export function getConstantVariableOptions(variable: SceneVariable): OptionsPaneItemDescriptor[] {
   if (!(variable instanceof ConstantVariable)) {
-    console.warn('getConstantVariableOptions: variable is not a ConstantVariable');
+    structuredLog(
+      'grafana/frontend.features.dashboard-scene.settings.variables.editors.ConstantVariableEditor',
+      'warn',
+      'getConstantVariableOptions: variable is not a ConstantVariable'
+    );
     return [];
   }
 

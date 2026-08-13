@@ -27,6 +27,7 @@ import {
 
 import { AppEvents, DataQueryErrorType, deprecationWarning, generateUUID } from '@grafana/data';
 import {
+  logStructured as structuredLog,
   type BackendSrv as BackendService,
   type BackendSrvRequest,
   config,
@@ -115,7 +116,7 @@ export class BackendSrv implements BackendService {
       const result = await fp.get();
       this.deviceID = result.visitorId;
     } catch (error) {
-      console.error(error);
+      structuredLog('grafana/frontend.core.services.backend_srv', 'error', error);
     }
   }
 
@@ -240,7 +241,7 @@ export class BackendSrv implements BackendService {
             observer.complete();
           }) // runs in background
           .catch((e) => {
-            console.log(requestId, 'catch', e);
+            structuredLog('grafana/frontend.core.services.backend_srv', 'info', requestId, 'catch', e);
             observer.error(e);
           }); // from abort
       },

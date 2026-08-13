@@ -22,6 +22,7 @@ import {
   config,
   type FetchResponse,
   getTemplateSrv,
+  logStructured,
   type TemplateSrv,
   type VariableInterpolation,
 } from '@grafana/runtime';
@@ -40,6 +41,7 @@ jest.mock('@grafana/runtime', () => ({
   getBackendSrv: () => ({
     fetch: fetchMock,
   }),
+  logStructured: jest.fn(),
   getTemplateSrv: () => {
     return {
       replace: (s: string) => s,
@@ -483,7 +485,11 @@ describe('graphiteDatasource', () => {
         results = data;
       });
       expect(results).toEqual([]);
-      expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/Unable to get annotations/));
+      expect(logStructured).toHaveBeenCalledWith(
+        'grafana/frontend.plugins.datasource.graphite.datasource',
+        'error',
+        expect.stringMatching(/Unable to get annotations/)
+      );
     });
   });
 
@@ -597,7 +603,11 @@ describe('graphiteDatasource', () => {
         results = data;
       });
       expect(results).toEqual([]);
-      expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/Unable to get annotations/));
+      expect(logStructured).toHaveBeenCalledWith(
+        'grafana/frontend.plugins.datasource.graphite.datasource',
+        'error',
+        expect.stringMatching(/Unable to get annotations/)
+      );
     });
   });
 

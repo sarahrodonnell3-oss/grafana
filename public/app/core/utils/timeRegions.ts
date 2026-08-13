@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { Cron } from 'croner';
 
 import { type AbsoluteTimeRange, type TimeRange, durationToMilliseconds, parseDuration } from '@grafana/data';
@@ -160,7 +162,7 @@ export function calculateTimesWithin(cfg: TimeRegionConfig, tRange: TimeRange): 
     }
   } catch (e) {
     // invalid expression
-    console.error(e);
+    structuredLog('grafana/frontend.core.utils.timeRegions', 'error', e);
   }
 
   return ranges;

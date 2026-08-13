@@ -1,5 +1,5 @@
 import { BASE_URL } from '@grafana/api-clients/rtkq/dashboard/v2beta1';
-import { getBackendSrv } from '@grafana/runtime';
+import { logStructured as structuredLog, getBackendSrv } from '@grafana/runtime';
 import { FlagKeys, getFeatureFlagClient } from '@grafana/runtime/internal';
 import { type ControlSourceRef, type VariableKind } from '@grafana/schema/apis/dashboard.grafana.app/v2';
 import { type Variable, type VariableList } from 'app/api/clients/dashboard/v2beta1';
@@ -99,7 +99,12 @@ export async function fetchPredefinedVariables(folderUid?: string): Promise<Vari
     cache.set(cacheKey, { ts: Date.now(), variables });
     return variables;
   } catch (err) {
-    console.warn('Failed to load predefined dashboard variables', err);
+    structuredLog(
+      'grafana/frontend.features.dashboard-scene.utils.predefinedVariables',
+      'warn',
+      'Failed to load predefined dashboard variables',
+      err
+    );
     return null;
   }
 }

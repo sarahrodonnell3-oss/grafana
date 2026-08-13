@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { debounce, trim } from 'lodash';
 
 import { isEmptyObject, containsSearchFilter, type VariableWithOptions, type VariableOption } from '@grafana/data';
@@ -180,7 +182,7 @@ const searchForOptions = async (
 
     dispatch(toKeyedAction(key, updateOptionsFromSearch(updated.options)));
   } catch (error) {
-    console.error(error);
+    structuredLog('grafana/frontend.features.variables.pickers.OptionsPicker.actions', 'error', error);
   }
 };
 

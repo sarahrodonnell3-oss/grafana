@@ -11,6 +11,7 @@ import {
   LoadingState,
   type PanelData,
 } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { SceneTimeRange, type dataLayers } from '@grafana/scenes';
 import { type DataSourceRef } from '@grafana/schema';
 
@@ -61,6 +62,7 @@ const grafanaDsInstanceSettings = {
 
 jest.mock('@grafana/runtime', () => ({
   ...jest.requireActual('@grafana/runtime'),
+  logStructured: jest.fn(),
   getDataSourceSrv: () => {
     return {
       //return default datasource when no ref is provided
@@ -100,7 +102,6 @@ describe('AnnotationsEditView', () => {
     beforeEach(async () => {
       const result = await buildTestScene();
       annotationsView = result.annotationsView;
-      jest.spyOn(console, 'error').mockImplementation();
     });
 
     it('should return the correct urlKey', () => {
@@ -110,7 +111,11 @@ describe('AnnotationsEditView', () => {
     it('should return undefined when datasource does not support annotations', () => {
       const ds = annotationsView.getDataSourceRefForAnnotation();
       expect(ds).toBe(undefined);
-      expect(console.error).toHaveBeenCalledWith('Default datasource does not support annotations');
+      expect(logStructured).toHaveBeenCalledWith(
+        'grafana/frontend.features.dashboard-scene.settings.AnnotationsEditView',
+        'error',
+        'Default datasource does not support annotations'
+      );
     });
 
     it('should add a new annotation and group it with the other annotations', () => {

@@ -22,9 +22,11 @@ export {
   logDebug,
   logWarning,
   logError,
+  logStructured,
   createMonitoringLogger,
   logMeasurement,
   type MonitoringLogger,
+  type StructuredLogLevel,
 } from './utils/logging';
 export { TracedError } from './utils/TracedError';
 export {

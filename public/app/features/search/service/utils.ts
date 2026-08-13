@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { type ManagedBy } from '@grafana/api-clients/rtkq/dashboard/v0alpha1';
 import { type DataFrame, type DataFrameView, type IconName, fuzzySearch } from '@grafana/data';
 import { type DashboardViewItemWithUIItems } from 'app/features/browse-dashboards/types';
@@ -67,7 +69,7 @@ async function getCurrentFolderUID(): Promise<string | undefined> {
     }
     return Promise.resolve(dash?.meta?.folderUid);
   } catch (e) {
-    console.error(e);
+    structuredLog('grafana/frontend.features.search.service.utils', 'error', e);
   }
   return undefined;
 }

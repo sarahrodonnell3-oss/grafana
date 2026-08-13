@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { CoreApp, type DataSourceApi, type DataSourceInstanceSettings, getDataSourceRef } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { t, Trans } from '@grafana/i18n';
-import { config, getDataSourceSrv, reportInteraction } from '@grafana/runtime';
+import { logStructured as structuredLog, config, getDataSourceSrv, reportInteraction } from '@grafana/runtime';
 import {
   SafeSerializableSceneObject,
   type SceneComponentProps,
@@ -165,7 +165,11 @@ export class PanelDataQueriesTab extends SceneObjectBase<PanelDataQueriesTabStat
         });
       }
 
-      console.error(err);
+      structuredLog(
+        'grafana/frontend.features.dashboard-scene.panel-edit.PanelDataPane.PanelDataQueriesTab',
+        'error',
+        err
+      );
     }
   }
 

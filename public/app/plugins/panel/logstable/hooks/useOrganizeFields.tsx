@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { merge } from 'lodash';
 import { useEffect, useState } from 'react';
 import useMountedState from 'react-use/lib/useMountedState';
@@ -68,7 +70,12 @@ export function useOrganizeFields({
         }
       })
       .catch((err) => {
-        console.error('LogsTable: Organize fields transform error', err);
+        structuredLog(
+          'grafana/frontend.plugins.panel.logstable.hooks.useOrganizeFields',
+          'error',
+          'LogsTable: Organize fields transform error',
+          err
+        );
       });
   }, [
     bodyFieldName,

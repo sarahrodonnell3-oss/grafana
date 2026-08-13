@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { uniq } from 'lodash';
 
 import {
@@ -117,7 +119,7 @@ export async function loadAndInitDatasource(
       instance.init();
     } catch (err) {
       // TODO: should probably be handled better
-      console.error(err);
+      structuredLog('grafana/frontend.features.explore.state.utils', 'error', err);
     }
   }
 

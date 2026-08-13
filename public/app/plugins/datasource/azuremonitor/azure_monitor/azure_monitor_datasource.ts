@@ -3,6 +3,7 @@ import { find } from 'lodash';
 import { type AzureCredentials } from '@grafana/azure-sdk';
 import { type ScopedVars } from '@grafana/data';
 import {
+  logStructured as structuredLog,
   config,
   DataSourceWithBackend,
   getTemplateSrv,
@@ -267,7 +268,11 @@ export default class AzureMonitorDatasource extends DataSourceWithBackend<
         return result;
       })
       .catch((reason) => {
-        console.error(`Failed to get metric namespaces: ${reason}`);
+        structuredLog(
+          'grafana/frontend.plugins.datasource.azuremonitor.azure_monitor.azure_monitor_datasource',
+          'error',
+          `Failed to get metric namespaces: ${reason}`
+        );
         return [];
       });
   }

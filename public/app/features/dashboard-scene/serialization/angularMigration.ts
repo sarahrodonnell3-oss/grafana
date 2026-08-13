@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { defaults, cloneDeep } from 'lodash';
 
 import { type PanelModel as PanelModelFromData, type PanelPlugin } from '@grafana/data';
@@ -42,7 +44,9 @@ export function getAngularPanelMigrationHandler(oldModel: PanelModel) {
       const targetClone = cloneDeep(oldModel.targets);
       Object.defineProperty(panel, 'targets', {
         get: function () {
-          console.warn(
+          structuredLog(
+            'grafana/frontend.features.dashboard-scene.serialization.angularMigration',
+            'warn',
             'Accessing the targets property when migrating a panel plugin is deprecated. Changes to this property will be ignored.'
           );
           return targetClone;
@@ -108,7 +112,9 @@ export function getV2AngularMigrationHandler(migrationData: AngularMigrationData
     const targetClone = cloneDeep(panel.targets);
     Object.defineProperty(panel, 'targets', {
       get: function () {
-        console.warn(
+        structuredLog(
+          'grafana/frontend.features.dashboard-scene.serialization.angularMigration',
+          'warn',
           'Accessing the targets property when migrating a panel plugin is deprecated. Changes to this property will be ignored.'
         );
         return targetClone;

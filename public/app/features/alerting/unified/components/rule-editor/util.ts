@@ -8,7 +8,7 @@ import {
   ThresholdsMode,
   isTimeSeriesFrames,
 } from '@grafana/data';
-import { config } from '@grafana/runtime';
+import { logStructured as structuredLog, config } from '@grafana/runtime';
 import { GraphThresholdsStyleMode } from '@grafana/schema';
 import { EvalFunction } from 'app/features/alerting/state/alertDef';
 import { isExpressionQuery } from 'app/features/expressions/guards';
@@ -216,7 +216,12 @@ export function getThresholdsForQueries(queries: AlertQuery[], condition: string
           }
         });
       } catch (err) {
-        console.error('Failed to parse thresholds', err);
+        structuredLog(
+          'grafana/frontend.features.alerting.unified.components.rule-editor.util',
+          'error',
+          'Failed to parse thresholds',
+          err
+        );
         return;
       }
     });

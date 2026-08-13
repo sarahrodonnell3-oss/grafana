@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { STARRED_FOLDERS_UID, TEAM_FOLDERS_UID, isRootFolderUID } from 'app/features/search/constants';
 import { type DashboardViewItem, type DashboardViewItemKind } from 'app/features/search/types';
 import { createAsyncThunk } from 'app/types/store';
@@ -13,7 +15,12 @@ async function listSafe(label: string, load: () => Promise<DashboardViewItem[]>)
   try {
     return await load();
   } catch (error) {
-    console.error(`Failed to load ${label}`, error);
+    structuredLog(
+      'grafana/frontend.features.browse-dashboards.state.actions',
+      'error',
+      `Failed to load ${label}`,
+      error
+    );
     return [];
   }
 }
@@ -173,7 +180,11 @@ export const fetchNextChildrenPage = createAsyncThunk(
       fetchKind = 'folder';
     } else if (collection.lastFetchedKind === 'dashboard' && !collection.lastKindHasMoreItems) {
       // There's nothing to load at all
-      console.warn(`fetchNextChildrenPage called for ${uid} but that collection is fully loaded`);
+      structuredLog(
+        'grafana/frontend.features.browse-dashboards.state.actions',
+        'warn',
+        `fetchNextChildrenPage called for ${uid} but that collection is fully loaded`
+      );
       // return;
     } else if (collection.lastFetchedKind === 'folder' && collection.lastKindHasMoreItems) {
       // Load additional pages of folders

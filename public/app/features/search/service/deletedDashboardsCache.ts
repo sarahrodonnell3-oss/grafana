@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { iamAPIv0alpha1, type DisplayList } from 'app/api/clients/iam/v0alpha1';
 import {
   AnnoKeyFolder,
@@ -123,7 +125,12 @@ class DeletedDashboardsCache {
         rows: Array.from(deduped.values()),
       };
     } catch (error) {
-      console.error('Failed to fetch deleted dashboards:', error);
+      structuredLog(
+        'grafana/frontend.features.search.service.deletedDashboardsCache',
+        'error',
+        'Failed to fetch deleted dashboards:',
+        error
+      );
       return EMPTY_TABLE_RESPONSE;
     }
   }
@@ -220,7 +227,12 @@ export async function resolveDeletedByDisplayMap(
   } catch (error) {
     // `Promise.allSettled` cannot reject; this catches synchronous throws from `dispatch()`
     // itself. Mark every UID unknown so callers render placeholders, not raw UIDs.
-    console.error('Failed to resolve deleted dashboard user displays:', getMessageFromError(error));
+    structuredLog(
+      'grafana/frontend.features.search.service.deletedDashboardsCache',
+      'error',
+      'Failed to resolve deleted dashboard user displays:',
+      getMessageFromError(error)
+    );
     for (const uid of toFetch) {
       result.set(uid, DELETED_BY_UNKNOWN);
     }
@@ -233,12 +245,22 @@ function extractDisplayData(
   settled: PromiseSettledResult<{ data?: DisplayList; error?: unknown }>
 ): DisplayList | undefined {
   if (settled.status === 'rejected') {
-    console.error('Failed to resolve deleted dashboard user displays:', getMessageFromError(settled.reason));
+    structuredLog(
+      'grafana/frontend.features.search.service.deletedDashboardsCache',
+      'error',
+      'Failed to resolve deleted dashboard user displays:',
+      getMessageFromError(settled.reason)
+    );
     return undefined;
   }
   // RTK Query query thunks resolve (do not reject) on request errors — surface them explicitly.
   if (settled.value.error) {
-    console.error('Failed to resolve deleted dashboard user displays:', getMessageFromError(settled.value.error));
+    structuredLog(
+      'grafana/frontend.features.search.service.deletedDashboardsCache',
+      'error',
+      'Failed to resolve deleted dashboard user displays:',
+      getMessageFromError(settled.value.error)
+    );
     return undefined;
   }
   return settled.value.data;

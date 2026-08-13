@@ -2,7 +2,7 @@ import { isArray } from 'lodash';
 import { useState } from 'react';
 
 import { dataFrameToJSON, toDataFrame, toDataFrameDTO } from '@grafana/data';
-import { toDataQueryResponse } from '@grafana/runtime';
+import { logStructured as structuredLog, toDataQueryResponse } from '@grafana/runtime';
 import { Alert, CodeEditor } from '@grafana/ui';
 
 import { type EditorProps } from '../QueryEditor';
@@ -35,8 +35,18 @@ export const RawFrameEditor = ({ onChange, query }: EditorProps) => {
       }
 
       if (data) {
-        console.log('Original', json);
-        console.log('Save', data);
+        structuredLog(
+          'grafana/frontend.plugins.datasource.grafana-testdata-datasource.components.RawFrameEditor',
+          'info',
+          'Original',
+          json
+        );
+        structuredLog(
+          'grafana/frontend.plugins.datasource.grafana-testdata-datasource.components.RawFrameEditor',
+          'info',
+          'Save',
+          data
+        );
         setError(undefined);
         setWarning('Converted to direct frame result');
         onChange({ ...query, rawFrameContent: JSON.stringify(data, null, 2) });
@@ -45,7 +55,12 @@ export const RawFrameEditor = ({ onChange, query }: EditorProps) => {
 
       setError('Unable to read dataframes in text');
     } catch (e) {
-      console.log('Error parsing json', e);
+      structuredLog(
+        'grafana/frontend.plugins.datasource.grafana-testdata-datasource.components.RawFrameEditor',
+        'info',
+        'Error parsing json',
+        e
+      );
       setError('Enter JSON array of data frames (or raw query results body)');
       setWarning(undefined);
     }

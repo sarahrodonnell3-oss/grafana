@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { type FieldConfigSource as FieldConfigSourceV1, SpecialValueMatch as SpecialValueMatchV1 } from '@grafana/data';
 import {
   VariableHide as VariableHideV1,
@@ -98,7 +100,11 @@ function transformSpecialValueMatchToV1(match: SpecialValueMatch): SpecialValueM
     case 'empty':
       return SpecialValueMatchV1.Empty;
     default:
-      console.warn(`Skipping special value mapping with unknown match type: "${match}"`);
+      structuredLog(
+        'grafana/frontend.features.dashboard-scene.serialization.transformToV1TypesUtils',
+        'warn',
+        `Skipping special value mapping with unknown match type: "${match}"`
+      );
       return undefined;
   }
 }

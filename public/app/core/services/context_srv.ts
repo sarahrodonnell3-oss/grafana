@@ -9,7 +9,7 @@ import {
   userHasPermissionInMetadata,
   userHasAnyPermission,
 } from '@grafana/data';
-import { featureEnabled, getBackendSrv } from '@grafana/runtime';
+import { logStructured as structuredLog, featureEnabled, getBackendSrv } from '@grafana/runtime';
 import { getSessionExpiry } from 'app/core/utils/auth';
 import { type UserPermission, AccessControlAction } from 'app/types/accessControl';
 import { type CurrentUserInternal } from 'app/types/config';
@@ -108,7 +108,7 @@ export class ContextSrv {
         reloadcache: true,
       });
     } catch (e) {
-      console.error(e);
+      structuredLog('grafana/frontend.core.services.context_srv', 'error', e);
     }
   }
 
@@ -258,7 +258,7 @@ export class ContextSrv {
         }
       })
       .catch((e) => {
-        console.error(e);
+        structuredLog('grafana/frontend.core.services.context_srv', 'error', e);
       });
   }
 }

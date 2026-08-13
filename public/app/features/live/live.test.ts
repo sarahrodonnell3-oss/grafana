@@ -1,11 +1,16 @@
 import { Subject } from 'rxjs';
 
 import { type DataQueryResponse, FieldType, LiveChannelScope, StreamingDataFrame } from '@grafana/data';
-import { type BackendSrv } from '@grafana/runtime';
+import { type BackendSrv, logStructured } from '@grafana/runtime';
 
 import { type CentrifugeSrv, type StreamingDataQueryResponse } from './centrifuge/service';
 import { StreamingResponseDataType } from './data/utils';
 import { GrafanaLiveService } from './live';
+
+jest.mock('@grafana/runtime', () => ({
+  ...jest.requireActual('@grafana/runtime'),
+  logStructured: jest.fn(),
+}));
 
 describe('GrafanaLiveService', () => {
   const mockGetDataStream = jest.fn();
@@ -142,6 +147,10 @@ describe('GrafanaLiveService', () => {
     const frame: StreamingDataFrame = response?.data[0];
     expect(frame).toBeInstanceOf(StreamingDataFrame);
     expect(frame.fields).toEqual([]);
-    expect(console.warn).toHaveBeenCalled();
+    expect(logStructured).toHaveBeenCalledWith(
+      'grafana/frontend.features.live.live',
+      'warn',
+      expect.stringContaining('expected first packet to contain a full frame')
+    );
   });
 });

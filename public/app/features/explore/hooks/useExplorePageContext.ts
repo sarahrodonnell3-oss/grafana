@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { useEffect, useState } from 'react';
 
 import { createAssistantContextItem, type ChatContextItem, useProvidePageContext } from '@grafana/assistant';
@@ -118,7 +120,7 @@ function getDisplayText(query: DataQuery, ds?: DataSourceApi): string | undefine
   try {
     return ds?.getQueryDisplayText?.(query);
   } catch (error) {
-    console.error(error);
+    structuredLog('grafana/frontend.features.explore.hooks.useExplorePageContext', 'error', error);
     return undefined;
   }
 }

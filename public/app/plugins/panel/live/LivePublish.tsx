@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { type LiveChannelAddress, isValidLiveChannelAddress } from '@grafana/data';
 import { Trans } from '@grafana/i18n';
-import { getBackendSrv, getGrafanaLiveSrv } from '@grafana/runtime';
+import { logStructured as structuredLog, getBackendSrv, getGrafanaLiveSrv } from '@grafana/runtime';
 import { CodeEditor, Button } from '@grafana/ui';
 
 import { MessagePublishMode } from './types';
@@ -46,7 +46,12 @@ export function LivePublish({ height, mode, body, addr, onSave }: Props) {
     }
 
     const rsp = await getGrafanaLiveSrv().publish(addr, body);
-    console.log('onPublishClicked (response from publish)', rsp);
+    structuredLog(
+      'grafana/frontend.plugins.panel.live.LivePublish',
+      'info',
+      'onPublishClicked (response from publish)',
+      rsp
+    );
   };
 
   return (

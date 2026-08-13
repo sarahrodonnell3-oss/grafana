@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import {
   type DataLink,
   type DisplayValue,
@@ -123,7 +125,7 @@ export const getFieldLinksSupplier = (value: FieldDisplay): LinkModelSupplier<Fi
           };
         }
       } else {
-        console.log('VALUE', value);
+        structuredLog('grafana/frontend.features.panel.panellinks.linkSuppliers', 'info', 'VALUE', value);
       }
 
       const replace: InterpolateFunction = (value: string, vars: ScopedVars | undefined, fmt?: string | Function) => {

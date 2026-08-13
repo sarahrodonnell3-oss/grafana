@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import {
   type ChangeEvent,
   type FocusEvent,
@@ -31,7 +33,11 @@ export function TextBoxVariablePicker({ variable, onVariableChange, readOnly }: 
 
   const updateVariable = useCallback(() => {
     if (!variable.rootStateKey) {
-      console.error('Cannot update variable without rootStateKey');
+      structuredLog(
+        'grafana/frontend.features.variables.textbox.TextBoxVariablePicker',
+        'error',
+        'Cannot update variable without rootStateKey'
+      );
       return;
     }
 

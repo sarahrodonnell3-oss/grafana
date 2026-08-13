@@ -1,3 +1,5 @@
+import { logStructured as structuredLog } from '@grafana/runtime';
+
 import { isEqual } from 'lodash';
 
 import {
@@ -232,7 +234,12 @@ export class DashboardSidebar extends SceneObjectBase<DashboardSidebarState> imp
   private selectElement(element: ElementSelectionContextItem, options: ElementSelectionOnSelectOptions) {
     let obj = sceneGraph.findByKey(this, element.id);
     if (!obj) {
-      console.warn('Cannot find element by key="%s"!', element.id);
+      structuredLog(
+        'grafana/frontend.features.dashboard-scene.sidebar.DashboardSidebar',
+        'warn',
+        'Cannot find element by key="%s"!',
+        element.id
+      );
       return;
     }
 
@@ -240,7 +247,12 @@ export class DashboardSidebar extends SceneObjectBase<DashboardSidebarState> imp
     if (sourceKey) {
       obj = sceneGraph.findByKey(this, sourceKey);
       if (!obj) {
-        console.warn('Cannot find element by source key="%s"!', sourceKey);
+        structuredLog(
+          'grafana/frontend.features.dashboard-scene.sidebar.DashboardSidebar',
+          'warn',
+          'Cannot find element by source key="%s"!',
+          sourceKey
+        );
         return;
       }
     }
