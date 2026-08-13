@@ -12,7 +12,6 @@ export const defaultTrustedTypesPolicy = {
       'grafana/frontend.core.trustedTypePolicies',
       'error',
       '[HTML not sanitized with Trusted Types]',
-      string,
       source,
       sink
     );
@@ -27,7 +26,6 @@ export const defaultTrustedTypesPolicy = {
       'grafana/frontend.core.trustedTypePolicies',
       'error',
       '[ScriptURL not sanitized with Trusted Types]',
-      string,
       source,
       sink
     );

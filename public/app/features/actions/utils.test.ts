@@ -495,9 +495,7 @@ describe('getActions onClick', () => {
 
     model.onClick(new MouseEvent('click'), mockField);
 
-    expect(appEventsEmitSpy).toHaveBeenCalledWith(AppEvents.alertError, [
-      'An error has occurred. Check console output for more details.',
-    ]);
+    expect(appEventsEmitSpy).toHaveBeenCalledWith(AppEvents.alertError, ['An error has occurred.']);
     consoleErrorSpy.mockRestore();
   });
 
@@ -510,9 +508,7 @@ describe('getActions onClick', () => {
 
     model.onClick(new MouseEvent('click'), mockField);
 
-    expect(appEventsEmitSpy).toHaveBeenCalledWith(AppEvents.alertError, [
-      'An error has occurred. Check console output for more details.',
-    ]);
+    expect(appEventsEmitSpy).toHaveBeenCalledWith(AppEvents.alertError, ['An error has occurred.']);
     consoleErrorSpy.mockRestore();
   });
 });

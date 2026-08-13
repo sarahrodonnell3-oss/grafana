@@ -40,6 +40,22 @@ describe('logStructured', () => {
     });
   });
 
+  it('includes an Error in context at non-error levels', () => {
+    const cause = new Error('cleanup failed');
+
+    logStructured('features.example', 'warn', 'Failed to clean up old expanded folders', cause, { retry: true });
+
+    expect(mockPushLog).toHaveBeenCalledWith(['Failed to clean up old expanded folders'], {
+      level: LogLevel.WARN,
+      context: {
+        source: 'features.example',
+        argument1: 'Error: cleanup failed',
+        argument2: '{"retry":true}',
+      },
+    });
+    expect(mockPushError).not.toHaveBeenCalled();
+  });
+
   it('preserves the original stack when recording an error', () => {
     const cause = new Error('connection refused');
 

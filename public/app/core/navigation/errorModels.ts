@@ -3,7 +3,7 @@ import { logStructured as structuredLog } from '@grafana/runtime';
 
 export function getExceptionNav(error: unknown): NavModel {
   structuredLog('grafana/frontend.core.navigation.errorModels', 'error', error);
-  return getWarningNav('Exception thrown', 'See console for details');
+  return getWarningNav('Exception thrown', error instanceof Error ? error.message : 'An unexpected error occurred');
 }
 
 export function getNotFoundNav(): NavModel {

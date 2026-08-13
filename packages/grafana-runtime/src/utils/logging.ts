@@ -102,9 +102,14 @@ export function logStructured(source: string, level: StructuredLogLevel, ...valu
   const message = formatLogValue(messageValue ?? error ?? 'No log message provided');
   const context = values.reduce<LogContext>(
     (result, value, index) => {
-      if (index !== messageIndex && index !== errorIndex) {
-        result[`argument${index}`] = formatLogValue(value);
+      if (index === messageIndex) {
+        return result;
       }
+      // Errors at the error level are attached as TracedError, not duplicated in context.
+      if (level === 'error' && index === errorIndex) {
+        return result;
+      }
+      result[`argument${index}`] = formatLogValue(value);
       return result;
     },
     { source }

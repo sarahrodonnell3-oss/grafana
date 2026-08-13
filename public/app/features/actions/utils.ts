@@ -122,9 +122,7 @@ export const getActions = (
               .fetch(request)
               .subscribe({
                 error: (error) => {
-                  appEvents.emit(AppEvents.alertError, [
-                    'An error has occurred. Check console output for more details.',
-                  ]);
+                  appEvents.emit(AppEvents.alertError, ['An error has occurred.']);
                   structuredLog('grafana/frontend.features.actions.utils', 'error', error);
                 },
                 complete: () => {
@@ -132,7 +130,7 @@ export const getActions = (
                 },
               });
           } catch (error) {
-            appEvents.emit(AppEvents.alertError, ['An error has occurred. Check console output for more details.']);
+            appEvents.emit(AppEvents.alertError, ['An error has occurred.']);
             structuredLog('grafana/frontend.features.actions.utils', 'error', error);
             return;
           }

@@ -27,7 +27,7 @@ export const callApi = (api: APIEditorConfig, updateLoadingStateCallback?: IsLoa
     .fetch(request)
     .subscribe({
       error: (error) => {
-        appEvents.emit(AppEvents.alertError, ['An error has occurred. Check console output for more details.']);
+        appEvents.emit(AppEvents.alertError, ['An error has occurred.']);
         structuredLog('grafana/frontend.plugins.panel.canvas.editor.element.utils', 'error', 'API call error: ', error);
         updateLoadingStateCallback && updateLoadingStateCallback(false);
       },
