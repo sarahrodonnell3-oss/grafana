@@ -63,6 +63,7 @@ import {
   ManagerKind,
   type ResourceForCreate,
 } from '../../apiserver/types';
+import { createMutationClient } from '../mutation-api/clientBridge';
 import { DashboardSceneChangeTracker } from '../saving/DashboardSceneChangeTracker';
 import { SaveDashboardDrawer } from '../saving/SaveDashboardDrawer';
 import { type DashboardChangeInfo } from '../saving/shared';
@@ -90,6 +91,7 @@ import { isRepeatCloneOrChildOf } from '../utils/clone';
 import { dashboardSceneGraph } from '../utils/dashboardSceneGraph';
 import { djb2Hash } from '../utils/djb2Hash';
 import { getDashboardUrl } from '../utils/getDashboardUrl';
+import { getLayoutManagerFor } from '../utils/getLayoutManagerFor';
 import { DashboardInteractions } from '../utils/interactions';
 import { getPanelStyleConfig, type PanelStyleConfig } from '../utils/panelStyleConfigs';
 import {
@@ -102,14 +104,12 @@ import {
   getDashboardSceneFor,
   getDefaultVizPanel,
   getLayoutForObject,
-  getLayoutManagerFor,
   getPanelIdForVizPanel,
   hasActualSaveChanges,
 } from '../utils/utils';
 
 import { AddLibraryPanelDrawer } from './AddLibraryPanelDrawer';
 import { DashboardLayoutOrchestrator } from './DashboardLayoutOrchestrator';
-import { createMutationClient } from './DashboardMutationClientSetter';
 import { DashboardSceneRenderer } from './DashboardSceneRenderer';
 import { DashboardSceneUrlSync } from './DashboardSceneUrlSync';
 import { LibraryPanelBehavior } from './LibraryPanelBehavior';
@@ -273,7 +273,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> impleme
     // @ts-expect-error
     getDashboardSrv().setCurrent(oldDashboardWrapper);
 
-    const destroyMutationClient = createMutationClient(this);
+    const destroyMutationClient = createMutationClient(this, 'dashboard');
 
     return () => {
       destroyMutationClient();
@@ -1453,7 +1453,8 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> impleme
   getRawJsonFromEditor(): Dashboard | DashboardV2Spec | undefined {
     if (this.state.editview instanceof JsonModelEditView) {
       try {
-        return JSON.parse(this.state.editview.state.jsonText);
+        // The v2 editor holds a full resource envelope; getEditedSaveModel unwraps it back to the bare spec.
+        return this.state.editview.getEditedSaveModel();
       } catch {
         return undefined;
       }
