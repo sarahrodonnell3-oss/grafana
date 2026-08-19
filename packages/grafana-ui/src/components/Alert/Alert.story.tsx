@@ -1,4 +1,5 @@
 import { type StoryFn, type Meta } from '@storybook/react-webpack5';
+import { useState } from 'react';
 import { action } from 'storybook/actions';
 
 import { StoryExample } from '../../utils/storybook/StoryExample';
@@ -124,13 +125,40 @@ Toast.args = {
   elevated: true,
 };
 
-export const ProductionGuidance: StoryFn<typeof Alert> = (args) => {
-  return <Alert {...args}>Set connection limits based on your database capacity and expected query concurrency.</Alert>;
-};
+export const ProductionGuidance: StoryFn<typeof Alert> = () => {
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
-ProductionGuidance.args = {
-  title: 'Connection limits in production',
-  severity: 'info',
+  if (dismissed) {
+    return <></>;
+  }
+
+  return (
+    <Stack direction="column">
+      <Alert
+        title="Connection limits in production"
+        severity="info"
+        action={
+          <Button
+            variant="secondary"
+            onClick={() => {
+              action('Review settings clicked')();
+              setShowConfirmation(true);
+            }}
+          >
+            Review settings
+          </Button>
+        }
+        onRemove={() => {
+          action('Dismiss button clicked')();
+          setDismissed(true);
+        }}
+      >
+        Set connection limits based on your database capacity and expected query concurrency.
+      </Alert>
+      {showConfirmation && <Alert title="Connection settings reviewed" severity="success" />}
+    </Stack>
+  );
 };
 
 export default meta;
