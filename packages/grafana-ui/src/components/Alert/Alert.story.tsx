@@ -124,4 +124,13 @@ Toast.args = {
   elevated: true,
 };
 
+export const ProductionGuidance: StoryFn<typeof Alert> = (args) => {
+  return <Alert {...args}>Set connection limits based on your database capacity and expected query concurrency.</Alert>;
+};
+
+ProductionGuidance.args = {
+  title: 'Connection limits in production',
+  severity: 'info',
+};
+
 export default meta;
