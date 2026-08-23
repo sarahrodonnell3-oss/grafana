@@ -71,11 +71,28 @@ describe('Alert', () => {
     });
   });
 
-  describe('backward compatibility', () => {
-    it('renders buttonContent with onRemove as before', () => {
-      render(<Alert title="Test" buttonContent="Go back" onRemove={jest.fn()} />);
+  describe('dismiss button accessible name', () => {
+    it('uses the visible buttonContent as the accessible name', () => {
+      render(<Alert title="Test" buttonContent="Dismiss" onRemove={jest.fn()} />);
+      expect(screen.getByRole('button', { name: 'Dismiss' })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /close alert/i })).not.toBeInTheDocument();
+    });
+
+    it('keeps Close alert as the accessible name for the icon-only dismiss button', () => {
+      render(<Alert title="Test" onRemove={jest.fn()} />);
       expect(screen.getByRole('button', { name: /close alert/i })).toBeInTheDocument();
+    });
+  });
+
+  describe('backward compatibility', () => {
+    it('renders buttonContent with onRemove as before', async () => {
+      const user = userEvent.setup();
+      const onRemove = jest.fn();
+      render(<Alert title="Test" buttonContent="Go back" onRemove={onRemove} />);
+      expect(screen.getByRole('button', { name: 'Go back' })).toBeInTheDocument();
       expect(screen.getByText('Go back')).toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: 'Go back' }));
+      expect(onRemove).toHaveBeenCalledTimes(1);
     });
 
     it('renders dismiss X icon when only onRemove is set', () => {
