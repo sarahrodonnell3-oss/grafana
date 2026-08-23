@@ -71,11 +71,46 @@ describe('Alert', () => {
     });
   });
 
-  describe('backward compatibility', () => {
-    it('renders buttonContent with onRemove as before', () => {
-      render(<Alert title="Test" buttonContent="Go back" onRemove={jest.fn()} />);
+  describe('dismiss button accessible name', () => {
+    it('uses the visible buttonContent text as the accessible name', () => {
+      render(<Alert title="Test" buttonContent="Dismiss" onRemove={jest.fn()} />);
+      expect(screen.getByRole('button', { name: 'Dismiss' })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /close alert/i })).not.toBeInTheDocument();
+    });
+
+    it('derives the accessible name from rendered buttonContent children', () => {
+      render(<Alert title="Test" buttonContent={<span>Go back</span>} onRemove={jest.fn()} />);
+      expect(screen.getByRole('button', { name: 'Go back' })).toBeInTheDocument();
+    });
+
+    it('keeps the localized close label for the icon-only dismiss button', () => {
+      render(<Alert title="Test" onRemove={jest.fn()} />);
       expect(screen.getByRole('button', { name: /close alert/i })).toBeInTheDocument();
+    });
+
+    it('names the action and labeled dismiss buttons independently', () => {
+      render(
+        <Alert
+          title="Quota exceeded"
+          severity="warning"
+          action={<Button onClick={jest.fn()}>Request increase</Button>}
+          buttonContent="Dismiss"
+          onRemove={jest.fn()}
+        />
+      );
+      expect(screen.getByRole('button', { name: 'Request increase' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Dismiss' })).toBeInTheDocument();
+    });
+  });
+
+  describe('backward compatibility', () => {
+    it('renders buttonContent and calls onRemove when it is clicked', async () => {
+      const user = userEvent.setup();
+      const onRemove = jest.fn();
+      render(<Alert title="Test" buttonContent="Go back" onRemove={onRemove} />);
       expect(screen.getByText('Go back')).toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: 'Go back' }));
+      expect(onRemove).toHaveBeenCalledTimes(1);
     });
 
     it('renders dismiss X icon when only onRemove is set', () => {
