@@ -78,6 +78,13 @@ describe('Alert', () => {
       expect(screen.queryByRole('button', { name: /close alert/i })).not.toBeInTheDocument();
     });
 
+    it('uses visible ReactNode buttonContent as the accessible name', () => {
+      render(<Alert title="Test" buttonContent={<span>Close</span>} onRemove={jest.fn()} />);
+      expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: '[object Object]' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /close alert/i })).not.toBeInTheDocument();
+    });
+
     it('keeps Close alert as the accessible name for the icon-only dismiss button', () => {
       render(<Alert title="Test" onRemove={jest.fn()} />);
       expect(screen.getByRole('button', { name: /close alert/i })).toBeInTheDocument();
