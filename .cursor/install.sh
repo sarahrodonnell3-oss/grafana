@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Grafana pins its Node version in .nvmrc. In the Cloud Agent VM an older Node is
 # injected ahead of nvm on PATH, so we install and activate the pinned version
-# explicitly here (and in start-frontend.sh) rather than relying on shell PATH.
+# explicitly here (and in start-storybook.sh) rather than relying on shell PATH.
 export NVM_DIR="$HOME/.nvm"
 # shellcheck disable=SC1091
 . "$NVM_DIR/nvm.sh"
@@ -19,7 +19,3 @@ export PATH="$NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH"
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 export YARN_ENABLE_PROGRESS_BARS=false
 yarn install --immutable
-
-# Warm the Go module cache for the checked-out revision so the first backend
-# build in the `make run` terminal is fast.
-go mod download

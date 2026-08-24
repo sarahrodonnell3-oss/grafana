@@ -1,22 +1,11 @@
 {
-  "name": "Grafana",
+  "name": "Grafana @grafana/ui Storybook (Cloud Agents workshop)",
   "install": "./.cursor/install.sh",
-  "terminals": [
-    {
-      "name": "backend",
-      "command": "make run",
-      "description": "Grafana backend with Air hot-reload. Serves the app on http://localhost:3000 (admin/admin). Ready when it logs 'HTTP Server Listen'."
-    },
-    {
-      "name": "frontend",
-      "command": "./.cursor/start-frontend.sh",
-      "description": "Webpack dev-server watcher that rebuilds frontend assets into public/build. Ready when it logs 'Compiled successfully'."
-    }
-  ],
+  "start": "./.cursor/start-storybook.sh",
   "ports": [
     {
-      "name": "grafana",
-      "port": 3000
+      "name": "storybook",
+      "port": 9001
     }
   ]
 }
