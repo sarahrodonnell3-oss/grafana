@@ -1,0 +1,22 @@
+{
+  "name": "Grafana",
+  "install": "./.cursor/install.sh",
+  "terminals": [
+    {
+      "name": "backend",
+      "command": "make run",
+      "description": "Grafana backend with Air hot-reload. Serves the app on http://localhost:3000 (admin/admin). Ready when it logs 'HTTP Server Listen'."
+    },
+    {
+      "name": "frontend",
+      "command": "./.cursor/start-frontend.sh",
+      "description": "Webpack dev-server watcher that rebuilds frontend assets into public/build. Ready when it logs 'Compiled successfully'."
+    }
+  ],
+  "ports": [
+    {
+      "name": "grafana",
+      "port": 3000
+    }
+  ]
+}

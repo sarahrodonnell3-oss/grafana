@@ -79,6 +79,9 @@ public/css/*.min.css
 .cursor/*
 !.cursor/skills/
 !.cursor/skills/**
+!.cursor/environment.json
+!.cursor/install.sh
+!.cursor/start-frontend.sh
 .devcontainer/
 .claude/*
 
