@@ -143,7 +143,7 @@ describe('PreviewBannerViewPR', () => {
       const testUrl = 'https://GitHub.com/test/repo/pull/123';
       setup({ prURL: testUrl });
 
-      const button = screen.getByRole('button', { name: /close alert/i });
+      const button = screen.getByRole('button', { name: 'View pull request in GitHub' });
       await userEvent.click(button);
 
       expect(windowOpenSpy).toHaveBeenCalledWith(testUrl, '_blank');
@@ -204,7 +204,7 @@ describe('PreviewBannerViewPR', () => {
     it('appends an encoded title param to a GitHub PR URL when pr_title is present', async () => {
       setup({ prURL: githubPrURL, repoType: 'github', prTitle: 'update: My Dashboard' });
 
-      await userEvent.click(screen.getByRole('button', { name: /close alert/i }));
+      await userEvent.click(screen.getByRole('button', { name: 'View pull request in GitHub' }));
 
       expect(windowOpenSpy).toHaveBeenCalledWith(`${githubPrURL}&title=update%3A%20My%20Dashboard`, '_blank');
     });
@@ -213,7 +213,7 @@ describe('PreviewBannerViewPR', () => {
       const gitlabPrURL = 'https://gitlab.com/org/repo/-/merge_requests/new?merge_request[source_branch]=feature';
       setup({ prURL: gitlabPrURL, repoType: 'gitlab', prTitle: 'update: My Dashboard' });
 
-      await userEvent.click(screen.getByRole('button', { name: /close alert/i }));
+      await userEvent.click(screen.getByRole('button', { name: 'View pull request in GitLab' }));
 
       expect(windowOpenSpy).toHaveBeenCalledWith(
         `${gitlabPrURL}&merge_request[title]=update%3A%20My%20Dashboard`,
@@ -224,7 +224,7 @@ describe('PreviewBannerViewPR', () => {
     it('leaves the PR URL unchanged when no pr_title is present', async () => {
       setup({ prURL: githubPrURL, repoType: 'github' });
 
-      await userEvent.click(screen.getByRole('button', { name: /close alert/i }));
+      await userEvent.click(screen.getByRole('button', { name: 'View pull request in GitHub' }));
 
       expect(windowOpenSpy).toHaveBeenCalledWith(githubPrURL, '_blank');
     });
