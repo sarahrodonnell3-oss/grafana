@@ -124,4 +124,23 @@ Toast.args = {
   elevated: true,
 };
 
+export const WorkshopOperationalStates: StoryFn<typeof Alert> = () => {
+  return (
+    <Stack direction="column">
+      <Alert title="Partial data" severity="warning">
+        12 of 18 series returned for this time range. The Prometheus replica in us-east-1 timed out; the chart is showing
+        the series that did complete.
+      </Alert>
+      <Alert title="Query failed" severity="error">
+        Prometheus query failed after 30s: context deadline exceeded. The panel could not be rendered. Retry the query
+        or reduce the time range.
+      </Alert>
+      <Alert title="Scheduled maintenance" severity="info">
+        Grafana Cloud has a planned maintenance window on Saturday 02:00–04:00 UTC. Dashboards stay available in
+        read-only mode; writes and alerting evaluations pause until the window ends.
+      </Alert>
+    </Stack>
+  );
+};
+
 export default meta;
