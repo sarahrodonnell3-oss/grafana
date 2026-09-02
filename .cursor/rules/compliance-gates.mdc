@@ -1,0 +1,16 @@
+---
+description: Mandatory governance and verification requirements for agent-assisted incident, migration, and production-change work
+alwaysApply: true
+---
+
+- Treat Jira as the authority for approved scope, ownership, and human decisions.
+- Treat repository policy and tests as authoritative for implementation and verification.
+- Work only on an isolated feature branch. Never modify or push directly to a protected base branch.
+- Make the smallest change that satisfies the explicitly approved acceptance criteria.
+- Do not broaden a migration into adjacent routes, services, interfaces, schemas, or policies without a new human approval.
+- Never approve, merge, deploy, release, waive a check, or mark a Jira issue Done.
+- Never delete, skip, quarantine, weaken, or repeatedly rerun a failing test merely to obtain a pass.
+- Run focused validation first and report every retry, broader CI state, uncertainty, and pre-existing or flaky failure.
+- Do not place credentials, tokens, personal data, or complete raw logs in prompts, Jira, commits, or pull requests.
+- Preserve provenance: signal, Jira key, agent run, base and feature branches, changed files, commands, results, risks, rollback, and human approvals.
+- Stop when approval is absent, policy conflicts, scope expands, evidence is inconclusive, rollback is not credible, or a protected action is required.
