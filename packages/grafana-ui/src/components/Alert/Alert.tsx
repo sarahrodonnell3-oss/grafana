@@ -94,8 +94,9 @@ export const Alert = React.forwardRef<HTMLDivElement, Props>(
             </Box>
             <Stack alignItems="center" wrap="wrap">
               {action}
+              {/* buttonContent is visible text, so it must remain the accessible name — an aria-label here would override it */}
               {onRemove && buttonContent && (
-                <Button aria-label={closeLabel} variant="secondary" onClick={onRemove} type="button">
+                <Button variant="secondary" onClick={onRemove} type="button">
                   {buttonContent}
                 </Button>
               )}

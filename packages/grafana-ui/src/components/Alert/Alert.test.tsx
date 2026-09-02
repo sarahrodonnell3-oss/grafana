@@ -71,10 +71,27 @@ describe('Alert', () => {
     });
   });
 
+  describe('dismiss button accessible name', () => {
+    it('uses the visible buttonContent label as the accessible name', () => {
+      render(<Alert title="Test" buttonContent="Go back" onRemove={jest.fn()} />);
+      expect(screen.getByRole('button', { name: 'Go back' })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /close alert/i })).not.toBeInTheDocument();
+    });
+
+    it('uses the visible text of a buttonContent element as the accessible name', () => {
+      render(<Alert title="Test" buttonContent={<span>Open pull request</span>} onRemove={jest.fn()} />);
+      expect(screen.getByRole('button', { name: 'Open pull request' })).toBeInTheDocument();
+    });
+
+    it('falls back to "Close alert" when the dismiss control is icon-only', () => {
+      render(<Alert title="Test" onRemove={jest.fn()} />);
+      expect(screen.getByRole('button', { name: 'Close alert' })).toBeInTheDocument();
+    });
+  });
+
   describe('backward compatibility', () => {
     it('renders buttonContent with onRemove as before', () => {
       render(<Alert title="Test" buttonContent="Go back" onRemove={jest.fn()} />);
-      expect(screen.getByRole('button', { name: /close alert/i })).toBeInTheDocument();
       expect(screen.getByText('Go back')).toBeInTheDocument();
     });
 
