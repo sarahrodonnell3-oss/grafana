@@ -124,4 +124,14 @@ Toast.args = {
   elevated: true,
 };
 
+export const WorkshopServiceHealth: StoryFn<typeof Alert> = () => {
+  return (
+    <Stack direction="column">
+      <Alert title="Metrics ingestion is delayed by approximately five minutes." severity="warning" />
+      <Alert title="The primary data source is currently unreachable." severity="error" />
+      <Alert title="Scheduled maintenance begins tonight at 11:00 PM UTC." severity="info" />
+    </Stack>
+  );
+};
+
 export default meta;
