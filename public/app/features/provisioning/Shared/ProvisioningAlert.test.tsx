@@ -46,7 +46,6 @@ describe('ProvisioningAlert', () => {
         wrapper: EmptyWrapper,
       });
 
-      // Alert component uses aria-label="Close alert" on the button
       const button = screen.getByRole('button');
       expect(screen.getByText('Retry')).toBeInTheDocument();
       await user.click(button);
