@@ -20,7 +20,7 @@ function DashboardPageProxy(props: DashboardPageProxyProps) {
   const location = useLocation();
 
   if (forceOld) {
-    <DashboardPage {...props} params={params} location={location} />;
+    return <DashboardPage {...props} params={params} location={location} />;
   }
 
   return <DashboardScenePage {...props} />;

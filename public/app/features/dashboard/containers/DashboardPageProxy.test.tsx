@@ -39,6 +39,13 @@ jest.mock('react-router-dom-v5-compat', () => ({
   useParams: jest.fn().mockReturnValue({}),
 }));
 
+jest.mock('./DashboardPage', () => ({
+  __esModule: true,
+  default: function DashboardPage() {
+    return <div data-testid="dashboard-page" />;
+  },
+}));
+
 function setup(props: Partial<DashboardPageProxyProps> & { uid?: string }) {
   (useParams as jest.Mock).mockReturnValue({ uid: props.uid });
   return render(
@@ -64,8 +71,9 @@ describe('DashboardPageProxy', () => {
       });
 
       await waitFor(() => {
-        expect(screen.queryAllByTestId('dashboard-scene-page')).toHaveLength(1);
+        expect(screen.getByTestId('dashboard-scene-page')).toBeInTheDocument();
       });
+      expect(screen.queryByTestId('dashboard-page')).not.toBeInTheDocument();
     });
 
     it('should render DashboardScenePage for normal route with uid', async () => {
@@ -75,8 +83,22 @@ describe('DashboardPageProxy', () => {
       });
 
       await waitFor(() => {
-        expect(screen.queryAllByTestId('dashboard-scene-page')).toHaveLength(1);
+        expect(screen.getByTestId('dashboard-scene-page')).toBeInTheDocument();
       });
+      expect(screen.queryByTestId('dashboard-page')).not.toBeInTheDocument();
+    });
+
+    it('should render DashboardScenePage when scenes query param is true', async () => {
+      setup({
+        route: { routeName: DashboardRoutes.Normal, component: () => null, path: '/' },
+        uid: 'abc-def',
+        queryParams: { scenes: true },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId('dashboard-scene-page')).toBeInTheDocument();
+      });
+      expect(screen.queryByTestId('dashboard-page')).not.toBeInTheDocument();
     });
 
     it('should render legacy DashboardPage when forceOld query param is set', async () => {
@@ -87,8 +109,9 @@ describe('DashboardPageProxy', () => {
       });
 
       await waitFor(() => {
-        expect(screen.queryAllByTestId('dashboard-scene-page')).toHaveLength(0);
+        expect(screen.getByTestId('dashboard-page')).toBeInTheDocument();
       });
+      expect(screen.queryByTestId('dashboard-scene-page')).not.toBeInTheDocument();
     });
   });
 });
