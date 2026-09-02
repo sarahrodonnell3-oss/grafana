@@ -113,6 +113,23 @@ WithActionAndRemoveButton.args = {
   buttonContent: 'Dismiss',
 };
 
+export const WorkshopOperationalStates: StoryFn<typeof Alert> = () => {
+  return (
+    <Stack direction="column">
+      <Alert title="Partial data" severity="warning">
+        This panel is showing incomplete results. Two of five Prometheus data sources timed out, so some series are
+        missing from the graph.
+      </Alert>
+      <Alert title="Query failed" severity="error">
+        The Loki query could not be executed. Check the data source configuration and try running the query again.
+      </Alert>
+      <Alert title="Scheduled maintenance" severity="info">
+        The metrics store will be unavailable from 02:00–04:00 UTC on Saturday while we apply a planned upgrade.
+      </Alert>
+    </Stack>
+  );
+};
+
 export const Toast: StoryFn<typeof Alert> = (args) => {
   return <Alert {...args}>To use as a toast, set the elevated and onRemove props.</Alert>;
 };
