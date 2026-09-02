@@ -17,7 +17,7 @@ When sources disagree, use this order and escalate the conflict rather than sile
 3. explicit human approval recorded in Jira;
 4. current repository code and configuration;
 5. executed CI and test evidence;
-6. Datadog operational evidence;
+6. approved external operational evidence, when configured;
 7. agent-generated hypotheses and summaries.
 
 Lower-ranked evidence may reveal that a higher-ranked source is stale or incomplete, but it does not amend that source.
@@ -28,7 +28,7 @@ Lower-ranked evidence may reveal that a higher-ranked source is stale or incompl
 | --- | --- | --- | --- | --- |
 | Repository policy | Required controls, review rules, migration constraints | Approved documents, owners, review cadence, protected paths | Applicable requirements and conflicts | That an absent control is optional |
 | Jira | Work identity, approved scope, accountable people, status, acceptance criteria | Project, issue type, required fields, workflow statuses, approval field or comment convention | Whether the issue is authorized for implementation from explicit evidence | Approval from assignment, silence, or an agent-authored statement |
-| Datadog | Signal occurrence, time window, affected service/environment, telemetry | Read-only credentials, allowed indexes/services, redaction rules, query limits, stable links | Clusters, impact estimates, correlations, representative traces | Root cause from correlation alone or permission to change code |
+| Observability system (optional) | Signal occurrence, time window, affected service/environment, telemetry | Organization approval, read-only credentials, allowed indexes/services, redaction rules, query limits, stable links | Clusters, impact estimates, correlations, representative traces | Root cause from correlation alone, permission to change code, or permission to connect a prohibited source |
 | Source repository | Current implementation, ownership metadata, history | Repository and branch allowlist, CODEOWNERS, protected branches, agent write boundary | Candidate symbols, dependencies, smallest coherent change | Business intent not represented in approved requirements |
 | CI and test systems | Checks that actually ran and their results | Required checks, environments, timeouts, retention, flaky-test registry | Failure classification and change/base comparison | Success for skipped, timed-out, cancelled, or inconclusive checks |
 | Pull request platform | Proposed diff, review discussion, recorded approval, merge status | Branch protection, required reviewers, check policy, merge permissions | Review package completeness and unresolved comments | Approval, risk acceptance, or merge authority |
@@ -41,7 +41,7 @@ The team must provide all of the following:
 - repository, default branch, and allowed write branch pattern;
 - policy owner, technical owner, and compliance-review role;
 - Jira project, issue type, workflow statuses, required fields, and approval convention;
-- Datadog site, service/environment allowlist, time-window limit, and redaction rules;
+- for each approved optional observability source, its site, service/environment allowlist, time-window limit, and redaction rules;
 - protected paths, CODEOWNERS, required CI checks, and merge protections;
 - log and artifact retention periods plus the location of the audit record;
 - migration scope, protected behavior, supported versions, rollout, and rollback owner; and
@@ -64,7 +64,7 @@ Derived context is advisory until a named person approves the decision required 
 
 ## 6. Retrieval and token controls
 
-- Filter by service, environment, error fingerprint, version, and bounded time window before retrieving event details.
+- For an approved observability source, filter by service, environment, error fingerprint, version, and bounded time window before retrieving event details.
 - Prefer counts, facets, and clusters to raw event streams.
 - Read at most three representative traces unless they conflict or are insufficient.
 - Retrieve only the policy sections applicable to the current phase.

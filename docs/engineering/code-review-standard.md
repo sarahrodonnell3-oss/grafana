@@ -20,8 +20,8 @@ Every agent-assisted pull request must include:
 - Compliance reviewer, if required:
 - Approval record:
 
-## Operational provenance
-- Datadog signal or incident:
+## Intake provenance
+- Jira bug or approved operational signal:
 - Agent run ID:
 - Base branch:
 - Feature branch:
@@ -53,14 +53,14 @@ If a required value is unknown, write `Unknown — human decision required`; do 
 Reviewers should evaluate evidence in this order:
 
 1. **Authorization:** Does Jira record the approved scope and named owner?
-2. **Problem evidence:** Does the Datadog signal support the claimed failure mode and affected version?
+2. **Problem evidence:** Does the Jira reproduction and any authorized operational evidence support the claimed failure mode and affected version?
 3. **Scope:** Does the diff stay inside the approved migration boundary?
 4. **Behavior:** Does the change preserve the stated compatibility contract?
 5. **Tests:** Do focused tests prove the failure and the fix? Is broader CI reported honestly?
 6. **Quality:** Does the implementation follow existing repository patterns and avoid unnecessary abstraction?
 7. **Security and data:** Are inputs validated and sensitive data excluded from logs and artifacts?
 8. **Operations:** Are rollout, observability, and rollback credible?
-9. **Provenance:** Can the reviewer trace the signal, Jira issue, agent run, branch, checks, approvals, and merge actor?
+9. **Provenance:** Can the reviewer trace the intake source, Jira issue, agent run, branch, checks, approvals, and merge actor?
 
 ## 4. Required reviewer decisions
 

@@ -12,5 +12,5 @@ alwaysApply: true
 - Never delete, skip, quarantine, weaken, or repeatedly rerun a failing test merely to obtain a pass.
 - Run focused validation first and report every retry, broader CI state, uncertainty, and pre-existing or flaky failure.
 - Do not place credentials, tokens, personal data, or complete raw logs in prompts, Jira, commits, or pull requests.
-- Preserve provenance: signal, Jira key, agent run, base and feature branches, changed files, commands, results, risks, rollback, and human approvals.
+- Preserve provenance: intake source, Jira key, agent run, base and feature branches, changed files, commands, results, risks, rollback, and human approvals.
 - Stop when approval is absent, policy conflicts, scope expands, evidence is inconclusive, rollback is not credible, or a protected action is required.

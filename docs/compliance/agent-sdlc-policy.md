@@ -29,7 +29,7 @@ It does not authorize production access, deployment, approval, merge, destructiv
 1. **Named accountability.** Every agent-assisted change must have a named technical owner. Changes classified as compliance-sensitive must also have a named compliance reviewer.
 2. **Least authority.** Each agent receives only the repositories, tools, credentials, network routes, and write actions required for its current phase.
 3. **Evidence before autonomy.** Human intervention may be reduced only after measured performance meets an approved reliability threshold for a representative set of runs.
-4. **Authoritative sources remain authoritative.** Datadog is the source for operational signals, Jira for approved scope and ownership, the repository for code and versioned policy, CI for executed checks, and the pull request for review and approval.
+4. **Authoritative sources remain authoritative.** Jira is the source for intake, approved scope, and ownership; the repository for code and versioned policy; CI for executed checks; and the pull request for review and approval. An observability system is authoritative only for evidence retrieved through an organization-approved integration.
 5. **Smallest safe change.** Agents must prefer a bounded change that satisfies the approved acceptance criteria and preserves rollback.
 6. **No silent policy changes.** An agent may identify a missing or conflicting policy, but only an authorized human may approve a policy exception or material change.
 7. **Honest uncertainty.** A no-op, escalation, or inconclusive result is acceptable. Unsupported confidence or a misleading success claim is not.
@@ -38,10 +38,10 @@ It does not authorize production access, deployment, approval, merge, destructiv
 
 | Phase | Agent may do | Required evidence | Human gate |
 | --- | --- | --- | --- |
-| Signal triage | Read bounded Datadog evidence, cluster symptoms, inspect code and policy, search/create/update Jira | Signal fingerprint, impact, representative traces, code references, hypothesis, confidence, proposed scope | Technical owner accepts or rejects the scope |
+| Intake triage | Read the Jira bug and any authorized evidence, inspect code and policy, search for duplicates, update Jira | Defect fingerprint, impact, reproduction, code references, hypothesis, confidence, proposed scope | Technical owner accepts or rejects the scope |
 | Planning | Propose implementation, validation, compatibility, rollout, and rollback | Named files/symbols, decisions, test plan, risks, stop conditions | Technical owner records approval in Jira |
 | Implementation | Edit an isolated feature branch within approved scope; add or update tests; run permitted tools | Diff, commands, focused results, broader CI status, deviations | None to continue inside the approved boundary |
-| Review preparation | Open or update a **draft** pull request and assemble the review package | Jira link, signal link, run ID, tests, risks, rollback, unresolved items | CODEOWNER and compliance reviewer where required |
+| Review preparation | Open or update a **draft** pull request and assemble the review package | Jira link, intake evidence, run ID, tests, risks, rollback, unresolved items | CODEOWNER and compliance reviewer where required |
 | Merge and release | Provide information or respond to review | Complete approval and CI record | Authorized human merges and releases |
 
 An agent must not enter implementation merely because it produced a plausible plan. Jira must contain an explicit approval by the named technical owner.
@@ -51,7 +51,7 @@ An agent must not enter implementation merely because it produced a plausible pl
 | Action | Triage agent | Implementation agent | Human owner |
 | --- | --- | --- | --- |
 | Read approved repositories and policies | Allowed | Allowed | Allowed |
-| Read bounded Datadog data | Allowed | When needed for verification | Allowed |
+| Read approved observability evidence | Only when configured and authorized | Only when configured and needed | Allowed |
 | Search Jira | Allowed | Allowed | Allowed |
 | Create/update Jira investigation fields | Allowed | Allowed for progress and evidence | Allowed |
 | Change Jira to Approved for Agent Implementation | Prohibited | Prohibited | Technical owner only |
@@ -84,7 +84,7 @@ Agent-authored code is reviewed and governed like human-authored code, with addi
 
 Required provenance:
 
-- originating Datadog signal or incident identifier;
+- originating Jira bug and any authorized operational-evidence identifier;
 - Jira issue key;
 - agent conversation or Cloud run identifier;
 - base branch and resulting feature branch;
@@ -98,9 +98,9 @@ The Git commit and pull-request history are the authoritative record of the deli
 
 ## 8. Data handling
 
-- Query the smallest useful Datadog time range and service scope.
-- Aggregate and cluster before retrieving individual events.
-- Inspect no more than three representative traces unless conflicting evidence justifies more.
+- Do not seek or connect an external data source that organization policy has not approved.
+- When approved observability evidence is available, query the smallest useful time range and service scope.
+- Aggregate and cluster before retrieving individual events, and inspect no more than three representative traces unless conflicting evidence justifies more.
 - Do not copy credentials, access tokens, session values, personal data, or complete request payloads into prompts, Jira, or pull requests.
 - Link to authoritative records instead of duplicating large logs.
 - Log action metadata by default; retain prompt or code content only when an approved retention policy explicitly requires it.

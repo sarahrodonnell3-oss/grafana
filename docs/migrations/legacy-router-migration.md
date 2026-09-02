@@ -22,7 +22,7 @@ The planning agent must identify:
 - deep-link and query-string behavior;
 - test helpers that encode legacy assumptions;
 - callers outside the immediate directory;
-- telemetry associated with the Datadog signal; and
+- the Jira reproduction and any telemetry available through an approved integration; and
 - the smallest independently testable slice.
 
 The plan must cite exact paths and symbols. A generic migration checklist is insufficient.
@@ -37,7 +37,7 @@ Approved production files:
 Approved test files:
 Base branch:
 Protected behaviors:
-Known Datadog fingerprint:
+Known defect or authorized signal fingerprint:
 Expected focused commands:
 Rollout mechanism:
 Rollback mechanism:
@@ -102,7 +102,7 @@ Prefer the smallest available rollout mechanism:
 
 During the observation window, monitor:
 
-- the original Datadog error fingerprint;
+- the original defect or authorized signal fingerprint;
 - route-level error and 404 rates;
 - redirect loops;
 - authentication failures;

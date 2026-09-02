@@ -43,7 +43,7 @@ If the approved decision is **restore**, `?scenes=false` must positively render 
 
 The review package must include:
 
-1. the originating Datadog signal and bounded reproduction;
+1. the originating Jira bug and bounded reproduction, plus any authorized operational evidence;
 2. Jira approval actor, timestamp, decision, base branch, and scope;
 3. a focused unit test that positively identifies the rendered page;
 4. verification that omitted `scenes` and `?scenes=true` still select Scenes;
